@@ -120,10 +120,7 @@ function InstallMSI ([string]$MsiFile, [bool]$Silent) {
 
 function InstallPKG ([string]$PkgFile, [bool]$Silent) {
     if ($Silent) {
-        $args = @()
-        $args += '-pkg'
-        $args += $PkgFile
-        Start-Process -FilePath 'installer' -ArgumentList $args
+        /usr/bin/sudo /usr/sbin/installer -pkg "$PkgFile" -target /
     } else {
         Invoke-Item $PkgFile
     }
