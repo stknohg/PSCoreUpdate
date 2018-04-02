@@ -11,15 +11,23 @@ function Save-PowerShellCore {
         [SemVer]$Version,
         [Parameter(ParameterSetName = 'Default', Mandatory = $true)]
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
-        [AssetArchtectures]$AssetType,
+        [AssetArchtectures[]]$AssetType,
         [Parameter(ParameterSetName = 'Default', Mandatory = $true)]
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [string]$OutDirectory
     )
-    if ($AssetType -eq [AssetArchtectures]::Unknown) {
-        Write-Error 'Invalid AssetType.'
-        return
+    if (@($AssetType).Length -eq 1) {
+        if ($AssetType[0] -eq [AssetArchtectures]::Unknown) {
+            Write-Error 'Invalid AssetType.'
+            return
+        }
+    } else {
+        if ($AssetType -contains [AssetArchtectures]::Unknown) {
+            Write-Error 'Invalid AssetType included.'
+            return
+        }
     }
+    
 
     # find release
     $release = $null
@@ -38,17 +46,19 @@ function Save-PowerShellCore {
     WriteInfo ('Start download PowerShell Core {0} ...' -f $release.Version)
 
     # download
-    $downloadUrl = ($release.Assets | Where-Object { $_.Architecture() -eq $AssetType }).DownloadUrl.OriginalString
-    if ($downloadUrl -eq '') {
-        Write-Error 'asset not found.'
-        return
-    }
-    $outFile = Join-Path $OutDirectory $downloadURL.split("/")[-1]
-    WriteInfo ('Download {0}' -f $downloadURL)
-    WriteInfo ('  To {0} ...' -f $outFile)
-    if ($PSCmdlet.ShouldProcess('Download file')) {
-        Invoke-WebRequest -Uri $downloadUrl -OutFile $outFile
-    } else {
-        Write-Warning 'Skip downloaging the file.'
+    foreach ($at in $AssetType) {
+        $downloadUrl = ($release.Assets | Where-Object { $_.Architecture() -eq $at }).DownloadUrl.OriginalString
+        if ($downloadUrl -eq '') {
+            Write-Error 'asset not found.'
+            return
+        }
+        $outFile = Join-Path $OutDirectory $downloadURL.split("/")[-1]
+        WriteInfo ('Download {0}' -f $downloadURL)
+        WriteInfo ('  To {0} ...' -f $outFile)
+        if ($PSCmdlet.ShouldProcess('Download file')) {
+            Invoke-WebRequest -Uri $downloadUrl -OutFile $outFile
+        } else {
+            Write-Warning 'Skip downloaging the file.'
+        }
     }
 }
