@@ -1,5 +1,7 @@
 # PSCoreUpdate
 
+[![Build status](https://ci.appveyor.com/api/projects/status/pewb2qx34quqleu5?svg=true)](https://ci.appveyor.com/project/stknohg/pscoreupdate)
+
 PowerShell Core update tool.
 
 ## Motivation
