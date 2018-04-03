@@ -8,8 +8,9 @@ Describe "Save-PowerShellCore unit tests" {
     }
 
     It "Returns error when invalid AssetType specified" {
-        Save-PowerShellCore -Latest -AssetType Unknown -OutDirectory $TestDrive 2>&1 | Should -be 'Invalid AssetType.'
-        Save-PowerShellCore -Latest -AssetType MSI_WIN32, Unknown, MSI_WIN64 -OutDirectory $TestDrive 2>&1 | Should -be 'Invalid AssetType included.'
+        { Save-PowerShellCore -Latest -AssetType Unknown -OutDirectory $TestDrive -ErrorAction Stop } | Should -Throw 'Invalid AssetType.'
+        { Save-PowerShellCore -Latest -AssetType MSI_WIN32, Unknown, MSI_WIN64 -OutDirectory $TestDrive -ErrorAction Stop } | Should -Throw 'Invalid AssetType included.'
+
     }
 
     It "Should get single proper asset" {
