@@ -15,7 +15,11 @@ This module is a little tool to solve such inconvenience.
 
 ## How to install
 
-We plan to install it from PowerShell gallery.
+You can install it from [PowerShell gallery](https://www.powershellgallery.com/packages/PSCoreUpdate).
+
+```powershell
+Install-Module PSCoreUpdate -Scope CurrentUser
+```
 
 ## Usage
 
