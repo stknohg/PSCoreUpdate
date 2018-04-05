@@ -1,0 +1,10 @@
+image: Visual Studio 2017
+install:
+- pwsh: Install-Module Pester -Scope CurrentUser -Force
+build: off
+test_script:
+- pwsh: ./Appveyor.ps1
+deploy_script:
+- pwsh: ./Deploy.ps1
+  on:
+    appveyor_repo_tag: true
