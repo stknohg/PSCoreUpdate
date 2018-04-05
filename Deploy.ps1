@@ -1,7 +1,7 @@
 $RootPath = Join-Path $PSScriptRoot 'PSCoreUpdate'
 
 # Check whether tag release.
-if ($null -eq $env:appveyor_repo_tag) {
+if ($Env:APPVEYOR_REPO_TAG -eq 'false') {
     Write-Host 'This is not tag release. Skip the deploy script.'
     exit
 }
