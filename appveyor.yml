@@ -6,5 +6,4 @@ test_script:
 - pwsh: ./Appveyor.ps1
 deploy_script:
 - pwsh: ./Deploy.ps1
-  on:
-    appveyor_repo_tag: true
+

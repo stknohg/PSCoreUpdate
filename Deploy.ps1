@@ -1,5 +1,11 @@
 $RootPath = Join-Path $PSScriptRoot 'PSCoreUpdate'
 
+# Check whether tag release.
+if ($null -eq $env:appveyor_repo_tag) {
+    Write-Host 'This is not tag release. Skip the deploy script.'
+    exit
+}
+
 # Validate module manifest
 Write-Host 'Validate module manifest...' -ForegroundColor Green
 Test-ModuleManifest -Path (Join-Path $RootPath 'PSCoreUpdate.psd1') | Format-List
