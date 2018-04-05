@@ -5,10 +5,11 @@
 function Test-LatestVersion {
     [CmdletBinding()]
     param (
+        [string]$Token,
         [switch]$PassThru
     )
 
-    $release = Find-PowerShellCore -Latest
+    $release = Find-PowerShellCore -Latest -Token $Token
     if ($null -eq $release) {
         Write-Error 'Failed to get the latest version.'
         return

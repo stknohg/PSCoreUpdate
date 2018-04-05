@@ -14,7 +14,10 @@ function Save-PowerShellCore {
         [AssetArchtectures[]]$AssetType,
         [Parameter(ParameterSetName = 'Default', Mandatory = $true)]
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
-        [string]$OutDirectory
+        [string]$OutDirectory,
+        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Version')]
+        [string]$Token
     )
     if (@($AssetType).Length -eq 1) {
         if ($AssetType[0] -eq [AssetArchtectures]::Unknown) {
@@ -33,10 +36,10 @@ function Save-PowerShellCore {
     $release = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $release = Find-PowerShellCore -MinimamVersion $Version | Where-Object { $_.Version -eq $Version }
+            $release = Find-PowerShellCore -MinimamVersion $Version -Token $Token | Where-Object { $_.Version -eq $Version }
         }
         Default {
-            $release = Find-PowerShellCore -Latest
+            $release = Find-PowerShellCore -Latest -Token $Token
         }
     }
     if ($null -eq $release) {
@@ -56,7 +59,11 @@ function Save-PowerShellCore {
         WriteInfo ('Download {0}' -f $downloadURL)
         WriteInfo ('  To {0} ...' -f $outFile)
         if ($PSCmdlet.ShouldProcess('Download file')) {
-            Invoke-WebRequest -Uri $downloadUrl -OutFile $outFile
+            if ([string]::IsNullOrEmpty($Token)) {
+                Invoke-WebRequest -Uri $downloadUrl -OutFile $outFile
+            } else {
+                Invoke-WebRequest -Uri $downloadUrl -OutFile $outFile -Headers @{Authorization = "token $Token"}
+            }
         } else {
             Write-Warning 'Skip downloaging the file.'
         }

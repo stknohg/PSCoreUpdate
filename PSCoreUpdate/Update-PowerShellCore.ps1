@@ -17,6 +17,9 @@ function Update-PowerShellCore {
         [Switch]$NotExitConsole,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
+        [string]$Token,
+        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Version')]
         [Switch]$Force
     )
     # currently, supports windows only
@@ -29,10 +32,10 @@ function Update-PowerShellCore {
     $newVersion = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellCore -MinimamVersion '6.0.0' | Where-Object { $_.Version -eq $Version }
+            $newVersion = Find-PowerShellCore -MinimamVersion '6.0.0' -Token $Token | Where-Object { $_.Version -eq $Version }
         }
         Default {
-            $newVersion = Find-PowerShellCore -Latest
+            $newVersion = Find-PowerShellCore -Latest -Token $Token
         }
     }
     if ($null -eq $newVersion) {
@@ -67,7 +70,11 @@ function Update-PowerShellCore {
     WriteInfo ('Download {0} ...' -f $downloadURL)
     $fileName = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $downloadURL.split("/")[-1]
     if ($PSCmdlet.ShouldProcess('Download asset')) {
-        Invoke-WebRequest -Uri $downloadURL -OutFile $fileName
+        if ([string]::IsNullOrEmpty($Token)) {
+            Invoke-WebRequest -Uri $downloadURL -OutFile $fileName
+        } else {
+            Invoke-WebRequest -Uri $downloadURL -OutFile $fileName -Headers @{Authorization = "token $Token"}
+        }
     } else {
         Write-Warning 'Skip downloading asset file.'
     }

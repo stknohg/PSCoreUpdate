@@ -3,18 +3,25 @@ Import-Module (Join-Path $RootPath 'PSCoreUpdate.psd1') -Force
 
 Describe "Find-PowerShellCore unit tests" {
 
+    BeforeAll {
+        $Token = $env:GITHUB_ACCESS_TOKEN
+        if ([string]::IsNullOrEmpty($Token)) {
+            Write-Host 'GITHUB_ACCESS_TOKEN is empty.'
+        }
+    }
+
     It "Returns nothing when specified invalid version" {
-        Find-PowerShellCore -MinimamVersion 999.0.0 | Should -BeNullOrEmpty
+        Find-PowerShellCore -MinimamVersion 999.0.0 -Token $Token | Should -BeNullOrEmpty
     }
 
     It "Should get the latest release information" {
-        Find-PowerShellCore -Latest | Should -Not -BeNullOrEmpty
+        Find-PowerShellCore -Latest -Token $Token | Should -Not -BeNullOrEmpty
         $release = Find-PowerShellCore -Latest
         $release.Count | Should -Be 1
     }
 
     It "Should get proper properties" {
-        $release = Find-PowerShellCore -MinimamVersion 6.0.0 | Where-Object { $_.Version -eq '6.0.0' }
+        $release = Find-PowerShellCore -MinimamVersion 6.0.0 -Token $Token | Where-Object { $_.Version -eq '6.0.0' }
         $release.Count | Should -Be 1
         # base properies
         $release.ReleaseId | Should -Be 9184057

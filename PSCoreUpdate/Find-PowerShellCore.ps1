@@ -8,7 +8,10 @@ function Find-PowerShellCore {
         [Parameter(ParameterSetName = 'Default')]
         [SemVer]$MinimamVersion,
         [Parameter(ParameterSetName = 'Latest')]
-        [Switch]$Latest
+        [Switch]$Latest,
+        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Latest')]
+        [string]$Token
     )
     
     $uri = ''
@@ -23,7 +26,11 @@ function Find-PowerShellCore {
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
         }
     }
-    $releases = Invoke-RestMethod -Uri $uri
+    if ([string]::IsNullOrEmpty($Token)) {
+        $releases = Invoke-RestMethod -Uri $uri
+    } else {
+        $releases = Invoke-RestMethod -Uri $uri -Headers @{Authorization = "token $Token"}
+    }
     if (@($releases).Length -eq 0) {
         Write-Warning 'PowerShell Core releases was not found.'
         return
