@@ -57,14 +57,8 @@ function Save-PowerShellCore {
         }
         foreach ($url in $downloadUrls) {
             $outFile = Join-Path $OutDirectory $url.split("/")[-1]
-            WriteInfo ('Download {0}' -f $url)
-            WriteInfo ('  To {0} ...' -f $outFile)
             if ($PSCmdlet.ShouldProcess('Download file')) {
-                if ([string]::IsNullOrEmpty($Token)) {
-                    Invoke-WebRequest -Uri $url -OutFile $outFile
-                } else {
-                    Invoke-WebRequest -Uri $url -OutFile $outFile -Headers @{Authorization = "token $Token"}
-                }
+                DownloadFile -Uri $url -OutFile $outFile -Token $Token
             } else {
                 Write-Warning 'Skip downloaging the file.'
             }

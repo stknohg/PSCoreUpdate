@@ -67,14 +67,9 @@ function Update-PowerShellCore {
         Write-Error 'Failed to get asset url.'
         return
     }
-    WriteInfo ('Download {0} ...' -f $downloadURL)
     $fileName = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $downloadURL.split("/")[-1]
     if ($PSCmdlet.ShouldProcess('Download asset')) {
-        if ([string]::IsNullOrEmpty($Token)) {
-            Invoke-WebRequest -Uri $downloadURL -OutFile $fileName
-        } else {
-            Invoke-WebRequest -Uri $downloadURL -OutFile $fileName -Headers @{Authorization = "token $Token"}
-        }
+        DownloadFile -Uri $downloadURL -OutFile $fileName -Token $Token
     } else {
         Write-Warning 'Skip downloading asset file.'
     }

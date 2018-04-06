@@ -131,3 +131,13 @@ function WriteInfo ([string]$message) {
 function IsCurrentProcess64bit () {
     return ([System.IntPtr]::Size -eq 8)
 }
+
+function DownloadFile ([string]$Uri, [string]$OutFile, [string]$Token) {
+    WriteInfo ('Download {0}' -f $Uri)
+    WriteInfo ('  To {0} ...' -f $OutFile)
+    if ([string]::IsNullOrEmpty($Token)) {
+        Invoke-WebRequest -Uri $Uri -OutFile $OutFile
+    } else {
+        Invoke-WebRequest -Uri $Uri -OutFile $OutFile -Headers @{Authorization = "token $Token"}
+    }
+}
