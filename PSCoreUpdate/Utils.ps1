@@ -27,6 +27,7 @@ enum AssetArchtectures {
     Unknown = 0
     MSI_WIN32
     MSI_WIN64
+    PKG_OSX1011
     PKG_OSX1012
     RPM_RHEL7
     DEB_DEBIAN8
@@ -67,7 +68,10 @@ class PowerShellCoreAsset {
             {$_ -match "^.+win.*-x64.msi$"} {
                 return [AssetArchtectures]::MSI_WIN64
             }
-            {$_ -match "^.+x64.pkg$"} {
+            {$_ -match "^.+osx.10.11-x64.pkg$"} {
+                return [AssetArchtectures]::PKG_OSX1011
+            }
+            {$_ -match "^.+osx.10.12-x64.pkg$"} {
                 return [AssetArchtectures]::PKG_OSX1012
             }
             {$_ -match "^.+.x86_64.rpm$"} {
