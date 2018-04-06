@@ -50,22 +50,24 @@ function Save-PowerShellCore {
 
     # download
     foreach ($at in $AssetType) {
-        $downloadUrl = ($release.Assets | Where-Object { $_.Architecture() -eq $at }).DownloadUrl.OriginalString
-        if ($downloadUrl -eq '') {
+        $downloadUrls = ($release.Assets | Where-Object { $_.Architecture() -eq $at }).DownloadUrl.OriginalString
+        if (@($downloadUrls).Length -eq 0) {
             Write-Error 'asset not found.'
             return
         }
-        $outFile = Join-Path $OutDirectory $downloadURL.split("/")[-1]
-        WriteInfo ('Download {0}' -f $downloadURL)
-        WriteInfo ('  To {0} ...' -f $outFile)
-        if ($PSCmdlet.ShouldProcess('Download file')) {
-            if ([string]::IsNullOrEmpty($Token)) {
-                Invoke-WebRequest -Uri $downloadUrl -OutFile $outFile
+        foreach ($url in $downloadUrls) {
+            $outFile = Join-Path $OutDirectory $url.split("/")[-1]
+            WriteInfo ('Download {0}' -f $url)
+            WriteInfo ('  To {0} ...' -f $outFile)
+            if ($PSCmdlet.ShouldProcess('Download file')) {
+                if ([string]::IsNullOrEmpty($Token)) {
+                    Invoke-WebRequest -Uri $url -OutFile $outFile
+                } else {
+                    Invoke-WebRequest -Uri $url -OutFile $outFile -Headers @{Authorization = "token $Token"}
+                }
             } else {
-                Invoke-WebRequest -Uri $downloadUrl -OutFile $outFile -Headers @{Authorization = "token $Token"}
+                Write-Warning 'Skip downloaging the file.'
             }
-        } else {
-            Write-Warning 'Skip downloaging the file.'
         }
     }
 }

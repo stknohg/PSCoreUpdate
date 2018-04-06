@@ -60,10 +60,10 @@ class PowerShellCoreAsset {
 
     [AssetArchtectures] Architecture () {
         switch ($this.DownloadUrl.OriginalString.Split("/")[-1]) {
-            {$_ -match "^.+win-x86.msi$"} {
+            {$_ -match "^.+win.*-x86.msi$"} {
                 return [AssetArchtectures]::MSI_WIN32
             }
-            {$_ -match "^.+win-x64.msi$"} {
+            {$_ -match "^.+win.*-x64.msi$"} {
                 return [AssetArchtectures]::MSI_WIN64
             }
             {$_ -match "^.+x64.pkg$"} {
@@ -78,13 +78,13 @@ class PowerShellCoreAsset {
             {$_ -match "^.+debian.9_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_DEBIAN9
             }
-            {$_ -match "^.+ubuntu.14.04_amd64.deb$"} {
+            {$_ -match "^.+[ubuntu|ubuntu1].14.\d\d.*_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_UBUNTU14
             }
-            {$_ -match "^.+ubuntu.16.04_amd64.deb$"} {
+            {$_ -match "^.+[ubuntu|ubuntu1].16.\d\d.*_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_UBUNTU16
             }
-            {$_ -match "^.+ubuntu.17.04_amd64.deb$"} {
+            {$_ -match "^.+ubuntu.17.\d\d.*_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_UBUNTU17
             }
             {$_ -match "^.+linux-arm32.tar.gz$"} {
@@ -102,10 +102,10 @@ class PowerShellCoreAsset {
             {$_ -match "^.+win-arm64.zip$"} {
                 return [AssetArchtectures]::ZIP_WINARM64
             }
-            {$_ -match "^.+win-x86.zip$"} {
+            {$_ -match "^.+win.*-x86.zip$"} {
                 return [AssetArchtectures]::ZIP_WIN32
             }
-            {$_ -match "^.+win-x64.zip$"} {
+            {$_ -match "^.+win.*-x64.zip$"} {
                 return [AssetArchtectures]::ZIP_WIN64
             }
             Default {
