@@ -34,6 +34,7 @@ enum AssetArchtectures {
     DEB_UBUNTU14
     DEB_UBUNTU16
     DEB_UBUNTU17
+    APPIMAGE
     # 
     TAR_LINUXARM32
     TAR_LINUX64
@@ -86,6 +87,9 @@ class PowerShellCoreAsset {
             }
             {$_ -match "^.+ubuntu.17.\d\d.*_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_UBUNTU17
+            }
+            {$_ -match "^.+.AppImage$"} {
+                return [AssetArchtectures]::APPIMAGE
             }
             {$_ -match "^.+linux-arm32.tar.gz$"} {
                 return [AssetArchtectures]::TAR_LINUXARM32
