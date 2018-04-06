@@ -72,13 +72,15 @@ The types of assets are as follows.
 |----|----|
 |MSI_WIN32|[PowerShell version]-win-x86.msi|
 |MSI_WIN64|[PowerShell version]-win-x64.msi|
+|PKG_OSX1011|[PowerShell version]-osx.10.11-x64.pkg|
 |PKG_OSX1012|[PowerShell version]-osx.10.12-x64.pkg|
 |RPM_RHEL7|[PowerShell version]-rhel.7.x86_64.rpm|
 |DEB_DEBIAN8|[PowerShell version]-debian.8_amd64.deb|
 |DEB_DEBIAN9|[PowerShell version]-debian.9_amd64.deb|
-|DEB_UBUNTU14|[PowerShell version]-ubuntu.14.04_amd64.deb|
-|DEB_UBUNTU16|[PowerShell version]-ubuntu.16.04_amd64.deb|
-|DEB_UBUNTU17|[PowerShell version]-ubuntu.17.04_amd64.deb|
+|DEB_UBUNTU14|[PowerShell version]-ubuntu.14.nn_amd64.deb|
+|DEB_UBUNTU16|[PowerShell version]-ubuntu.16.nn_amd64.deb|
+|DEB_UBUNTU17|[PowerShell version]-ubuntu.17.nn_amd64.deb|
+|APPIMAGE|[PowerShell version]-x86_64.AppImage|
 |TAR_LINUXARM32|[PowerShell version]-linux-arm32.tar.gz|
 |TAR_LINUX64|[PowerShell version]-linux-x64.tar.gz|
 |TAR_OSX|[PowerShell version]-osx-x64.tar.gz|
