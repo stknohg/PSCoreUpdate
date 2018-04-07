@@ -25,12 +25,6 @@ function Find-PowerShellCore {
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
         }
         Default {
-            if ($null -eq $MinimumVersion) {
-                $MinimumVersion = $PSVersionTable.PSVersion
-            }
-            if ($null -eq $MaximumVersion) {
-                $MaximumVersion = $PSVersionTable.PSVersion
-            }
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
         }
     }
@@ -66,11 +60,15 @@ function Find-PowerShellCore {
                 }
             }
             'Default' {
-                if ($currentVer -lt $MinimumVersion) {
-                    $isOutput = $false
+                if ($null -ne $MinimumVersion) {
+                    if ($currentVer -lt $MinimumVersion) {
+                        $isOutput = $false
+                    }
                 }
-                if ($currentVer -gt $MaximumVersion) {
-                    $isOutput = $false
+                if ($null -ne $MaximumVersion) {
+                    if ($currentVer -gt $MaximumVersion) {
+                        $isOutput = $false
+                    }
                 }
             }
         }
