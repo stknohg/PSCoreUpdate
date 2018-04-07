@@ -36,7 +36,7 @@ function Save-PowerShellCore {
     $release = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $release = Find-PowerShellCore -MinimamVersion $Version -Token $Token | Where-Object { $_.Version -eq $Version }
+            $release = Find-PowerShellCore -Version $Version -Token $Token
         }
         Default {
             $release = Find-PowerShellCore -Latest -Token $Token

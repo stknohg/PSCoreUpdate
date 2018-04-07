@@ -32,7 +32,7 @@ function Update-PowerShellCore {
     $newVersion = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellCore -MinimamVersion '6.0.0' -Token $Token | Where-Object { $_.Version -eq $Version }
+            $newVersion = Find-PowerShellCore -Version $Version -Token $Token
         }
         Default {
             $newVersion = Find-PowerShellCore -Latest -Token $Token
