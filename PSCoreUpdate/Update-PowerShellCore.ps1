@@ -53,7 +53,7 @@ function Update-PowerShellCore {
     WriteInfo ('Find new version PowerShell Core {0} ...' -f $newVersion.Version)
 
     # Download asset
-    $downloadURL = ""
+    $downloadURL = @()
     if ($IsWindows) {
         $downloadURL = GetMSIDownloadUrl -Release $newVersion
     } elseif ($IsMacOS) {
@@ -63,8 +63,12 @@ function Update-PowerShellCore {
         Write-Warning 'This cmdlet supports Windows/macOS Only.'
         return
     }
-    if ($downloadURL -eq "") {
+    if (@($downloadURL).Length -eq 0) {
         Write-Error 'Failed to get asset url.'
+        return
+    }
+    if (@($downloadURL).Length -gt 1) {
+        Write-Warning 'Multiple assets were found. This case is not supported currently.'
         return
     }
     $fileName = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $downloadURL.split("/")[-1]
