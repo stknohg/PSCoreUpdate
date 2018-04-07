@@ -11,17 +11,23 @@ Describe "Find-PowerShellCore unit tests" {
     }
 
     It "Returns nothing when specified invalid version" {
-        Find-PowerShellCore -MinimamVersion 999.0.0 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellCore -MinimumVersion 999.0.0 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellCore -MaximumVersion 1.0.0 -Token $Token | Should -BeNullOrEmpty
     }
 
     It "Should get the latest release information" {
         Find-PowerShellCore -Latest -Token $Token | Should -Not -BeNullOrEmpty
-        $release = Find-PowerShellCore -Latest
+        $release = Find-PowerShellCore -Latest -Token $Token 
         $release.Count | Should -Be 1
     }
 
+    It "Should get the range releases information" {
+        $release = Find-PowerShellCore -MinimumVersion '6.0.0' -MaximumVersion '6.0.1' -Token $Token
+        $release.Count | Should -Be 2
+    }
+
     It "Should get proper properties" {
-        $release = Find-PowerShellCore -MinimamVersion 6.0.0 -Token $Token | Where-Object { $_.Version -eq '6.0.0' }
+        $release = Find-PowerShellCore -Version 6.0.0 -Token $Token
         $release.Count | Should -Be 1
         # base properies
         $release.ReleaseId | Should -Be 9184057

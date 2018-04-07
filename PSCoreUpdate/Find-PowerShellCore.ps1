@@ -6,10 +6,15 @@ function Find-PowerShellCore {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Default')]
-        [SemVer]$MinimamVersion,
+        [SemVer]$MinimumVersion,
+        [Parameter(ParameterSetName = 'Default')]
+        [SemVer]$MaximumVersion,
+        [Parameter(ParameterSetName = 'Version', Mandatory=$true)]
+        [SemVer]$Version,
         [Parameter(ParameterSetName = 'Latest')]
         [Switch]$Latest,
         [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Version')]
         [Parameter(ParameterSetName = 'Latest')]
         [string]$Token
     )
@@ -20,8 +25,11 @@ function Find-PowerShellCore {
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
         }
         Default {
-            if ($null -eq $MinimamVersion) {
-                $MinimamVersion = $PSVersionTable.PSVersion
+            if ($null -eq $MinimumVersion) {
+                $MinimumVersion = $PSVersionTable.PSVersion
+            }
+            if ($null -eq $MaximumVersion) {
+                $MaximumVersion = $PSVersionTable.PSVersion
             }
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
         }
@@ -37,10 +45,10 @@ function Find-PowerShellCore {
     }
     foreach ($release in $releases) {
         # check version
-        $version = $null
+        $currentVer = $null
         try {
             if ($release.tag_name -match "^v(?<Major>\d+)\.(?<Minor>\d+)\.(?<Patch>\d+)($|-(?<Label>.+$))") {
-                $version = [SemVer]::new($Matches.Major, $Matches.Minor, $Matches.Patch, $Matches.Label)
+                $currentVer = [SemVer]::new($Matches.Major, $Matches.Minor, $Matches.Patch, $Matches.Label)
             } else {
                 Write-Warning ("""{0}"" is not correct version tag name." -f $release.tag_name)
                 continue
@@ -49,10 +57,31 @@ function Find-PowerShellCore {
             continue
         }
 
+        # filter required version
+        $isOutput = $true
+        switch ($PSCmdlet.ParameterSetName) {
+            'Version' {
+                if ($currentVer -ne $Version) {
+                    $isOutput = $false
+                }
+            }
+            'Default' {
+                if ($currentVer -lt $MinimumVersion) {
+                    $isOutput = $false
+                }
+                if ($currentVer -gt $MaximumVersion) {
+                    $isOutput = $false
+                }
+            }
+        }
+        if (-not $isOutput) {
+            continue
+        }
+
         # convert to class
         $obj = [PowerShellCoreRelease]::new()
         $obj.ReleaseId = $release.Id
-        $obj.Version = $version
+        $obj.Version = $currentVer
         $obj.Tag = $release.tag_name
         $obj.Name = $release.name
         $obj.Url = $release.url
@@ -73,15 +102,7 @@ function Find-PowerShellCore {
             $obj.Assets.Add($item)
         }
 
-        $isOutput = $true
-        if ($null -ne $MinimamVersion) {
-            if ($obj.version -lt $MinimamVersion) {
-                $isOutput = $false
-            }
-        }
-        if ($isOutput) {
-            Write-Output $obj
-        }
+        Write-Output $obj
     }
 }
 
