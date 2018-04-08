@@ -55,6 +55,8 @@ Update PowerShell Core if the newer version found.
 PS C:\> Update-PowerShellCore -Latest
 ```
 
+<img src="https://user-images.githubusercontent.com/720127/38464437-dfe8b956-3b48-11e8-8c39-8f76102a9073.gif" width="800">
+
 You can do silent install with `-Silent` switch parameter.
 
 ```powershell
