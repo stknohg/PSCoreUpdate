@@ -28,7 +28,7 @@ Install-Module PSCoreUpdate -Scope CurrentUser
 Find PowerShell Core release information from GitHub.
 
 ```powershell
-PS C:\> Find-PowerShellCore -MinimamVersion 6.0.0
+PS C:\> Find-PowerShellCore -MinimumVersion 6.0.0
 
 Version         Name                                        Published           PreRelease
 -------         ----                                        ---------           ----------
@@ -55,8 +55,14 @@ Update PowerShell Core if the newer version found.
 PS C:\> Update-PowerShellCore -Latest
 ```
 
-This cmdlet supports only Windows and MacOS.  
-You can use a package management tool like yum, apt etc. on Linux.
+You can do silent install with `-Silent` switch parameter.
+
+```powershell
+PS C:\> Update-PowerShellCore -Latest -Silent
+```
+
+* This cmdlet supports only Windows and MacOS.  
+  You can use a package management tool like yum, apt etc. on Linux.
 
 ### Save-PowerShellCore
 
