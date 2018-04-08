@@ -111,7 +111,20 @@ function GetMSIDownloadUrl ([PowerShellCoreRelease]$Release) {
 }
 
 function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
-    return ($Release.Assets | Where-Object { $_.Architecture() -eq [AssetArchtectures]::PKG_OSX1012 }).DownloadUrl.OriginalString
+    $prodcutVersion = ''
+    try {
+        $prodcutVersion = '{0}.{1}' -f (sw_vers -productVersion).split('.')
+    }
+    catch {
+        # do nothing 
+    }
+    $architecture = switch ($prodcutVersion) {
+        '10.11' { [AssetArchtectures]::PKG_OSX1011 }
+        '10.12' { [AssetArchtectures]::PKG_OSX1012 }
+        '10.13' { [AssetArchtectures]::PKG_OSX1012 }
+        Default { [AssetArchtectures]::Unknown }
+    }
+    return ($Release.Assets | Where-Object { $_.Architecture() -eq $architecture }).DownloadUrl.OriginalString
 }
 
 function InstallMSI ([string]$MsiFile, [bool]$Silent) {
