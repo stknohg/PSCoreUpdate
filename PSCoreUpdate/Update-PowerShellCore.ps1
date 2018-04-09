@@ -104,9 +104,9 @@ function Update-PowerShellCore {
 
 function GetMSIDownloadUrl ([PowerShellCoreRelease]$Release) {
     if (IsCurrentProcess64bit) {
-        return ($Release.Assets | Where-Object { $_.Architecture() -eq [AssetArchtectures]::MSI_WIN64 }).DownloadUrl.OriginalString
+        return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN64 }).DownloadUrl.OriginalString
     } else {
-        return ($Release.Assets | Where-Object { $_.Architecture() -eq [AssetArchtectures]::MSI_WIN32 }).DownloadUrl.OriginalString
+        return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN32 }).DownloadUrl.OriginalString
     }
 }
 
@@ -117,7 +117,7 @@ function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
         17 { [AssetArchtectures]::PKG_OSX1012 } # macOS High Sierra (10.13)
         Default { [AssetArchtectures]::Unknown }
     }
-    return ($Release.Assets | Where-Object { $_.Architecture() -eq $architecture }).DownloadUrl.OriginalString
+    return ($Release.Assets | Where-Object { $_.Architecture -eq $architecture }).DownloadUrl.OriginalString
 }
 
 function InstallMSI ([string]$MsiFile, [bool]$Silent) {

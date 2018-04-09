@@ -50,7 +50,7 @@ function Save-PowerShellCore {
 
     # download
     foreach ($at in $AssetType) {
-        $downloadUrls = ($release.Assets | Where-Object { $_.Architecture() -eq $at }).DownloadUrl.OriginalString
+        $downloadUrls = ($release.Assets | Where-Object { $_.Architecture -eq $at }).DownloadUrl.OriginalString
         if (@($downloadUrls).Length -eq 0) {
             Write-Error 'asset not found.'
             return

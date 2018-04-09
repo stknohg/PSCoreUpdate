@@ -60,7 +60,7 @@ class PowerShellCoreAsset {
 
     [uri]$DownloadUrl;
 
-    [AssetArchtectures] Architecture () {
+    [AssetArchtectures] GetArchitecture () {
         switch ($this.DownloadUrl.OriginalString.Split("/")[-1]) {
             {$_ -match "^.+win.*-x86.msi$"} {
                 return [AssetArchtectures]::MSI_WIN32

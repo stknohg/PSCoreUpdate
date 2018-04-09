@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<Types>
+    <Type>
+    <Name>PowerShellCoreAsset</Name>
+    <Members>
+        <ScriptProperty>
+            <Name>Architecture</Name>
+            <GetScriptBlock>
+            $this.GetArchitecture()
+            </GetScriptBlock>
+        </ScriptProperty>
+    </Members>
+    </Type>
+</Types>

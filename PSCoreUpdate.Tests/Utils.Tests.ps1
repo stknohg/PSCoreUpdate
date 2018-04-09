@@ -35,7 +35,8 @@ Describe "PowerShellCoreAsset class unit tests" {
 
         $target = [PowerShellCoreAsset]::new()
         $target.DownloadUrl = $DownloadUrl
-        $target.Architecture() | Should -be $Expected
+        $target.GetArchitecture() | Should -be $Expected
+        $target.Architecture | Should -be $Expected
     }
 
 }
