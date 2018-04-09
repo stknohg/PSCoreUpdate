@@ -111,17 +111,10 @@ function GetMSIDownloadUrl ([PowerShellCoreRelease]$Release) {
 }
 
 function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
-    $prodcutVersion = ''
-    try {
-        $prodcutVersion = '{0}.{1}' -f (sw_vers -productVersion).split('.')
-    }
-    catch {
-        # do nothing 
-    }
-    $architecture = switch ($prodcutVersion) {
-        '10.11' { [AssetArchtectures]::PKG_OSX1011 }
-        '10.12' { [AssetArchtectures]::PKG_OSX1012 }
-        '10.13' { [AssetArchtectures]::PKG_OSX1012 }
+    $architecture = switch ([System.Environment]::OSVersion.Version.Major) {
+        15 { [AssetArchtectures]::PKG_OSX1011 } # OSX El Capitan (10.11)
+        16 { [AssetArchtectures]::PKG_OSX1012 } # macOS Sierra (10.12)
+        17 { [AssetArchtectures]::PKG_OSX1012 } # macOS High Sierra (10.13)
         Default { [AssetArchtectures]::Unknown }
     }
     return ($Release.Assets | Where-Object { $_.Architecture() -eq $architecture }).DownloadUrl.OriginalString
