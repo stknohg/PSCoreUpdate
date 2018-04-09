@@ -9,7 +9,7 @@ function Find-PowerShellCore {
         [SemVer]$MinimumVersion,
         [Parameter(ParameterSetName = 'Default')]
         [SemVer]$MaximumVersion,
-        [Parameter(ParameterSetName = 'Version', Mandatory=$true)]
+        [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [SemVer]$Version,
         [Parameter(ParameterSetName = 'Latest')]
         [Switch]$Latest,
@@ -29,15 +29,27 @@ function Find-PowerShellCore {
         }
     }
     if ([string]::IsNullOrEmpty($Token)) {
-        $releases = Invoke-RestMethod -Uri $uri
+        $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink
     } else {
-        $releases = Invoke-RestMethod -Uri $uri -Headers @{Authorization = "token $Token"}
+        $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink -Headers @{Authorization = "token $Token"}
     }
-    if (@($releases).Length -eq 0) {
+    if (@($releaseSets).Length -eq 0) {
         Write-Warning 'PowerShell Core releases was not found.'
         return
     }
-    foreach ($release in $releases) {
+    if ($releaseSets -is [Object[]]) {
+        # when $releaseSets contains some links.
+        foreach ($releases in $releaseSets) {
+            GetPowerShellCoreRelease -Releases $releases -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
+        }
+    } elseif ($releaseSets -is [PSCustomObject]) {
+        # when $releaseSets has no link.
+        GetPowerShellCoreRelease -Releases $releaseSets -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
+    }
+}
+
+function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, [SemVer]$MinimumVersion, [SemVer]$MaximumVersion) {
+    foreach ($release in $Releases) {
         # check version
         $currentVer = $null
         try {
@@ -103,4 +115,3 @@ function Find-PowerShellCore {
         Write-Output $obj
     }
 }
-

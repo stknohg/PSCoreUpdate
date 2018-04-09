@@ -28,7 +28,7 @@ Describe "Find-PowerShellCore unit tests" {
 
     It "Should get the range releases information(specify MaximumVersion)" {
         $release = Find-PowerShellCore -MaximumVersion '6.0.0' -Token $Token
-        $release.Count | Should -Be 27
+        $release.Count | Should -Be 30
     }
 
     It "Should get the range releases information(specify MinimumVersion, MaximumVersion)" {
