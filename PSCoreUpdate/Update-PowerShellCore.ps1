@@ -14,6 +14,9 @@ function Update-PowerShellCore {
         [Switch]$Silent,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
+        [hashtable]$InstallOptions,
+        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Version')]
         [Switch]$NotExitConsole,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
@@ -105,9 +108,8 @@ function Update-PowerShellCore {
 function GetMSIDownloadUrl ([PowerShellCoreRelease]$Release) {
     if (IsCurrentProcess64bit) {
         return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN64 }).DownloadUrl.OriginalString
-    } else {
-        return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN32 }).DownloadUrl.OriginalString
     }
+    return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN32 }).DownloadUrl.OriginalString
 }
 
 function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
@@ -121,19 +123,36 @@ function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
 }
 
 function InstallMSI ([string]$MsiFile, [bool]$Silent) {
-    $args = @()
-    $args += '/i'
-    $args += $MsiFile
+    $args = @('/i', $MsiFile)
     if ($Silent) {
         $args += '/passive'
     }
+    if ($null -ne $InstallOptions) {
+        # INSTALLFOLDER = "C:\PowerShell\" : Install folder
+        # REGISTER_MANIFEST = [0|1] : Register Windows Event Logging Manifest
+        # ENABLE_PSREMOTING = [0|1] : Enable PowerShell remoting
+        # ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL = [0|1] : Add 'Open here' context menus to Explorer
+        foreach ($key in $InstallOptions.Keys) {
+            $args += ('{0}={1}' -f $key, $InstallOptions[$key])
+        }
+    }
+    Write-Verbose ('msiexec.exe {0}' -f ($args -join ' '))
     Start-Process -FilePath 'msiexec.exe' -ArgumentList $args
 }
 
 function InstallPKG ([string]$PkgFile, [bool]$Silent) {
-    if ($Silent) {
-        /usr/bin/sudo /usr/sbin/installer -pkg "$PkgFile" -target /
-    } else {
-        Invoke-Item $PkgFile
+    $targetVolume = '/'
+    if ($null -ne $InstallOptions) {
+        # Install volume
+        if ($InstallOptions.ContainsKey('target')) {
+            $targetVolume = $InstallOptions['target']
+        }
     }
+    if ($Silent) {
+        Write-Verbose "/usr/bin/sudo /usr/sbin/installer -pkg ""$PkgFile"" -target $targetVolume"
+        /usr/bin/sudo /usr/sbin/installer -pkg "$PkgFile" -target $targetVolume
+        return
+    }
+    Write-Verbose "Invoke-Item $PkgFile"
+    Invoke-Item $PkgFile
 }
