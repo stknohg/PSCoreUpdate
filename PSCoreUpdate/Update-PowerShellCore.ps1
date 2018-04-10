@@ -88,9 +88,9 @@ function Update-PowerShellCore {
         return
     }
     if ($IsWindows) {
-        InstallMSI -MsiFile $fileName -Silent $Silent
+        InstallMSI -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions
     } elseif ($IsMacOS) {
-        InstallPKG -PkgFile $fileName -Silent $Silent
+        InstallPKG -PkgFile $fileName -Silent $Silent -InstallOptions $InstallOptions
     } else {
         # TODO : implement
         Write-Warning 'This cmdlet supports Windows/macOS Only.'
@@ -122,7 +122,7 @@ function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
     return ($Release.Assets | Where-Object { $_.Architecture -eq $architecture }).DownloadUrl.OriginalString
 }
 
-function InstallMSI ([string]$MsiFile, [bool]$Silent) {
+function InstallMSI ([string]$MsiFile, [bool]$Silent, [hashtable]$InstallOptions) {
     $args = @('/i', $MsiFile)
     if ($Silent) {
         $args += '/passive'
@@ -140,7 +140,7 @@ function InstallMSI ([string]$MsiFile, [bool]$Silent) {
     Start-Process -FilePath 'msiexec.exe' -ArgumentList $args
 }
 
-function InstallPKG ([string]$PkgFile, [bool]$Silent) {
+function InstallPKG ([string]$PkgFile, [bool]$Silent, [hashtable]$InstallOptions) {
     $targetVolume = '/'
     if ($null -ne $InstallOptions) {
         # Install volume
