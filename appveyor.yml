@@ -1,3 +1,6 @@
+branches:
+  only:
+  - master
 image: Visual Studio 2017
 install:
 - pwsh: Install-Module Pester -Scope CurrentUser -Force
