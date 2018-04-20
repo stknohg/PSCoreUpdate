@@ -21,22 +21,16 @@ You can install it from [PowerShell gallery](https://www.powershellgallery.com/p
 Install-Module PSCoreUpdate -Scope CurrentUser
 ```
 
+### First-time installation scripts
+
+This module is for updating PowerShell Core.  
+So, the first-time installation must be performed manually.
+
+We prepared the following page to facilitate the first-time installation.
+
+* [First-time installation scripts](./FirstTimeInstaller/)
+
 ## Usage
-
-### Find-PowerShellCore
-
-Find PowerShell Core release information from GitHub.
-
-```powershell
-PS C:\> Find-PowerShellCore -MinimumVersion 6.0.0
-
-Version         Name                                        Published           PreRelease
--------         ----                                        ---------           ----------
-6.1.0-preview.1 v6.1.0-preview.1 Release of PowerShell Core 2018/03/24 1:21:41  False
-6.0.2           v6.0.2 release of PowerShell Core           2018/03/15 18:00:46 False
-6.0.1           v6.0.1 release of PowerShell Core           2018/01/25 22:14:29 False
-6.0.0           v6.0.0 release of PowerShell Core           2018/01/20 0:19:22  False
-```
 
 ### Test-LatestVersion
 
@@ -65,6 +59,22 @@ PS C:\> Update-PowerShellCore -Latest -Silent
 
 * This cmdlet supports only Windows and MacOS.  
   You can use a package management tool like yum, apt etc. on Linux.
+
+### Find-PowerShellCore
+
+Find PowerShell Core release information from GitHub.
+
+```powershell
+
+PS C:\> Find-PowerShellCore -MinimumVersion 6.0.0
+
+Version         Name                                        Published           PreRelease
+-------         ----                                        ---------           ----------
+6.1.0-preview.1 v6.1.0-preview.1 Release of PowerShell Core 2018/03/24 1:21:41  False
+6.0.2           v6.0.2 release of PowerShell Core           2018/03/15 18:00:46 False
+6.0.1           v6.0.1 release of PowerShell Core           2018/01/25 22:14:29 False
+6.0.0           v6.0.0 release of PowerShell Core           2018/01/20 0:19:22  False
+```
 
 ### Save-PowerShellCore
 

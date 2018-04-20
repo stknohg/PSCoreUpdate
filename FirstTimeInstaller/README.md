@@ -1,4 +1,12 @@
-# [WIP] First-time installation scripts
+# First-time installation scripts
+
+__NOTE:__ If you are worried, please inspect each script before doing it for safety.
+
+Each script is based on the official installation instructions.
+
+* [For Windows](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md)
+* [For macOS](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/macos.md)
+* [For Linux](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md)
 
 ## Windows 
 
@@ -53,9 +61,9 @@ This script supports following versions.
 
 This script supports following versions.
 
+* RHEL 7
 * CentOS 7
 * Fedora 26, 25
-* RHEL 7
 
 ```sh
 # Bash
