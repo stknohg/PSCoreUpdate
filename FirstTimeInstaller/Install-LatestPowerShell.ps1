@@ -11,8 +11,12 @@ function WriteError ([string]$Message) {
     Write-Host $Message -ForegroundColor Red
 }
 
-# edition check
+# version and edition check
 try {
+    if ($PSVersionTable.PSVersion.Major -lt 4) {
+        WriteError 'This script supports Windows PowerShell 4.0 or newer.'
+        return
+    }
     if ($PSVersionTable.PSEdition -eq 'Core') {
         WriteError 'This script supports only Windows PowerShell.'
         return
