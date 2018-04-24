@@ -87,12 +87,29 @@ function Install-PowerShellCore ([hashtable]$InstallOptions) {
     WriteMessage ('msiexec.exe {0}' -f ($args -join ' '))
     $proc = Start-Process -FilePath 'msiexec.exe' -ArgumentList $args -Wait -PassThru
 
-    # checking installation result(.log)
-    if ($proc.ExitCode -ne 0) {
-        WriteError "Failed to install."
-        $errorMessages = Get-Content $msiLogFile | Where-Object { $_ -notmatch "^=== Logging (started:|stopped:).+" }
-        foreach ($m in $errorMessages) {
-            WriteError $m
+    # checking installation result
+    switch ($proc.ExitCode) {
+        0 {
+            # Success
+            break
+        }
+        3010 {
+            # Success required restarting computer
+            break
+        }
+        1602 {
+            # User canceled
+            Write-Warning "Installation canceled."
+            break
+        }    
+        Default {
+            # other errors
+            WriteError ("Failed to install.(Exit code={0})" -f $_)
+            $errorMessages = Get-Content $msiLogFile | Where-Object { $_ -notmatch "^=== Logging (started:|stopped:).+" }
+            foreach ($m in $errorMessages) {
+                WriteError $m
+            }
+            break
         }
     }
 }
