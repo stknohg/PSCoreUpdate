@@ -76,7 +76,8 @@ function Install-PowerShellCore ([hashtable]$InstallOptions) {
     Invoke-WebRequest -Uri $msiUri -OutFile $msiOutPath
 
     # silent install
-    $args = @('/i', $msiOutPath, '/passive')
+    $msiLogFile = Join-Path -Path ([IO.Path]::GetTempPath()) ("{0}.log" -f [IO.Path]::GetFileNameWithoutExtension($msiOutPath))
+    $args = @('/i', $msiOutPath, '/passive', '/le', $msiLogFile)
     if ($null -ne $InstallOptions) {
         foreach ($key in $InstallOptions.Keys) {
             $args += ('{0}={1}' -f $key, $InstallOptions[$key])
@@ -84,6 +85,15 @@ function Install-PowerShellCore ([hashtable]$InstallOptions) {
     }
     WriteMessage 'Install PowerShell Core...'
     WriteMessage ('msiexec.exe {0}' -f ($args -join ' '))
-    Start-Process -FilePath 'msiexec.exe' -ArgumentList $args -NoNewWindow
+    $proc = Start-Process -FilePath 'msiexec.exe' -ArgumentList $args -Wait -PassThru
+
+    # checking installation result(.log)
+    if ($proc.ExitCode -ne 0) {
+        WriteError "Failed to install."
+        $errorMessages = Get-Content $msiLogFile | Where-Object { $_ -notmatch "^=== Logging (started:|stopped:).+" }
+        foreach ($m in $errorMessages) {
+            WriteError $m
+        }
+    }
 }
 Install-PowerShellCore -InstallOptions $options
