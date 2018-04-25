@@ -3,14 +3,6 @@
 # First-time PowerShell Core installation script for Windows
 #
 
-function WriteMessage ([string]$Message) {
-    Write-Host $Message -ForegroundColor Green
-}
-
-function WriteError ([string]$Message) {
-    Write-Host $Message -ForegroundColor Red
-}
-
 # version and edition check
 try {
     if ($PSVersionTable.PSVersion.Major -lt 4) {
@@ -23,6 +15,21 @@ try {
     }
 } catch {
     # do nothing
+}
+
+function WriteMessage ([string]$Message) {
+    Write-Host $Message -ForegroundColor Green
+}
+
+function WriteError ([string]$Message) {
+    Write-Host $Message -ForegroundColor Red
+}
+
+function GetFileHash ([string]$LiteralPath) {
+    if ( -not(Test-Path -LiteralPath $LiteralPath -PathType Leaf) ) {
+        return ""
+    }
+    return (Get-FileHash -LiteralPath $LiteralPath -Algorithm SHA256).Hash
 }
 
 # check if the $options variable exists
@@ -42,6 +49,16 @@ if (Test-Path 'Variable:\options') {
     }
 } else {
     $options = $null
+}
+
+# check if the $downloadCache variable exists
+if (Test-Path 'Variable:\downloadCache') {
+    if (-not $options -is [hashtable]) {
+        WriteError '$downloadCache variable should be [Hashtable] type.'
+        return
+    }
+} else {
+    $downloadCache = @{}
 }
 
 # install PowerShell Core
@@ -75,9 +92,21 @@ function Install-PowerShellCore ([hashtable]$InstallOptions) {
 
     # download MSI
     $msiOutPath = Join-Path -Path ([IO.Path]::GetTempPath()) ($msiUri -split '/')[-1]
-    WriteMessage ('Download {0}' -f $msiUri)
-    WriteMessage (' to {0}' -f $msiOutPath)
-    Invoke-WebRequest -Uri $msiUri -OutFile $msiOutPath
+    if ( 
+        (Test-Path -LiteralPath $msiOutPath -PathType Leaf) -and 
+        (GetFileHash -LiteralPath $msiOutPath) -eq $downloadCache[$msiOutPath]
+    ) {
+        # use downloaded file
+        WriteMessage 'Downloaded MSI file found.'
+        WriteMessage ('Use downloaded {0}' -f $msiOutPath)
+    } else {
+        # download msi
+        WriteMessage ('Download {0}' -f $msiUri)
+        WriteMessage (' to {0}' -f $msiOutPath)
+        Invoke-WebRequest -Uri $msiUri -OutFile $msiOutPath
+        # add cache info
+        $downloadCache[$msiOutPath] = GetFileHash -LiteralPath $msiOutPath
+    }
 
     # silent install
     $msiLogFile = Join-Path -Path ([IO.Path]::GetTempPath()) ("{0}.log" -f [IO.Path]::GetFileNameWithoutExtension($msiOutPath))
