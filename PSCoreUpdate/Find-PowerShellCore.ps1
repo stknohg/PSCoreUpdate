@@ -16,6 +16,10 @@ function Find-PowerShellCore {
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [Parameter(ParameterSetName = 'Latest')]
+        [Switch]$ExcludePreRelease,
+        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Version')]
+        [Parameter(ParameterSetName = 'Latest')]
         [string]$Token
     )
     
@@ -23,6 +27,9 @@ function Find-PowerShellCore {
     switch ($PSCmdlet.ParameterSetName) {
         'Latest' {
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
+            if ($ExcludePreRelease) {
+                $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
+            }
         }
         Default {
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
@@ -49,6 +56,7 @@ function Find-PowerShellCore {
 }
 
 function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, [SemVer]$MinimumVersion, [SemVer]$MaximumVersion) {
+    $outputObjects = [System.Collections.Generic.List[PowerShellCoreRelease]]::new()
     foreach ($release in $Releases) {
         # check version
         $currentVer = $null
@@ -62,6 +70,9 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
         } catch {
             continue
         }
+
+        # is prerelease
+        $isPreRelease = $release.prerelease -or (-not [string]::IsNullOrEmpty($currentVer.PreReleaseLabel)) -or $currentVer.Major -lt 6
 
         # filter required version
         $isOutput = $true
@@ -84,6 +95,11 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
                 }
             }
         }
+        if ($ExcludePreRelease) {
+            if ($isPreRelease) {
+                $isOutput = $false
+            }
+        }
         if (-not $isOutput) {
             continue
         }
@@ -96,7 +112,7 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
         $obj.Name = $release.name
         $obj.Url = $release.url
         $obj.HtmlUrl = $release.html_url
-        $obj.PreRelease = $release.prerelease
+        $obj.PreRelease = $isPreRelease
         $obj.Published = $release.published_at
         $obj.Description = $release.body
         # set assets
@@ -111,7 +127,15 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
             $item.DownloadUrl = $asset.browser_download_url
             $obj.Assets.Add($item)
         }
-
-        Write-Output $obj
+        $outputObjects.Add($obj)
+    }
+    
+    # output
+    if ($Latest) {
+        $outputObjects | Sort-Object -Top 1 -Property Version -Descending
+    } else {
+        foreach ($o in $outputObjects) {
+            Write-Output $o
+        }
     }
 }
