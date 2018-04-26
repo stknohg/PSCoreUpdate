@@ -20,6 +20,9 @@ function Update-PowerShellCore {
         [Switch]$NotExitConsole,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
+        [Switch]$ExcludePreRelease,
+        [Parameter(ParameterSetName = 'Default')]
+        [Parameter(ParameterSetName = 'Version')]
         [string]$Token,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
@@ -35,22 +38,22 @@ function Update-PowerShellCore {
     $newVersion = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellCore -Version $Version -Token $Token
+            $newVersion = Find-PowerShellCore -Version $Version -Token $Token -ExcludePreRelease:$ExcludePreRelease
         }
         Default {
-            $newVersion = Find-PowerShellCore -Latest -Token $Token
+            $newVersion = Find-PowerShellCore -Latest -Token $Token -ExcludePreRelease:$ExcludePreRelease
         }
     }
     if ($null -eq $newVersion) {
         Write-Warning 'No updates found.'
         return
     }
-    if ($newVersion.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
-        Write-Warning 'No updates found.'
+    if ($newVersion.Version -lt $PSVersionTable.PSVersion -and (-not $Force)) {
+        Write-Warning ('No updates found.' -f $newVersion.Version)
         return
     }
-    if ($newVersion.Version -lt $PSVersionTable.PSVersion -and (-not $Force)) {
-        Write-Warning ('PowerShell Core {0} is not newer version.' -f $newVersion.Version)
+    if ($newVersion.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
+        Write-Warning 'Current version is the latest.'
         return
     }
     WriteInfo ('Find new version PowerShell Core {0} ...' -f $newVersion.Version)
