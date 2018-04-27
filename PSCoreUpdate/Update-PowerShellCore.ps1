@@ -36,12 +36,16 @@ function Update-PowerShellCore {
 
     # find update version
     $newVersion = $null
+    $specifiedToken = $Token
+    if ([string]::IsNullOrEmpty($specifiedToken)) {
+        $specifiedToken = GetPowerShellCoreApiTokenImpl
+    }
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellCore -Version $Version -Token $Token -ExcludePreRelease:$ExcludePreRelease
+            $newVersion = Find-PowerShellCore -Version $Version -Token $specifiedToken -ExcludePreRelease:$ExcludePreRelease
         }
         Default {
-            $newVersion = Find-PowerShellCore -Latest -Token $Token -ExcludePreRelease:$ExcludePreRelease
+            $newVersion = Find-PowerShellCore -Latest -Token $specifiedToken -ExcludePreRelease:$ExcludePreRelease
         }
     }
     if ($null -eq $newVersion) {
@@ -79,7 +83,7 @@ function Update-PowerShellCore {
     }
     $fileName = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $downloadURL.split("/")[-1]
     if ($PSCmdlet.ShouldProcess('Download asset')) {
-        DownloadFile -Uri $downloadURL -OutFile $fileName -Token $Token
+        DownloadFile -Uri $downloadURL -OutFile $fileName -Token $specifiedToken
     } else {
         Write-Warning 'Skip downloading asset file.'
     }

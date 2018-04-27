@@ -40,7 +40,7 @@
     NestedModules        = @('PSCoreUpdate.psm1')
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport    = @('Find-PowerShellCore', 'Save-PowerShellCore', 'Test-LatestVersion', 'Update-PowerShellCore')
+    FunctionsToExport    = @('Find-PowerShellCore', 'Get-PowerShellCoreApiToken', 'Remove-PowerShellCoreApiToken', 'Save-PowerShellCore', 'Set-PowerShellCoreApiToken', 'Test-LatestVersion', 'Update-PowerShellCore')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport      = @()

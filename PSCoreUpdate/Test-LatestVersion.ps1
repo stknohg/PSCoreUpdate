@@ -10,7 +10,11 @@ function Test-LatestVersion {
         [switch]$PassThru
     )
 
-    $release = Find-PowerShellCore -Latest -Token $Token -ExcludePreRelease:$ExcludePreRelease
+    $specifiedToken = $Token
+    if ([string]::IsNullOrEmpty($specifiedToken)) {
+        $specifiedToken = GetPowerShellCoreApiTokenImpl
+    }
+    $release = Find-PowerShellCore -Latest -Token $specifiedToken -ExcludePreRelease:$ExcludePreRelease
     if ($null -eq $release) {
         Write-Error 'Failed to get the latest version.'
         return

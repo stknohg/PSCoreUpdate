@@ -35,10 +35,14 @@ function Find-PowerShellCore {
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
         }
     }
-    if ([string]::IsNullOrEmpty($Token)) {
+    $specifiedToken = $Token
+    if ([string]::IsNullOrEmpty($specifiedToken)) {
+        $specifiedToken = GetPowerShellCoreApiTokenImpl
+    }
+    if ([string]::IsNullOrEmpty($specifiedToken)) {
         $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink
     } else {
-        $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink -Headers @{Authorization = "token $Token"}
+        $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink -Headers @{Authorization = "token $specifiedToken"}
     }
     if (@($releaseSets).Length -eq 0) {
         Write-Warning 'PowerShell Core releases was not found.'

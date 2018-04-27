@@ -33,13 +33,17 @@ function Save-PowerShellCore {
     
 
     # find release
+    $specifiedToken = $Token
+    if ([string]::IsNullOrEmpty($specifiedToken)) {
+        $specifiedToken = GetPowerShellCoreApiTokenImpl
+    }
     $release = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $release = Find-PowerShellCore -Version $Version -Token $Token
+            $release = Find-PowerShellCore -Version $Version -Token $specifiedToken
         }
         Default {
-            $release = Find-PowerShellCore -Latest -Token $Token
+            $release = Find-PowerShellCore -Latest -Token $specifiedToken
         }
     }
     if ($null -eq $release) {
@@ -58,7 +62,7 @@ function Save-PowerShellCore {
         foreach ($url in $downloadUrls) {
             $outFile = Join-Path $OutDirectory $url.split("/")[-1]
             if ($PSCmdlet.ShouldProcess('Download file')) {
-                DownloadFile -Uri $url -OutFile $outFile -Token $Token
+                DownloadFile -Uri $url -OutFile $outFile -Token $specifiedToken
             } else {
                 Write-Warning 'Skip downloaging the file.'
             }
