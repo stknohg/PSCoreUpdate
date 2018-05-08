@@ -37,6 +37,7 @@ function GetFileHash ([string]$LiteralPath) {
 #   $options variable accepts MSI installer arguments.
 #   Currently following parameters are allowed.
 #     INSTALLFOLDER = "C:\PowerShell\" : Install folder
+#     ADD_PATH = [0|1]          : Add PowerShell to Path Environment Variable
 #     REGISTER_MANIFEST = [0|1] : Register Windows Event Logging Manifest
 #     ENABLE_PSREMOTING = [0|1] : Enable PowerShell remoting
 #     ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL = [0|1] : Add 'Open here' context menus to Explorer
@@ -48,12 +49,16 @@ if (Test-Path 'Variable:\options') {
         return
     }
 } else {
-    $options = $null
+    # Set default options
+    $options = @{
+        ADD_PATH          = 1;
+        REGISTER_MANIFEST = 1;
+    }
 }
 
 # check if the $downloadCache variable exists
 if (Test-Path 'Variable:\downloadCache') {
-    if (-not $options -is [hashtable]) {
+    if (-not $downloadCache -is [hashtable]) {
         WriteError '$downloadCache variable should be [Hashtable] type.'
         return
     }
