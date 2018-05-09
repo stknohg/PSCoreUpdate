@@ -90,14 +90,14 @@ function Update-PowerShellCore {
 
     # Install
     WriteInfo ('Start install PowerShell Core {0} .' -f $newVersion.Version)
-    if (-not $PSCmdlet.ShouldProcess('Install PowerShell Core')) {
+    $shouldProcess = $PSCmdlet.ShouldProcess('Install PowerShell Core')
+    if (-not $shouldProcess) {
         Write-Warning 'Skip installing PowerShell Core.'
-        return
     }
     if ($IsWindows) {
-        InstallMSI -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions
+        InstallMSI -NewVersion $newVersion.Version -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
     } elseif ($IsMacOS) {
-        InstallPKG -PkgFile $fileName -Silent $Silent -InstallOptions $InstallOptions
+        InstallPKG -PkgFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
     } else {
         # TODO : implement
         Write-Warning 'This cmdlet supports Windows/macOS Only.'
@@ -129,25 +129,39 @@ function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
     return ($Release.Assets | Where-Object { $_.Architecture -eq $architecture }).DownloadUrl.OriginalString
 }
 
-function InstallMSI ([string]$MsiFile, [bool]$Silent, [hashtable]$InstallOptions) {
+function InstallMSI ([SemVer]$NewVersion, [string]$MsiFile, [bool]$Silent, [hashtable]$InstallOptions, [bool]$ShouldProcess) {
     $args = @('/i', $MsiFile)
     if ($Silent) {
         $args += '/passive'
     }
+    # Set the default install options if not specified.
+    # Note : These options are valid only for silent installation.
+    if ($null -eq $InstallOptions) {
+        if ($NewVersion -ge '6.1.0-preview.2') {
+            $InstallOptions = @{
+                ADD_PATH          = 1;
+                REGISTER_MANIFEST = 1;
+            }
+        }
+    }
     if ($null -ne $InstallOptions) {
-        # INSTALLFOLDER = "C:\PowerShell\" : Install folder
-        # REGISTER_MANIFEST = [0|1] : Register Windows Event Logging Manifest
-        # ENABLE_PSREMOTING = [0|1] : Enable PowerShell remoting
-        # ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL = [0|1] : Add 'Open here' context menus to Explorer
+        # Currently following parameters are allowed.
+        #   INSTALLFOLDER = "C:\PowerShell\" : Install folder
+        #   ADD_PATH = [0|1]          : Add PowerShell to Path Environment Variable
+        #   REGISTER_MANIFEST = [0|1] : Register Windows Event Logging Manifest
+        #   ENABLE_PSREMOTING = [0|1] : Enable PowerShell remoting
+        #   ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL = [0|1] : Add 'Open here' context menus to Explorer
         foreach ($key in $InstallOptions.Keys) {
             $args += ('{0}={1}' -f $key, $InstallOptions[$key])
         }
     }
-    Write-Verbose ('msiexec.exe {0}' -f ($args -join ' '))
-    Start-Process -FilePath 'msiexec.exe' -ArgumentList $args
+    WriteInfo ('msiexec.exe {0}' -f ($args -join ' '))
+    if ($ShouldProcess) {
+        Start-Process -FilePath 'msiexec.exe' -ArgumentList $args
+    }
 }
 
-function InstallPKG ([string]$PkgFile, [bool]$Silent, [hashtable]$InstallOptions) {
+function InstallPKG ([string]$PkgFile, [bool]$Silent, [hashtable]$InstallOptions, [bool]$ShouldProcess) {
     $targetVolume = '/'
     if ($null -ne $InstallOptions) {
         # Install volume
@@ -156,10 +170,14 @@ function InstallPKG ([string]$PkgFile, [bool]$Silent, [hashtable]$InstallOptions
         }
     }
     if ($Silent) {
-        Write-Verbose "/usr/bin/sudo /usr/sbin/installer -pkg ""$PkgFile"" -target $targetVolume"
-        /usr/bin/sudo /usr/sbin/installer -pkg "$PkgFile" -target $targetVolume
+        WriteInfo "/usr/bin/sudo /usr/sbin/installer -pkg ""$PkgFile"" -target $targetVolume"
+        if ($ShouldProcess) {
+            /usr/bin/sudo /usr/sbin/installer -pkg "$PkgFile" -target $targetVolume
+        }
         return
     }
-    Write-Verbose "Invoke-Item $PkgFile"
-    Invoke-Item $PkgFile
+    WriteInfo "Invoke-Item $PkgFile"
+    if ($ShouldProcess) {
+        Invoke-Item $PkgFile
+    }
 }
