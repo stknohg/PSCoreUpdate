@@ -9,7 +9,7 @@ PowerShell Core update tool.
 PSCoreUpdate supports automation update of PowerShell Core.  
 
 Currently, PowerShell Team is planning on supporting security updates of PowerShell Core through Microsoft Update on Windows ([#6118](https://github.com/PowerShell/PowerShell/issues/6118)), but it will take some time for realization.  
-[Homebrew Cask](https://caskroom.github.io/) is now available on MacOS, but the installation of Homebrew is a bit heavy.  
+[Homebrew Cask](https://caskroom.github.io/) is now available on macOS, but the installation of Homebrew is a bit heavy.  
 
 This module is a little tool to solve such inconvenience.
 
@@ -57,7 +57,7 @@ You can do silent install with `-Silent` switch parameter.
 PS C:\> Update-PowerShellCore -Latest -Silent
 ```
 
-* This cmdlet supports only Windows and MacOS.  
+* This cmdlet supports only Windows and macOS.  
   You can use a package management tool like yum, apt etc. on Linux.
 
 ### Find-PowerShellCore
