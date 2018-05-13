@@ -38,7 +38,7 @@ Check if the current console is the latest version.
 
 ```powershell
 PS C:\> Test-LatestVersion
-No updates. PowerShell Core 6.1.0-preview.1 is the latest version.
+No updates. PowerShell Core 6.1.0-preview.2 is the latest version.
 ```
 
 ### Update-PowerShellCore
@@ -60,17 +60,23 @@ PS C:\> Update-PowerShellCore -Latest -Silent
 * This cmdlet supports only Windows and macOS.  
   You can use a package management tool like yum, apt etc. on Linux.
 
+If you want to install the stable release only, you can use `-ExcludePreRelease` parameter.
+
+```powershell
+PS C:\> Update-PowerShellCore -Latest -ExcludePreRelease
+```
+
 ### Find-PowerShellCore
 
 Find PowerShell Core release information from GitHub.
 
 ```powershell
-
 PS C:\> Find-PowerShellCore -MinimumVersion 6.0.0
 
 Version         Name                                        Published           PreRelease
 -------         ----                                        ---------           ----------
-6.1.0-preview.1 v6.1.0-preview.1 Release of PowerShell Core 2018/03/24 1:21:41  False
+6.1.0-preview.2 v6.1.0-preview.2 Release of PowerShell Core 2018/04/27 20:28:09 True
+6.1.0-preview.1 v6.1.0-preview.1 Release of PowerShell Core 2018/03/24 1:21:41  True
 6.0.2           v6.0.2 release of PowerShell Core           2018/03/15 18:00:46 False
 6.0.1           v6.0.1 release of PowerShell Core           2018/01/25 22:14:29 False
 6.0.0           v6.0.0 release of PowerShell Core           2018/01/20 0:19:22  False
