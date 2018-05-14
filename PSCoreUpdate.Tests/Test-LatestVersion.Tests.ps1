@@ -22,21 +22,13 @@ Describe "Test-LatestVersion unit tests" {
         $result = Test-LatestVersion -Token $Token -PassThru
         $result | Should -Not -BeNullOrEmpty
         $result.Result | Should -BeOfType 'bool'
-        if ($result.Result) {
-            $result.Release | Should -BeNullOrEmpty
-        } else {
-            $result.Release | Should -Not -BeNullOrEmpty
-        }
+        $result.Release | Should -Not -BeNullOrEmpty
     }
 
     It "Test-LatestVersion -ExcludePreRelease -PassThru returns a result object" {
         $result = Test-LatestVersion -ExcludePreRelease -Token $Token -PassThru
         $result | Should -Not -BeNullOrEmpty
         $result.Result | Should -BeOfType 'bool'
-        if ($result.Result) {
-            $result.Release | Should -BeNullOrEmpty
-        } else {
-            $result.Release | Should -Not -BeNullOrEmpty
-        }
+        $result.Release | Should -Not -BeNullOrEmpty
     }
 }

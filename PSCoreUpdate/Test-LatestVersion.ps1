@@ -20,10 +20,18 @@ function Test-LatestVersion {
         return
     }
 
-    if ($PSVersionTable.PSVersion -ge $release.Version) {
+    if ($PSVersionTable.PSVersion -gt $release.Version) {
+        # Note : This pattern occurs when using -ExcludePreRelease parameter.
+        WriteInfo ('PowerShell Core {0} is newer than the latest version {1}.' -f $PSVersionTable.PSVersion, $release.Version)
+        if ($PassThru) {
+            return [PSCustomObject]@{ Result = $true; Release = $release }
+        }
+        return
+    }
+    if ($PSVersionTable.PSVersion -eq $release.Version) {
         WriteInfo ('No updates. PowerShell Core {0} is the latest version.' -f $PSVersionTable.PSVersion)
         if ($PassThru) {
-            return [PSCustomObject]@{ Result = $true; Release = $null }
+            return [PSCustomObject]@{ Result = $true; Release = $release }
         }
         return
     }
