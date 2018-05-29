@@ -30,7 +30,7 @@ function Update-PowerShellCore {
     )
     # currently, supports windows only
     if (-not ($IsWindows -or $IsMacOS)) {
-        Write-Warning 'This cmdlet supports Windows/macOS Only.'
+        Write-Warning $Messages.Update_PowerShellCore_001
         return
     }
 
@@ -49,18 +49,18 @@ function Update-PowerShellCore {
         }
     }
     if ($null -eq $newVersion) {
-        Write-Warning 'No updates found.'
+        Write-Warning $Messages.Update_PowerShellCore_002
         return
     }
     if ($newVersion.Version -lt $PSVersionTable.PSVersion -and (-not $Force)) {
-        Write-Warning ('No updates found.' -f $newVersion.Version)
+        Write-Warning $Messages.Update_PowerShellCore_003
         return
     }
     if ($newVersion.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
-        Write-Warning 'Current version is the latest.'
+        Write-Warning $Messages.Update_PowerShellCore_004
         return
     }
-    WriteInfo ('Find new version PowerShell Core {0} ...' -f $newVersion.Version)
+    WriteInfo ($Messages.Update_PowerShellCore_005 -f $newVersion.Version)
 
     # Download asset
     $downloadURL = @()
@@ -70,29 +70,29 @@ function Update-PowerShellCore {
         $downloadURL = GetPKGDownloadUrl -Release $newVersion
     } else {
         # TODO : update
-        Write-Warning 'This cmdlet supports Windows/macOS Only.'
+        Write-Warning $Messages.Update_PowerShellCore_001
         return
     }
     if (@($downloadURL).Length -eq 0) {
-        Write-Error 'Failed to get asset url.'
+        Write-Error $Messages.Update_PowerShellCore_006
         return
     }
     if (@($downloadURL).Length -gt 1) {
-        Write-Warning 'Multiple assets were found. This case is not supported currently.'
+        Write-Warning $Messages.Update_PowerShellCore_007
         return
     }
     $fileName = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $downloadURL.split("/")[-1]
     if ($PSCmdlet.ShouldProcess('Download asset')) {
         DownloadFile -Uri $downloadURL -OutFile $fileName -Token $specifiedToken
     } else {
-        Write-Warning 'Skip downloading asset file.'
+        Write-Warning $Messages.Update_PowerShellCore_008
     }
 
     # Install
-    WriteInfo ('Start install PowerShell Core {0} .' -f $newVersion.Version)
+    WriteInfo ($Messages.Update_PowerShellCore_009 -f $newVersion.Version)
     $shouldProcess = $PSCmdlet.ShouldProcess('Install PowerShell Core')
     if (-not $shouldProcess) {
-        Write-Warning 'Skip installing PowerShell Core.'
+        Write-Warning $Messages.Update_PowerShellCore_010
     }
     if ($IsWindows) {
         InstallMSI -NewVersion $newVersion.Version -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
@@ -100,13 +100,13 @@ function Update-PowerShellCore {
         InstallPKG -PkgFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
     } else {
         # TODO : implement
-        Write-Warning 'This cmdlet supports Windows/macOS Only.'
+        Write-Warning $Messages.Update_PowerShellCore_001
         return
     }
 
     # Exit PowerShel Console
     if ((-not $NotExitConsole) -or $Silent) {
-        WriteInfo 'Exit current PowerShell Console...'
+        WriteInfo $Messages.Update_PowerShellCore_011
         Start-Sleep -Seconds 1
         exit 
     }

@@ -45,7 +45,7 @@ function Find-PowerShellCore {
         $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink -Headers @{Authorization = "token $specifiedToken"}
     }
     if (@($releaseSets).Length -eq 0) {
-        Write-Warning 'PowerShell Core releases was not found.'
+        Write-Warning $Messages.Find_PowerShellCore_001
         return
     }
     if ($releaseSets -is [Object[]]) {
@@ -68,7 +68,7 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
             if ($release.tag_name -match "^v(?<Major>\d+)\.(?<Minor>\d+)\.(?<Patch>\d+)($|-(?<Label>.+$))") {
                 $currentVer = [SemVer]::new($Matches.Major, $Matches.Minor, $Matches.Patch, $Matches.Label)
             } else {
-                Write-Warning ("""{0}"" is not correct version tag name." -f $release.tag_name)
+                Write-Warning ($Messages.Find_PowerShellCore_002 -f $release.tag_name)
                 continue
             }
         } catch {

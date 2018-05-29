@@ -49,7 +49,7 @@ function Get-PowerShellCoreApiToken {
     $token = GetPowerShellCoreApiTokenImpl
 
     if ([string]::IsNullOrEmpty($token)) {
-        Write-Warning 'GitHub API token is not saved.'
+        Write-Warning $Messages.Get_PowerShellCoreApiToken_001
         return
     }
 
@@ -58,7 +58,7 @@ function Get-PowerShellCoreApiToken {
     } else {
         $token.Substring(0, 5) + "*" * ($token.Length - 5)
     }
-    Write-Host ("Saved GitHub API token is : {0}" -f $maskedToken)
+    Write-Host ($Messages.Get_PowerShellCoreApiToken_002 -f $maskedToken)
 }
 
 function GetPowerShellCoreApiTokenImpl () {

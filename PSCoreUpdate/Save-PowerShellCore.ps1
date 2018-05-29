@@ -21,16 +21,15 @@ function Save-PowerShellCore {
     )
     if (@($AssetType).Length -eq 1) {
         if ($AssetType[0] -eq [AssetArchtectures]::Unknown) {
-            Write-Error 'Invalid AssetType.'
+            Write-Error $Messages.Save_PowerShellCore_001
             return
         }
     } else {
         if ($AssetType -contains [AssetArchtectures]::Unknown) {
-            Write-Error 'Invalid AssetType included.'
+            Write-Error $Messages.Save_PowerShellCore_002
             return
         }
     }
-    
 
     # find release
     $specifiedToken = $Token
@@ -47,16 +46,16 @@ function Save-PowerShellCore {
         }
     }
     if ($null -eq $release) {
-        Write-Warning 'No release found.'
+        Write-Warning $Messages.Save_PowerShellCore_003
         return
     }
-    WriteInfo ('Start download PowerShell Core {0} ...' -f $release.Version)
+    WriteInfo ($Messages.Save_PowerShellCore_004 -f $release.Version)
 
     # download
     foreach ($at in $AssetType) {
         $downloadUrls = ($release.Assets | Where-Object { $_.Architecture -eq $at }).DownloadUrl.OriginalString
         if (@($downloadUrls).Length -eq 0) {
-            Write-Error 'asset not found.'
+            Write-Error $Messages.Save_PowerShellCore_005
             return
         }
         foreach ($url in $downloadUrls) {
@@ -64,7 +63,7 @@ function Save-PowerShellCore {
             if ($PSCmdlet.ShouldProcess('Download file')) {
                 DownloadFile -Uri $url -OutFile $outFile -Token $specifiedToken
             } else {
-                Write-Warning 'Skip downloaging the file.'
+                Write-Warning $Messages.Save_PowerShellCore_006
             }
         }
     }

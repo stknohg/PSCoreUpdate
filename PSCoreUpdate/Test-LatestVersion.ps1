@@ -16,13 +16,13 @@ function Test-LatestVersion {
     }
     $release = Find-PowerShellCore -Latest -Token $specifiedToken -ExcludePreRelease:$ExcludePreRelease
     if ($null -eq $release) {
-        Write-Error 'Failed to get the latest version.'
+        Write-Error $Messages.Test_LatestVersion_001
         return
     }
 
     if ($PSVersionTable.PSVersion -gt $release.Version) {
         # Note : This pattern occurs when using -ExcludePreRelease parameter.
-        WriteInfo ('PowerShell Core {0} is newer than the latest version {1}.' -f $PSVersionTable.PSVersion, $release.Version)
+        WriteInfo ($Messages.Test_LatestVersion_002 -f $PSVersionTable.PSVersion, $release.Version)
         NotifyNewVersion -Published $release.Published -ExcludePreRelease $ExcludePreRelease
         if ($PassThru) {
             return [PSCustomObject]@{ Result = $true; Release = $release }
@@ -30,14 +30,14 @@ function Test-LatestVersion {
         return
     }
     if ($PSVersionTable.PSVersion -eq $release.Version) {
-        WriteInfo ('No updates. PowerShell Core {0} is the latest version.' -f $PSVersionTable.PSVersion)
+        WriteInfo ($Messages.Test_LatestVersion_003 -f $PSVersionTable.PSVersion)
         NotifyNewVersion -Published $release.Published -ExcludePreRelease $ExcludePreRelease
         if ($PassThru) {
             return [PSCustomObject]@{ Result = $true; Release = $release }
         }
         return
     }
-    Write-Warning ('Newer version PowerShell Core {0} is available.' -f $release.Version)
+    Write-Warning ($Messages.Test_LatestVersion_004 -f $release.Version)
     if ($PassThru) {
         return [PSCustomObject]@{ Result = $false; Release = $release }
     }
@@ -51,7 +51,7 @@ function NotifyNewVersion ([datetime]$Published, [boolean]$ExcludePreRelease) {
     $elapsed = (Get-Date).Subtract($Published)
     if ($elapsed -ge $span) {
         WriteInfo ""
-        WriteInfo ("{0} days have elapsed since the latest PowerShell Core was released." -f $elapsed.Days)
-        WriteInfo "A new version may be released in the near future."
+        WriteInfo ($Messages.Test_LatestVersion_005 -f $elapsed.Days)
+        WriteInfo $Messages.Test_LatestVersion_006
     }
 }

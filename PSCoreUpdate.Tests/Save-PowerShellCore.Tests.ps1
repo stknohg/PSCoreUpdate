@@ -11,13 +11,12 @@ Describe "Save-PowerShellCore unit tests" {
     }
 
     It "Returns nothing when specified invalid version" {
-        Save-PowerShellCore -Version 999.0.0 -AssetType ZIP_WIN64 -OutDirectory $TestDrive -Token $Token 3>&1 | Should -Be 'No release found.'
+        Save-PowerShellCore -Version 999.0.0 -AssetType ZIP_WIN64 -OutDirectory $TestDrive -Token $Token 3>&1 | Should -Not -BeNullOrEmpty
     }
 
     It "Returns error when invalid AssetType specified" {
-        { Save-PowerShellCore -Latest -AssetType Unknown -OutDirectory $TestDrive -Token $Token -ErrorAction Stop } | Should -Throw 'Invalid AssetType.'
-        { Save-PowerShellCore -Latest -AssetType MSI_WIN32, Unknown, MSI_WIN64 -OutDirectory $TestDrive -Token $Token -ErrorAction Stop } | Should -Throw 'Invalid AssetType included.'
-
+        { Save-PowerShellCore -Latest -AssetType Unknown -OutDirectory $TestDrive -Token $Token -ErrorAction Stop } | Should -Throw
+        { Save-PowerShellCore -Latest -AssetType MSI_WIN32, Unknown, MSI_WIN64 -OutDirectory $TestDrive -Token $Token -ErrorAction Stop } | Should -Throw
     }
 
     It "Should get single proper asset" {

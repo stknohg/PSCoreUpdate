@@ -1,3 +1,6 @@
+# Load messages
+Import-LocalizedData -BindingVariable "Messages" -FileName "Messages"
+
 # Import functions
 . (Join-Path $PSScriptRoot 'Utils.ps1')
 . (Join-Path $PSScriptRoot 'PowerShellCoreApiToken.ps1')
