@@ -120,13 +120,40 @@ function GetMSIDownloadUrl ([PowerShellCoreRelease]$Release) {
 }
 
 function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
-    $architecture = switch ([System.Environment]::OSVersion.Version.Major) {
-        15 { [AssetArchtectures]::PKG_OSX1011 } # OSX El Capitan (10.11)
-        16 { [AssetArchtectures]::PKG_OSX1012 } # macOS Sierra (10.12)
-        17 { [AssetArchtectures]::PKG_OSX1012 } # macOS High Sierra (10.13)
-        Default { [AssetArchtectures]::Unknown }
+    switch (GetDarwinVersion) {
+        15 {
+            # OSX El Capitan (10.11)
+            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX1011 }
+            if ($null -ne $asset) {
+                return $asset.DownloadUrl.OriginalString
+            }
+            return
+        } 
+        {$_ -in (16, 17)} {
+            # macOS Sierra (10.12)
+            # macOS High Sierra (10.13)
+            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX }
+            if ($null -ne $asset) {
+                return $asset.DownloadUrl.OriginalString
+            }
+            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX1012 }
+            if ($null -ne $asset) {
+                return $asset.DownloadUrl.OriginalString
+            }
+            return
+        }
+        Default {
+            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX }
+            if ($null -ne $asset) {
+                return $asset.DownloadUrl.OriginalString
+            }
+            return
+        }
     }
-    return ($Release.Assets | Where-Object { $_.Architecture -eq $architecture }).DownloadUrl.OriginalString
+}
+
+function GetDarwinVersion () {
+    return [System.Environment]::OSVersion.Version.Major
 }
 
 function InstallMSI ([SemVer]$NewVersion, [string]$MsiFile, [bool]$Silent, [hashtable]$InstallOptions, [bool]$ShouldProcess) {
