@@ -52,7 +52,7 @@ case "$ID" in
             exit 1
         fi
         #
-        # ref : https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md
+        # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
         #
         echo -e "\e[32mInstall PowerShell Core...\e[m"
 

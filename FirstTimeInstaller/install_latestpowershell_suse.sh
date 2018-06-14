@@ -38,7 +38,7 @@ case "$ID" in
         esac
 
         #
-        # ref : https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md
+        # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
         #
         echo_info "Install PowerShell Core..."
 

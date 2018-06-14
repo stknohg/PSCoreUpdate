@@ -34,7 +34,7 @@ case "$VERSION_ID" in
     "17.10"|"17.04"|"16.10"|"16.04"|"15.10"|"14.04")
         echo_info "Install PowerShell Core..."
         #
-        # ref : https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md
+        # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
         #
         # Import the public repository GPG keys
         echo_info "curl -s https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -"
