@@ -15,24 +15,21 @@ if [ ! `uname` = Darwin ]; then
     echo_error "This platform is not supported."
     exit 1
 fi
-pkg_file_match="osx.10.12-x64.pkg"
+pkg_file_match="osx-x64.pkg"
 os_ver=`\sw_vers -productversion | awk -F "." '{print $1"."$2}'`
 case "$os_ver" in
     "10.11")
         echo_error "OSX El Capitan (10.11) is not supported."
         exit 1
         ;;
-    "10.12")
-        #echo -e "macOS Sierra (10.12)"
-        pkg_file_match="osx.10.12-x64.pkg"
-        ;;
-    "10.13")
-        #echo -e "macOS High Sierra (10.13)"
-        pkg_file_match="osx.10.12-x64.pkg"
+    "10.13"|"10.12")
+        # macOS High Sierra (10.13)
+        # macOS Sierra (10.12)
+        pkg_file_match="osx-x64.pkg"
         ;;
     *)
         #echo -e "macOS version $os_ver"
-        pkg_file_match="osx.10.12-x64.pkg"
+        pkg_file_match="osx-x64.pkg"
         ;;
 esac
 
