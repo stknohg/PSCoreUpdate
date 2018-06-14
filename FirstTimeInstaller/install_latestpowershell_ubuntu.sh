@@ -10,6 +10,12 @@ echo_error () {
     echo -e "\e[31m$1\e[m" >&2
 }
 
+# parse arguments
+package_name="powershell"
+if [ "$1" = "preview" ]; then
+    package_name="powershell-preview"
+fi
+
 # detect os
 if [ ! -e /etc/os-release ]; then
     echo_error "This platform is not supported."
@@ -31,7 +37,7 @@ if [ ! $ID = ubuntu ]; then
     exit 1
 fi
 case "$VERSION_ID" in
-    "17.10"|"17.04"|"16.10"|"16.04"|"15.10"|"14.04")
+    "18.04"|"17.10"|"17.04"|"16.10"|"16.04"|"15.10"|"14.04")
         echo_info "Install PowerShell Core..."
         #
         # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
@@ -46,8 +52,8 @@ case "$VERSION_ID" in
         echo_info "sudo apt-get update"
         sudo apt-get update
         # Install PowerShell
-        echo_info "msudo apt-get install -y powershell"
-        sudo apt-get install -y powershell
+        echo_info "sudo apt-get install -y $package_name"
+        sudo apt-get install -y $package_name
         exit 0
         ;;
     *)

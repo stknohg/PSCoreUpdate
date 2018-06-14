@@ -4,20 +4,20 @@ __NOTE:__ If you are worried, please inspect each script before doing it for saf
 
 Each script is based on the official installation instructions.
 
-* [For Windows](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md)
-* [For macOS](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/macos.md)
-* [For Linux](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md)
+* [For Windows](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6)
+* [For macOS](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6)
+* [For Linux](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6)
 
 ## Windows 
 
-It is necessary to meet [prerequisites](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#prerequisites) in advance. 
+It is necessary to meet [prerequisites](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6#prerequisites) in advance. 
 
 * Install the [Universal C Runtime](https://www.microsoft.com/download/details.aspx?id=50410) on Windows versions prior to Windows 10.
   It is available via direct download or Windows Update.
   Fully patched (including optional packages), supported systems will already have this installed.
 * Install the Windows Management Framework (WMF) [4.0](https://www.microsoft.com/download/details.aspx?id=40855)
   or newer ([5.0](https://www.microsoft.com/download/details.aspx?id=50395),
-  [5.1](https://www.microsoft.com/download/details.aspx?id=54616)) on Windows 7.
+  [5.1](https://www.microsoft.com/download/details.aspx?id=54616)) on Windows 7 and Windows Server 2008 R2.
   
 ### Command prompt
 
@@ -50,11 +50,15 @@ This script supports following versions.
 
 This script supports following versions.
 
-* Ubuntu 17.04, 16.04, 14.04
+* Ubuntu 18.04, 17.04, 16.04, 14.04
 
 ```sh
 # Bash
+# Install stable release
 \curl -s https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_ubuntu.sh | bash -s
+
+# Install preview release
+\curl -s https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_ubuntu.sh | bash -s preview
 ```
 
 ### RHEL, CentOS, Fedora
@@ -67,7 +71,11 @@ This script supports following versions.
 
 ```sh
 # Bash
+# Install stable release
 \curl -s https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_rhel.sh | bash -s
+
+# Install preview release
+\curl -s https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_rhel.sh | bash -s preview
 ```
 
 ### Debian
@@ -78,7 +86,11 @@ This script supports following versions.
 
 ```sh
 # Bash
+# Install stable release
 \wget -q --no-check-certificate https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_debian.sh -O - | bash -s
+
+# Install preview release
+\wget -q --no-check-certificate https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_debian.sh -O - | bash -s preview
 ```
 
 ### [Experimental] openSUSE, SLES
@@ -90,5 +102,9 @@ This script will support following versions.
 
 ```sh
 # Bash
+# Install stable release
 \curl -s https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_suse.sh | bash -s
+
+# Install preview release
+\curl -s https://raw.githubusercontent.com/stknohg/PSCoreUpdate/master/FirstTimeInstaller/install_latestpowershell_suse.sh | bash -s preview
 ```

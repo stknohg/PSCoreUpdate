@@ -10,6 +10,12 @@ echo_error () {
     echo -e "\e[31m$1\e[m" >&2
 }
 
+# parse arguments
+package_name="powershell"
+if [ "$1" = "preview" ]; then
+    package_name="powershell-preview"
+fi
+
 # detect os
 if [ ! -e /etc/os-release ]; then
     echo_error "This platform is not supported."
@@ -61,8 +67,8 @@ case "$ID" in
         sudo zypper --non-interactive --no-gpg-checks update
 
         # Install PowerShell
-        echo_info "sudo zypper --non-interactive install powershell"
-        sudo zypper --non-interactive install powershell
+        echo_info "sudo zypper --non-interactive install $package_name"
+        sudo zypper --non-interactive install $package_name
 
         exit 0
         ;;
@@ -79,7 +85,7 @@ case "$ID" in
         esac
 
         #
-        # ref : https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md
+        # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
         #
         echo_info "Install PowerShell Core..."
 
@@ -102,8 +108,8 @@ case "$ID" in
         sudo zypper --non-interactive --no-gpg-checks update
 
         # Install PowerShell
-        echo_info "sudo zypper --non-interactive install powershell"
-        sudo zypper --non-interactive install powershell
+        echo_info "sudo zypper --non-interactive install $package_name"
+        sudo zypper --non-interactive install $package_name
 
         exit 0
         ;;

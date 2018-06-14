@@ -10,6 +10,12 @@ echo_error () {
     echo -e "\e[31m$1\e[m" >&2
 }
 
+# parse arguments
+package_name="powershell"
+if [ "$1" = "preview" ]; then
+    package_name="powershell-preview"
+fi
+
 # detect os
 if [ ! -e /etc/os-release ]; then
     echo_error "This platform is not supported."
@@ -67,8 +73,8 @@ case $VERSION_ID in
         echo_info "sudo apt-get update"
         sudo apt-get update
         # Install PowerShell
-        echo_info "sudo apt-get install -y powershell"
-        sudo apt-get install -y powershell
+        echo_info "sudo apt-get install -y $package_name"
+        sudo apt-get install -y $package_name
         exit 0
         ;;
     *)

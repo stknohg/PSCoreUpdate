@@ -10,6 +10,12 @@ echo_error () {
     echo -e "\e[31m$1\e[m" >&2
 }
 
+# parse arguments
+package_name="powershell"
+if [ "$1" = "preview" ]; then
+    package_name="powershell-preview"
+fi
+
 # detect os
 if [ ! -e /etc/os-release ]; then
     echo_error "This platform is not supported."
@@ -33,7 +39,7 @@ case "$ID" in
             exit 1
         fi
         #
-        # ref : https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md
+        # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
         #
         echo_info "Install PowerShell Core..."
 
@@ -42,8 +48,8 @@ case "$ID" in
         \curl -s https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo
 
         # Install PowerShell
-        echo_info "sudo yum install -y powershell"
-        sudo yum install -y powershell
+        echo_info "sudo yum install -y $package_name"
+        sudo yum install -y $package_name
         exit 0
         ;;
     "fedora")
@@ -75,8 +81,8 @@ case "$ID" in
         fi
 
         # Install PowerShell
-        echo_info "sudo dnf install -y powershell"
-        sudo dnf install -y powershell
+        echo_info "sudo dnf install -y $package_name"
+        sudo dnf install -y $package_name
         exit 0
         ;;
     *)
