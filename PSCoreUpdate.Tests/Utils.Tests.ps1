@@ -18,6 +18,7 @@ InModuleScope 'PSCoreUpdate' {
             @{Expected = [AssetArchtectures]::DEB_UBUNTU14; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.ubuntu.14.04_amd64.deb'},
             @{Expected = [AssetArchtectures]::DEB_UBUNTU16; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.ubuntu.16.04_amd64.deb'},
             @{Expected = [AssetArchtectures]::DEB_UBUNTU17; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.ubuntu.17.04_amd64.deb'},
+            @{Expected = [AssetArchtectures]::DEB_UBUNTU18; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-preview_6.1.0-preview.3-1.ubuntu.18.04_amd64.deb'},
             @{Expected = [AssetArchtectures]::APPIMAGE; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-x86_64.AppImage'},
             @{Expected = [AssetArchtectures]::TAR_LINUXARM32; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-linux-arm32.tar.gz'},
             @{Expected = [AssetArchtectures]::TAR_LINUX64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-linux-x64.tar.gz'},
