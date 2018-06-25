@@ -96,6 +96,7 @@ The types of assets are as follows.
 |----|----|
 |MSI_WIN32|[PowerShell version]-win-x86.msi|
 |MSI_WIN64|[PowerShell version]-win-x64.msi|
+|PKG_OSX|[PowerShell version]-osx-x64.pkg|
 |PKG_OSX1011|[PowerShell version]-osx.10.11-x64.pkg|
 |PKG_OSX1012|[PowerShell version]-osx.10.12-x64.pkg|
 |RPM_RHEL7|[PowerShell version]-rhel.7.x86_64.rpm|
