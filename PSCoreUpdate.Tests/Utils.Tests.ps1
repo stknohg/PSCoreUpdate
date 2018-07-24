@@ -30,6 +30,8 @@ InModuleScope 'PSCoreUpdate' {
             @{Expected = [AssetArchtectures]::ZIP_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x64.zip'},
             @{Expected = [AssetArchtectures]::ZIP_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win10-win2016-x64.zip'},
             @{Expected = [AssetArchtectures]::ZIP_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.zip'},
+            @{Expected = [AssetArchtectures]::WIXPDB32; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x86.wixpdb'},
+            @{Expected = [AssetArchtectures]::WIXPDB64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x64.wixpdb'},
             @{Expected = [AssetArchtectures]::Unknown; DownloadUrl = ''}
         )
         It "Should get proper asset architecture (<Expected>)" -TestCases $testCases {

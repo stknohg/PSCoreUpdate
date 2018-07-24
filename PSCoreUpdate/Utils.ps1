@@ -46,6 +46,8 @@ enum AssetArchtectures {
     ZIP_WINARM64
     ZIP_WIN32
     ZIP_WIN64
+    WIXPDB32
+    WIXPDB64
 }
 
 class PowerShellCoreAsset {
@@ -124,6 +126,12 @@ class PowerShellCoreAsset {
             }
             {$_ -match "^.+win.*-x64.zip$"} {
                 return [AssetArchtectures]::ZIP_WIN64
+            }
+            {$_ -match "^.+win-x86.wixpdb$"} {
+                return [AssetArchtectures]::WIXPDB32
+            }
+            {$_ -match "^.+win-x64.wixpdb$"} {
+                return [AssetArchtectures]::WIXPDB64
             }
             Default {
                 return [AssetArchtectures]::Unknown
