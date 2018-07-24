@@ -39,7 +39,7 @@ function Save-PowerShellCore {
     $release = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $release = Find-PowerShellCore -Version $Version -Token $specifiedToken
+            $release = Find-PowerShellCore -Version $Version -IncludePreRelease -Token $specifiedToken
         }
         Default {
             $release = Find-PowerShellCore -Latest -Token $specifiedToken

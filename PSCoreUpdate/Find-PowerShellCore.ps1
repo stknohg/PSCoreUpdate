@@ -16,7 +16,7 @@ function Find-PowerShellCore {
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [Parameter(ParameterSetName = 'Latest')]
-        [Switch]$ExcludePreRelease,
+        [Switch]$IncludePreRelease = $false,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [Parameter(ParameterSetName = 'Latest')]
@@ -27,7 +27,7 @@ function Find-PowerShellCore {
     switch ($PSCmdlet.ParameterSetName) {
         'Latest' {
             $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
-            if ($ExcludePreRelease) {
+            if ($IncludePreRelease) {
                 $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
             }
         }
@@ -48,19 +48,29 @@ function Find-PowerShellCore {
         Write-Warning $Messages.Find_PowerShellCore_001
         return
     }
+
+    $outputObjects = @()
     if ($releaseSets -is [Object[]]) {
         # when $releaseSets contains some links.
         foreach ($releases in $releaseSets) {
-            GetPowerShellCoreRelease -Releases $releases -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
+            $outputObjects += GetPowerShellCoreRelease -Releases $releases -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
         }
     } elseif ($releaseSets -is [PSCustomObject]) {
         # when $releaseSets has no link.
-        GetPowerShellCoreRelease -Releases $releaseSets -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
+        $outputObjects += GetPowerShellCoreRelease -Releases $releaseSets -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
+    }
+
+    # output
+    if ($Latest) {
+        $outputObjects | Sort-Object -Top 1 -Property Version -Descending
+    } else {
+        foreach ($o in $outputObjects) {
+            Write-Output $o
+        }
     }
 }
 
 function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, [SemVer]$MinimumVersion, [SemVer]$MaximumVersion) {
-    $outputObjects = [System.Collections.Generic.List[PowerShellCoreRelease]]::new()
     foreach ($release in $Releases) {
         # check version
         $currentVer = $null
@@ -99,7 +109,7 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
                 }
             }
         }
-        if ($ExcludePreRelease) {
+        if (-not $IncludePreRelease) {
             if ($isPreRelease) {
                 $isOutput = $false
             }
@@ -131,15 +141,6 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
             $item.DownloadUrl = $asset.browser_download_url
             $obj.Assets.Add($item)
         }
-        $outputObjects.Add($obj)
-    }
-    
-    # output
-    if ($Latest) {
-        $outputObjects | Sort-Object -Top 1 -Property Version -Descending
-    } else {
-        foreach ($o in $outputObjects) {
-            Write-Output $o
-        }
+        Write-Output $obj
     }
 }

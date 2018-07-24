@@ -14,8 +14,8 @@ Describe "Test-LatestVersion unit tests" {
         { Test-LatestVersion -Token $Token } | Should -Not -Throw
     }
 
-    It "Test-LatestVersion -ExcludePreRelease exit normaly" {
-        { Test-LatestVersion -ExcludePreRelease -Token $Token } | Should -Not -Throw
+    It "Test-LatestVersion -IncludePreRelease exit normaly" {
+        { Test-LatestVersion -IncludePreRelease -Token $Token } | Should -Not -Throw
     }
 
     It "Test-LatestVersion -PassThru returns a result object" {
@@ -25,8 +25,8 @@ Describe "Test-LatestVersion unit tests" {
         $result.Release | Should -Not -BeNullOrEmpty
     }
 
-    It "Test-LatestVersion -ExcludePreRelease -PassThru returns a result object" {
-        $result = Test-LatestVersion -ExcludePreRelease -Token $Token -PassThru
+    It "Test-LatestVersion -IncludePreRelease -PassThru returns a result object" {
+        $result = Test-LatestVersion -IncludePreRelease -Token $Token -PassThru
         $result | Should -Not -BeNullOrEmpty
         $result.Result | Should -BeOfType 'bool'
         $result.Release | Should -Not -BeNullOrEmpty

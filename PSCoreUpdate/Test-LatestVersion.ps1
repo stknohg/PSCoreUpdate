@@ -5,7 +5,7 @@
 function Test-LatestVersion {
     [CmdletBinding()]
     param (
-        [Switch]$ExcludePreRelease,
+        [Switch]$IncludePreRelease = $false,
         [string]$Token,
         [switch]$PassThru
     )
@@ -14,16 +14,16 @@ function Test-LatestVersion {
     if ([string]::IsNullOrEmpty($specifiedToken)) {
         $specifiedToken = GetPowerShellCoreApiTokenImpl
     }
-    $release = Find-PowerShellCore -Latest -Token $specifiedToken -ExcludePreRelease:$ExcludePreRelease
+    $release = Find-PowerShellCore -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
     if ($null -eq $release) {
         Write-Error $Messages.Test_LatestVersion_001
         return
     }
 
     if ($PSVersionTable.PSVersion -gt $release.Version) {
-        # Note : This pattern occurs when using -ExcludePreRelease parameter.
+        # Note : This pattern occurs when using -IncludePreRelease parameter.
         WriteInfo ($Messages.Test_LatestVersion_002 -f $PSVersionTable.PSVersion, $release.Version)
-        NotifyNewVersion -Published $release.Published -ExcludePreRelease $ExcludePreRelease
+        NotifyNewVersion -Published $release.Published -IncludePreRelease $IncludePreRelease
         if ($PassThru) {
             return [PSCustomObject]@{ Result = $true; Release = $release }
         }
@@ -31,7 +31,7 @@ function Test-LatestVersion {
     }
     if ($PSVersionTable.PSVersion -eq $release.Version) {
         WriteInfo ($Messages.Test_LatestVersion_003 -f $PSVersionTable.PSVersion)
-        NotifyNewVersion -Published $release.Published -ExcludePreRelease $ExcludePreRelease
+        NotifyNewVersion -Published $release.Published -IncludePreRelease $IncludePreRelease
         if ($PassThru) {
             return [PSCustomObject]@{ Result = $true; Release = $release }
         }
@@ -43,11 +43,11 @@ function Test-LatestVersion {
     }
 }
 
-function NotifyNewVersion ([datetime]$Published, [boolean]$ExcludePreRelease) {
+function NotifyNewVersion ([datetime]$Published, [boolean]$IncludePreRelease) {
     # Note : Notify the new version releasing is coming.
     #  * Stable Release : after a half year (180 days)
     #  * PreRelease : after 3 weeks (21 days)
-    $span = if ($ExcludePreRelease) {[timespan]::new(180, 0, 0, 0)} else {[timespan]::new(21, 0, 0, 0)}
+    $span = if ($IncludePreRelease) {[timespan]::new(21, 0, 0, 0)} else {[timespan]::new(180, 0, 0, 0)}
     $elapsed = (Get-Date).Subtract($Published)
     if ($elapsed -ge $span) {
         WriteInfo ""

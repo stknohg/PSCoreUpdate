@@ -20,7 +20,7 @@ function Update-PowerShellCore {
         [Switch]$NotExitConsole,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
-        [Switch]$ExcludePreRelease,
+        [Switch]$IncludePreRelease = $false,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [string]$Token,
@@ -42,10 +42,10 @@ function Update-PowerShellCore {
     }
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellCore -Version $Version -Token $specifiedToken -ExcludePreRelease:$ExcludePreRelease
+            $newVersion = Find-PowerShellCore -Version $Version -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
         }
         Default {
-            $newVersion = Find-PowerShellCore -Latest -Token $specifiedToken -ExcludePreRelease:$ExcludePreRelease
+            $newVersion = Find-PowerShellCore -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
         }
     }
     if ($null -eq $newVersion) {
