@@ -38,7 +38,7 @@ Check if the current console is the latest version.
 
 ```powershell
 PS C:\> Test-LatestVersion
-No updates. PowerShell Core 6.0.3 is the latest version.
+No updates. PowerShell Core 6.1.0 is the latest version.
 ```
 
 ### Update-PowerShellCore
@@ -75,6 +75,8 @@ PS C:\> Find-PowerShellCore
 
 Version Name                              Published           PreRelease
 ------- ----                              ---------           ----------
+6.1.0   v6.1.0 Release of PowerShell Core 2018/09/13 21:49:59 False
+6.0.4   v6.0.4 Release of PowerShell Core 2018/08/10 22:20:50 False
 6.0.3   v6.0.3 Release of PowerShell Core 2018/07/20 17:42:19 False
 6.0.2   v6.0.2 release of PowerShell Core 2018/03/15 18:00:46 False
 6.0.1   v6.0.1 release of PowerShell Core 2018/01/25 22:14:29 False
@@ -104,6 +106,7 @@ The types of assets are as follows.
 |DEB_UBUNTU14|[PowerShell version]-ubuntu.14.nn_amd64.deb|
 |DEB_UBUNTU16|[PowerShell version]-ubuntu.16.nn_amd64.deb|
 |DEB_UBUNTU17|[PowerShell version]-ubuntu.17.nn_amd64.deb|
+|DEB_UBUNTU18|[PowerShell version]-ubuntu.17.nn_amd64.deb|
 |APPIMAGE|[PowerShell version]-x86_64.AppImage|
 |TAR_LINUXARM32|[PowerShell version]-linux-arm32.tar.gz|
 |TAR_LINUX64|[PowerShell version]-linux-x64.tar.gz|
