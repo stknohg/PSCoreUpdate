@@ -53,7 +53,7 @@ case "$ID" in
         exit 0
         ;;
     "fedora")
-        if [ $VERSION_ID -lt 25 ]; then
+        if [ $VERSION_ID -lt 27 ]; then
             echo_error "This version($VERSION_ID) is not supported."
             exit 1
         fi
@@ -74,11 +74,9 @@ case "$ID" in
         echo_info "sudo dnf update -y"
         sudo dnf update -y
 
-        # Install a system component (Fedora 26)
-        if [ $VERSION_ID = 26 ]; then
-            echo_info "sudo dnf install -y compat-openssl10"
-            sudo dnf install -y compat-openssl10
-        fi
+        # Install a system component
+        echo_info "sudo dnf install -y compat-openssl10"
+        sudo dnf install -y compat-openssl10
 
         # Install PowerShell
         echo_info "sudo dnf install -y $package_name"

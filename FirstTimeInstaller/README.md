@@ -67,7 +67,7 @@ This script supports following versions.
 
 * RHEL 7
 * CentOS 7
-* Fedora 26, 25
+* Fedora 28, 27
 
 ```sh
 # Bash
@@ -97,7 +97,7 @@ This script supports following versions.
 
 This script will support following versions.
 
-* openSUSE 42.1
+* openSUSE 42.3
 * SLES 12
 
 ```sh
