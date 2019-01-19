@@ -82,7 +82,7 @@ This script supports following versions.
 
 This script supports following versions.
 
-* Debian 9, 8.7+
+* Debian 9
 
 ```sh
 # Bash

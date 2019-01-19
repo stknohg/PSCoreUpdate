@@ -37,7 +37,7 @@ if [ ! $ID = debian ]; then
     exit 1
 fi
 case $VERSION_ID in
-    "8"|"9")
+    "9")
         #
         # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
         #
@@ -59,14 +59,8 @@ case $VERSION_ID in
 
         # Register the Microsoft Product feed
         if [ ! -e /etc/apt/sources.list.d/microsoft.list ]; then
-            if [ $VERSION_ID = "8" ]; then
-                echo_info "sudo sh -c 'echo ""deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-jessie-prod jessie main"" > /etc/apt/sources.list.d/microsoft.list'"
-                sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-jessie-prod jessie main" > /etc/apt/sources.list.d/microsoft.list'
-            fi
-            if [ $VERSION_ID = "9" ]; then
-                echo_info "sudo sh -c 'echo ""deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main"" > /etc/apt/sources.list.d/microsoft.list'"
-                sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main" > /etc/apt/sources.list.d/microsoft.list'
-            fi
+            echo_info "sudo sh -c 'echo ""deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main"" > /etc/apt/sources.list.d/microsoft.list'"
+            sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/microsoft-debian-stretch-prod stretch main" > /etc/apt/sources.list.d/microsoft.list'
         fi
 
         # Update the list of products
