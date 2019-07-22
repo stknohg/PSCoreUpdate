@@ -38,7 +38,7 @@ Check if the current console is the latest version.
 
 ```powershell
 PS C:\> Test-LatestVersion
-No updates. PowerShell Core 6.1.0 is the latest version.
+No updates. PowerShell 6.2.2 is the latest version.
 ```
 
 ### Update-PowerShellCore
@@ -75,6 +75,15 @@ PS C:\> Find-PowerShellCore
 
 Version Name                              Published           PreRelease
 ------- ----                              ---------           ----------
+6.2.2   v6.2.2 Release of PowerShell Core 2019/07/16 17:22:31 False
+6.1.5   v6.1.5 Release of PowerShell Core 2019/07/16 17:17:29 False
+6.2.1   v6.2.1 Release of PowerShell Core 2019/05/21 17:58:45 False
+6.1.4   v6.1.4 Release of PowerShell Core 2019/05/21 17:58:26 False
+6.2.0   v6.2.0 Release of PowerShell Core 2019/03/28 18:42:02 False
+6.1.3   v6.1.3 Release of PowerShell Core 2019/02/19 18:29:23 False
+6.1.2   v6.1.2 Release of PowerShell Core 2019/01/15 20:02:39 False
+6.1.1   v6.1.1 Release of PowerShell Core 2018/11/13 18:00:39 False
+6.0.5   v6.0.5 Release of PowerShell Core 2018/11/13 18:00:56 False
 6.1.0   v6.1.0 Release of PowerShell Core 2018/09/13 21:49:59 False
 6.0.4   v6.0.4 Release of PowerShell Core 2018/08/10 22:20:50 False
 6.0.3   v6.0.3 Release of PowerShell Core 2018/07/20 17:42:19 False
@@ -98,22 +107,33 @@ The types of assets are as follows.
 |MSI_WIN32|[PowerShell version]-win-x86.msi|
 |MSI_WIN64|[PowerShell version]-win-x64.msi|
 |PKG_OSX|[PowerShell version]-osx-x64.pkg|
-|PKG_OSX1011|[PowerShell version]-osx.10.11-x64.pkg|
-|PKG_OSX1012|[PowerShell version]-osx.10.12-x64.pkg|
 |RPM_RHEL7|[PowerShell version]-rhel.7.x86_64.rpm|
-|DEB_DEBIAN8|[PowerShell version]-debian.8_amd64.deb|
 |DEB_DEBIAN9|[PowerShell version]-debian.9_amd64.deb|
-|DEB_UBUNTU14|[PowerShell version]-ubuntu.14.nn_amd64.deb|
 |DEB_UBUNTU16|[PowerShell version]-ubuntu.16.nn_amd64.deb|
-|DEB_UBUNTU17|[PowerShell version]-ubuntu.17.nn_amd64.deb|
 |DEB_UBUNTU18|[PowerShell version]-ubuntu.17.nn_amd64.deb|
-|APPIMAGE|[PowerShell version]-x86_64.AppImage|
 |TAR_LINUXARM32|[PowerShell version]-linux-arm32.tar.gz|
+|TAR_LINUXARM64|[PowerShell version]-linux-arm64.tar.gz|
+|TAR_LINUXALPINE64|[PowerShell version]-linux-alpine-x64.tar.gz|
+|TAR_LINUX64FXDEPENDENT|[PowerShell version]-linux-x64-fxdependent.tar.gz|
 |TAR_LINUX64|[PowerShell version]-linux-x64.tar.gz|
 |TAR_OSX|[PowerShell version]-osx-x64.tar.gz|
 |ZIP_WINARM32|[PowerShell version]-win-arm32.zip|
 |ZIP_WINARM64|[PowerShell version]-win-arm64.zip|
 |ZIP_WIN32|[PowerShell version]-win-x86.zip|
 |ZIP_WIN64|[PowerShell version]-win-x64.zip|
+|ZIP_WINFXDEPENDENT|[PowerShell version]-win-fxdependent.zip|
 |WIXPDB32|[PowerShell version]-win-x86.wixpdb|
 |WIXPDB64|[PowerShell version]-win-x64.wixpdb|
+
+#### Old release assets
+
+* These assets are not available from the latest version.
+
+|Value|Asset|
+|----|----|
+|PKG_OSX1011|[PowerShell version]-osx.10.11-x64.pkg|
+|PKG_OSX1012|[PowerShell version]-osx.10.12-x64.pkg|
+|DEB_DEBIAN8|[PowerShell version]-debian.8_amd64.deb|
+|DEB_UBUNTU14|[PowerShell version]-ubuntu.14.nn_amd64.deb|
+|DEB_UBUNTU17|[PowerShell version]-ubuntu.17.nn_amd64.deb|
+|APPIMAGE|[PowerShell version]-x86_64.AppImage|
