@@ -40,12 +40,16 @@ enum AssetArchtectures {
     APPIMAGE
     # 
     TAR_LINUXARM32
+    TAR_LINUXARM64
+    TAR_LINUXALPINE64
     TAR_LINUX64
+    TAR_LINUX64FXDEPENDENT
     TAR_OSX
     ZIP_WINARM32
     ZIP_WINARM64
     ZIP_WIN32
     ZIP_WIN64
+    ZIP_WINFXDEPENDENT
     WIXPDB32
     WIXPDB64
 }
@@ -109,8 +113,17 @@ class PowerShellCoreAsset {
             {$_ -match "^.+linux-arm32.tar.gz$"} {
                 return [AssetArchtectures]::TAR_LINUXARM32
             }
+            {$_ -match "^.+linux-arm64.tar.gz$"} {
+                return [AssetArchtectures]::TAR_LINUXARM64
+            }
+            {$_ -match "^.+linux-alpine-x64.tar.gz$"} {
+                return [AssetArchtectures]::TAR_LINUXALPINE64
+            }
             {$_ -match "^.+linux-x64.tar.gz$"} {
                 return [AssetArchtectures]::TAR_LINUX64
+            }
+            {$_ -match "^.+linux-x64-fxdependent.tar.gz$"} {
+                return [AssetArchtectures]::TAR_LINUX64FXDEPENDENT
             }
             {$_ -match "^.+osx-x64.tar.gz$"} {
                 return [AssetArchtectures]::TAR_OSX
@@ -126,6 +139,9 @@ class PowerShellCoreAsset {
             }
             {$_ -match "^.+win.*-x64.zip$"} {
                 return [AssetArchtectures]::ZIP_WIN64
+            }
+            {$_ -match "^.+win-fxdependent.zip$"} {
+                return [AssetArchtectures]::ZIP_WINFXDEPENDENT
             }
             {$_ -match "^.+win-x86.wixpdb$"} {
                 return [AssetArchtectures]::WIXPDB32
