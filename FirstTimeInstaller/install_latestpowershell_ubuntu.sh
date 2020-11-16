@@ -37,8 +37,8 @@ if [ ! $ID = ubuntu ]; then
     exit 1
 fi
 case "$VERSION_ID" in
-    "18.04"|"17.10"|"17.04"|"16.10"|"16.04"|"15.10"|"14.04")
-        echo_info "Install PowerShell Core..."
+    "20.04"|"18.04"|"16.04")
+        echo_info "Install PowerShell..."
         #
         # ref : https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6
         #
