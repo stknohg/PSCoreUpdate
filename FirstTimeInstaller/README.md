@@ -4,20 +4,17 @@ __NOTE:__ If you are worried, please inspect each script before doing it for saf
 
 Each script is based on the official installation instructions.
 
-* [For Windows](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6)
-* [For macOS](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-macos?view=powershell-6)
-* [For Linux](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-linux?view=powershell-6)
+* [For Windows](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7.1)
+* [For macOS](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-macos?view=powershell-7.1)
+* [For Linux](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-linux?view=powershell-7.1)
 
 ## Windows 
 
-It is necessary to meet [prerequisites](https://docs.microsoft.com/en-us/powershell/scripting/setup/installing-powershell-core-on-windows?view=powershell-6#prerequisites) in advance. 
+It is necessary to meet [prerequisites](https://docs.microsoft.com/en-us/powershell/scripting/install/installing-powershell-core-on-windows?view=powershell-7.1#prerequisites) in advance. 
 
 * Install the [Universal C Runtime](https://www.microsoft.com/download/details.aspx?id=50410) on Windows versions prior to Windows 10.
   It is available via direct download or Windows Update.
   Fully patched (including optional packages), supported systems will already have this installed.
-* Install the Windows Management Framework (WMF) [4.0](https://www.microsoft.com/download/details.aspx?id=40855)
-  or newer ([5.0](https://www.microsoft.com/download/details.aspx?id=50395),
-  [5.1](https://www.microsoft.com/download/details.aspx?id=54616)) on Windows 7 and Windows Server 2008 R2.
   
 ### Command prompt
 
@@ -37,7 +34,7 @@ Set-ExecutionPolicy Bypass -Scope Process -Force; [Net.ServicePointManager]::Sec
 
 This script supports following versions.
 
-* macOS Sierra (10.12) or higher.
+* macOS 10.13+.
 
 ```sh
 # Bash
@@ -50,7 +47,7 @@ This script supports following versions.
 
 This script supports following versions.
 
-* Ubuntu 18.04, 17.04, 16.04, 14.04
+* Ubuntu 20.04, 18.04, 16.04
 
 ```sh
 # Bash
@@ -65,9 +62,9 @@ This script supports following versions.
 
 This script supports following versions.
 
-* RHEL 7
-* CentOS 7
-* Fedora 28, 27
+* RHEL 8, 7
+* CentOS 8, 7
+* Fedora 30
 
 ```sh
 # Bash
@@ -82,7 +79,7 @@ This script supports following versions.
 
 This script supports following versions.
 
-* Debian 9
+* Debian 10, 9
 
 ```sh
 # Bash
