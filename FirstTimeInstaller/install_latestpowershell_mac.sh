@@ -22,9 +22,14 @@ case "$os_ver" in
         echo_error "OSX El Capitan (10.11) is not supported."
         exit 1
         ;;
-    "10.13"|"10.12")
+    "10.12")
+        echo_error "macOS Sierra (10.12) is not supported."
+        exit 1
+        ;;
+    "10.15"|"10.14"|"10.13")
+        # macOS Catalina (10.15)
+        # macOS Mojave (10.14)
         # macOS High Sierra (10.13)
-        # macOS Sierra (10.12)
         pkg_file_match="osx-x64.pkg"
         ;;
     *)

@@ -53,7 +53,7 @@ case "$ID" in
         exit 0
         ;;
     "fedora")
-        if [ $VERSION_ID -lt 27 ]; then
+        if [ $VERSION_ID -lt 30 ]; then
             echo_error "This version($VERSION_ID) is not supported."
             exit 1
         fi
