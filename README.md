@@ -66,12 +66,12 @@ If you want to install the preview release, you can use `-IncludePreRelease` par
 PS C:\> Update-PowerShellCore -Latest -IncludePreRelease
 ```
 
-### Find-PowerShellCore
+### Find-PowerShellRelease
 
 Find PowerShell Core release information from GitHub.
 
 ```powershell
-PS C:\> Find-PowerShellCore
+PS C:\> Find-PowerShellRelease
 
 Version Name                              Published             PreRelease
 ------- ----                              ---------             ----------

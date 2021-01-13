@@ -14,7 +14,7 @@ function Test-LatestVersion {
     if ([string]::IsNullOrEmpty($specifiedToken)) {
         $specifiedToken = GetPowerShellCoreApiTokenImpl
     }
-    $release = Find-PowerShellCore -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
+    $release = Find-PowerShellRelease -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
     if ($null -eq $release) {
         Write-Error $Messages.Test_LatestVersion_001
         return

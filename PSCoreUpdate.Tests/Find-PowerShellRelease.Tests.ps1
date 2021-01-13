@@ -1,7 +1,7 @@
 $RootPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'PSCoreUpdate'
 Import-Module (Join-Path $RootPath 'PSCoreUpdate.psd1') -Force
 
-Describe "Find-PowerShellCore unit tests" {
+Describe "Find-PowerShellRelease unit tests" {
 
     BeforeAll {
         $Token = $env:GH_API_ACCESS_TOKEN
@@ -11,53 +11,53 @@ Describe "Find-PowerShellCore unit tests" {
     }
 
     It "Returns nothing when specified invalid version" {
-        Find-PowerShellCore -MinimumVersion 999.0.0 -Token $Token | Should -BeNullOrEmpty
-        Find-PowerShellCore -MaximumVersion 0.0.1 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellRelease -MinimumVersion 999.0.0 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellRelease -MaximumVersion 0.0.1 -Token $Token | Should -BeNullOrEmpty
     }
 
     It "Should exclude prerelease version without -IncludePreRelease parameter" {
-        Find-PowerShellCore -Version 6.0.0-alpha.18 -Token $Token | Should -BeNullOrEmpty
-        Find-PowerShellCore -Version 6.0.0-beta.1 -Token $Token | Should -BeNullOrEmpty
-        Find-PowerShellCore -Version 6.0.0-rc.1 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellRelease -Version 6.0.0-alpha.18 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellRelease -Version 6.0.0-beta.1 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellRelease -Version 6.0.0-rc.1 -Token $Token | Should -BeNullOrEmpty
     }
 
     It "Should get the latest release information" {
-        $target = Find-PowerShellCore -Latest -Token $Token
-        $expected = Find-PowerShellCore -MinimumVersion 6.0.0 -IncludePreRelease -Token $Token | 
+        $target = Find-PowerShellRelease -Latest -Token $Token
+        $expected = Find-PowerShellRelease -MinimumVersion 6.0.0 -IncludePreRelease -Token $Token | 
             Where-Object { -not $_.PreRelease } |
             Sort-Object -Property Version -Top 1 -Descending
         $target.Version | Should -Be $expected.Version
     }
 
     It "Should get the latest release with -IncludePreRelease parameter" {
-        Find-PowerShellCore -Latest -IncludePreRelease -Token $Token | Should -Not -BeNullOrEmpty
-        $release = Find-PowerShellCore -Latest -IncludePreRelease -Token $Token 
+        Find-PowerShellRelease -Latest -IncludePreRelease -Token $Token | Should -Not -BeNullOrEmpty
+        $release = Find-PowerShellRelease -Latest -IncludePreRelease -Token $Token 
         $release.Count | Should -Be 1
     }
 
     It "Should get the range releases information(specify MinimumVersion)" {
-        $release = Find-PowerShellCore -MinimumVersion '6.0.0' -Token $Token
+        $release = Find-PowerShellRelease -MinimumVersion '6.0.0' -Token $Token
         $release.Count | Should -BeGreaterThan 1
-        $release = Find-PowerShellCore -IncludePreRelease -MinimumVersion '6.0.0' -Token $Token
+        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.0.0' -Token $Token
         $release.Count | Should -BeGreaterThan 1
     }
 
     It "Should get the range releases information(specify MaximumVersion)" {
-        $release = Find-PowerShellCore -IncludePreRelease -MaximumVersion '6.0.0' -Token $Token
+        $release = Find-PowerShellRelease -IncludePreRelease -MaximumVersion '6.0.0' -Token $Token
         $release.Count | Should -Be 30
-        $release = Find-PowerShellCore -MaximumVersion '6.0.0' -Token $Token
+        $release = Find-PowerShellRelease -MaximumVersion '6.0.0' -Token $Token
         $release.Count | Should -Be 1
     }
 
     It "Should get the range releases information(specify MinimumVersion, MaximumVersion)" {
-        $release = Find-PowerShellCore -IncludePreRelease -MinimumVersion '6.0.0' -MaximumVersion '6.0.1' -Token $Token
+        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.0.0' -MaximumVersion '6.0.1' -Token $Token
         $release.Count | Should -Be 2
-        $release = Find-PowerShellCore -MinimumVersion '6.0.0' -MaximumVersion '6.0.1' -Token $Token
+        $release = Find-PowerShellRelease -MinimumVersion '6.0.0' -MaximumVersion '6.0.1' -Token $Token
         $release.Count | Should -Be 2
     }
 
     It "Should get proper properties" {
-        $release = Find-PowerShellCore -Version 6.0.0 -Token $Token
+        $release = Find-PowerShellRelease -Version 6.0.0 -Token $Token
         $release.Count | Should -Be 1
         # base properies
         $release.ReleaseId | Should -Be 9184057

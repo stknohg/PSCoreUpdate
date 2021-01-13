@@ -2,7 +2,7 @@
 .SYNOPSIS
     Find PowerShell Core releases.
 #>
-function Find-PowerShellCore {
+function Find-PowerShellRelease {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Default')]

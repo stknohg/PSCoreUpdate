@@ -42,10 +42,10 @@ function Update-PowerShellCore {
     }
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellCore -Version $Version -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
+            $newVersion = Find-PowerShellRelease -Version $Version -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
         }
         Default {
-            $newVersion = Find-PowerShellCore -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
+            $newVersion = Find-PowerShellRelease -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
         }
     }
     if ($null -eq $newVersion) {
