@@ -13,10 +13,27 @@ Import-LocalizedData -BindingVariable "Messages" -FileName "Messages"
 # Set alias
 Set-Alias -Name 'Download-PowerShellAsset' -Value 'Save-PowerShellAsset'
 # alias for compatibility
-Set-Alias -Name 'Download-PowerShellCore' -Value 'Save-PowerShellAsset'
-Set-Alias -Name 'Find-PowerShellCore' -Value 'Find-PowerShellRelease'
-Set-Alias -Name 'Save-PowerShellCore' -Value 'Save-PowerShellAsset'
-Set-Alias -Name 'Set-PowerShellCoreApiToken' -Value 'Set-PowerShellGitHubApiToken'
-Set-Alias -Name 'Remove-PowerShellCoreApiToken' -Value 'Remove-PowerShellGitHubApiToken'
-Set-Alias -Name 'Get-PowerShellCoreApiToken' -Value 'Get-PowerShellGitHubApiToken'
-Set-Alias -Name 'Update-PowerShellCore' -Value 'Update-PowerShellRelease'
+<#
+.SYNOPSIS
+    Enable legacy function alias
+    * Download-PowerShellCore
+    * Find-PowerShellCore
+    * Save-PowerShellCore
+    * Set-PowerShellCoreApiToken, Remove-PowerShellCoreApiToken, Get-PowerShellCoreApiToken
+    * Update-PowerShellCore
+#>
+function Enable-PSCoreUpdateLegacyAlias {
+    param (
+        [string]$Scope
+    )
+    if (-not $Scope) {
+        $Scope = 'Global'
+    }
+    Set-Alias -Name 'Download-PowerShellCore' -Value 'Save-PowerShellAsset' -Scope $Scope
+    Set-Alias -Name 'Find-PowerShellCore' -Value 'Find-PowerShellRelease' -Scope $Scope
+    Set-Alias -Name 'Save-PowerShellCore' -Value 'Save-PowerShellAsset' -Scope $Scope
+    Set-Alias -Name 'Set-PowerShellCoreApiToken' -Value 'Set-PowerShellGitHubApiToken' -Scope $Scope
+    Set-Alias -Name 'Remove-PowerShellCoreApiToken' -Value 'Remove-PowerShellGitHubApiToken' -Scope $Scope
+    Set-Alias -Name 'Get-PowerShellCoreApiToken' -Value 'Get-PowerShellGitHubApiToken' -Scope $Scope
+    Set-Alias -Name 'Update-PowerShellCore' -Value 'Update-PowerShellRelease' -Scope $Scope
+}

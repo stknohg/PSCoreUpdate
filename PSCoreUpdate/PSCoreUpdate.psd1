@@ -40,7 +40,10 @@
     NestedModules        = @('PSCoreUpdate.psm1')
 
     # Functions to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no functions to export.
-    FunctionsToExport    = @('Find-PowerShellBuildStatus', 'Find-PowerShellRelease', 'Get-PowerShellGitHubApiToken', 'Remove-PowerShellGitHubApiToken', 'Save-PowerShellAsset', 'Set-PowerShellGitHubApiToken', 'Test-LatestVersion', 'Update-PowerShellRelease')
+    FunctionsToExport    = @('Find-PowerShellBuildStatus', 'Find-PowerShellRelease', 
+                             'Get-PowerShellGitHubApiToken', 'Remove-PowerShellGitHubApiToken', 'Save-PowerShellAsset', 'Set-PowerShellGitHubApiToken',
+                             'Test-LatestVersion', 'Update-PowerShellRelease', 
+                             'Enable-PSCoreUpdateLegacyAlias')
 
     # Cmdlets to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no cmdlets to export.
     CmdletsToExport      = @()
@@ -49,7 +52,7 @@
     VariablesToExport    = '*'
 
     # Aliases to export from this module, for best performance, do not use wildcards and do not delete the entry, use an empty array if there are no aliases to export.
-    AliasesToExport      = @('Download-PowerShellAsset', 'Download-PowerShellCore', 'Find-PowerShellCore', 'Save-PowerShellCore', 'Set-PowerShellCoreApiToken', 'Remove-PowerShellCoreApiToken', 'Get-PowerShellCoreApiToken', 'Update-PowerShellCore')
+    AliasesToExport      = @('Download-PowerShellAsset')
 
     # Private data to pass to the module specified in RootModule/ModuleToProcess. This may also contain a PSData hashtable with additional module metadata used by PowerShell.
     PrivateData          = @{
