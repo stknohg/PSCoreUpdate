@@ -1,0 +1,33 @@
+# Publish module workflow
+name: publish-module
+on:
+  workflow_dispatch:
+jobs:
+  publish-to-gallery:
+    runs-on: windows-2019
+    steps:
+    # checkout
+    - uses: actions/checkout@v2
+    # validate
+    - name: validate module
+      shell: pwsh
+      run: |
+        # validate module
+        $result = Test-ModuleManifest -Path ./PSCoreUpdate/PSCoreUpdate.psd1
+        if (-not $?) {
+            Write-Error 'Module manifest validation was failed.'
+            exit 1
+        }
+        $result | Format-List
+    # publish
+    - name: publish module
+      env:
+        NUGET_API_KEY: ${{ secrets.NUGET_API_KEY }}
+      shell: pwsh
+      run: |
+        # publish module
+        if (-not $env:NUGET_API_KEY) {
+            Write-Error 'NUGET_API_KEY environment variable not found.'
+            exit 1
+        }
+        Publish-Module -Path ./PSCoreUpdate -NuGetApiKey $env:NUGET_API_KEY -Verbose
