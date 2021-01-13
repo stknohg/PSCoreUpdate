@@ -33,10 +33,13 @@ enum AssetArchtectures {
     RPM_RHEL7
     DEB_DEBIAN8
     DEB_DEBIAN9
+    DEB_DEBIAN10
+    DEB_DEBIAN11
     DEB_UBUNTU14
     DEB_UBUNTU16
     DEB_UBUNTU17
     DEB_UBUNTU18
+    DEB_UBUNTU20
     APPIMAGE
     # 
     TAR_LINUXARM32
@@ -95,6 +98,12 @@ class PowerShellCoreAsset {
             {$_ -match "^.+debian.9_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_DEBIAN9
             }
+            {$_ -match "^.+debian.10_amd64.deb$"} {
+                return [AssetArchtectures]::DEB_DEBIAN10
+            }
+            {$_ -match "^.+debian.11_amd64.deb$"} {
+                return [AssetArchtectures]::DEB_DEBIAN11
+            }
             {$_ -match "^.+[ubuntu|ubuntu1].14.\d\d.*_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_UBUNTU14
             }
@@ -106,6 +115,9 @@ class PowerShellCoreAsset {
             }
             {$_ -match "^.+ubuntu.18.\d\d.*_amd64.deb$"} {
                 return [AssetArchtectures]::DEB_UBUNTU18
+            }
+            {$_ -match "^.+ubuntu.20.\d\d.*_amd64.deb$"} {
+                return [AssetArchtectures]::DEB_UBUNTU20
             }
             {$_ -match "^.+.AppImage$"} {
                 return [AssetArchtectures]::APPIMAGE
