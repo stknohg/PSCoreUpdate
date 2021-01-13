@@ -1,6 +1,6 @@
 <#
 .SYNOPSIS
-    Find PowerShell Core releases.
+    Find PowerShell releases.
 #>
 function Find-PowerShellRelease {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
@@ -45,7 +45,7 @@ function Find-PowerShellRelease {
         $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink -Headers @{Authorization = "token $specifiedToken"}
     }
     if (@($releaseSets).Length -eq 0) {
-        Write-Warning $Messages.Find_PowerShellCore_001
+        Write-Warning $Messages.Find_PowerShellRelease_001
         return
     }
 
@@ -78,7 +78,7 @@ function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, 
             if ($release.tag_name -match "^v(?<Major>\d+)\.(?<Minor>\d+)\.(?<Patch>\d+)($|-(?<Label>.+$))") {
                 $currentVer = [SemVer]::new($Matches.Major, $Matches.Minor, $Matches.Patch, $Matches.Label)
             } else {
-                Write-Warning ($Messages.Find_PowerShellCore_002 -f $release.tag_name)
+                Write-Warning ($Messages.Find_PowerShellRelease_002 -f $release.tag_name)
                 continue
             }
         } catch {
