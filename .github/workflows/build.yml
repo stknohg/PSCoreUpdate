@@ -22,7 +22,8 @@ jobs:
       # Runs Pester all *.tests.ps1 scripts
       - name: Run Pester tests
         run: |
-          Import-Module Pester
+          # Pester is not installed by default on Windows Server 2019 - PowerShell 7
+          Install-Module Pester -Force
           Write-Output "Run Pester $(Get-InstalledModule Pester | Select-Object -ExpandProperty Version) ..."
           $config = [PesterConfiguration]@{
               Run = @{
