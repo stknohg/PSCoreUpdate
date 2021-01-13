@@ -24,6 +24,7 @@ jobs:
         run: |
           # Pester is not installed by default on Windows Server 2019 - PowerShell 7
           Install-Module Pester -Force
+          Import-Module Pester
           Write-Output "Run Pester $(Get-InstalledModule Pester | Select-Object -ExpandProperty Version) ..."
           $config = [PesterConfiguration]@{
               Run = @{
