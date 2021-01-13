@@ -1,8 +1,8 @@
 ConvertFrom-StringData @'
 Find_PowerShellRelease_001 = PowerShell releases was not found.
 Find_PowerShellRelease_002 = ""{0}"" is not correct version tag name.
-Get_PowerShellCoreApiToken_001 = GitHub API token is not saved.
-Get_PowerShellCoreApiToken_002 = Saved GitHub API token is {0} .
+Get_PowerShellGitHubApiToken_001 = GitHub API token is not saved.
+Get_PowerShellGitHubApiToken_002 = Saved GitHub API token is {0} .
 Save_PowerShellCore_001 = Invalid AssetType.
 Save_PowerShellCore_002 = Invalid AssetType is included.
 Save_PowerShellCore_003 = No release found.

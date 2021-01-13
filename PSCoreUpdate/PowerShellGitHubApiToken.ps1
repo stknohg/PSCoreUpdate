@@ -49,7 +49,7 @@ function Get-PowerShellGitHubApiToken {
     $token = GetPowerShellGitHubApiTokenImpl
 
     if ([string]::IsNullOrEmpty($token)) {
-        Write-Warning $Messages.Get_PowerShellCoreApiToken_001
+        Write-Warning $Messages.Get_PowerShellGitHubApiToken_001
         return
     }
 
@@ -58,7 +58,7 @@ function Get-PowerShellGitHubApiToken {
     } else {
         $token.Substring(0, 5) + "*" * ($token.Length - 5)
     }
-    Write-Host ($Messages.Get_PowerShellCoreApiToken_002 -f $maskedToken)
+    Write-Host ($Messages.Get_PowerShellGitHubApiToken_002 -f $maskedToken)
 }
 
 function GetPowerShellGitHubApiTokenImpl () {

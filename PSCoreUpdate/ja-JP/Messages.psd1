@@ -1,8 +1,8 @@
 ConvertFrom-StringData @'
 Find_PowerShellRelease_001 = PowerShell のリリース情報が見つかりません。
 Find_PowerShellRelease_002 = ""{0}"" は正しいバージョンタグではありません。
-Get_PowerShellCoreApiToken_001 = GitHub API token は保存されていません。
-Get_PowerShellCoreApiToken_002 = 保存された GitHub API token は {0} です。
+Get_PowerShellGitHubApiToken_001 = GitHub API token は保存されていません。
+Get_PowerShellGitHubApiToken_002 = 保存された GitHub API token は {0} です。
 Save_PowerShellCore_001 = 不正な AssetType 。
 Save_PowerShellCore_002 = 不正な AssetType が含まれています。
 Save_PowerShellCore_003 = リリース情報が見つかりません。
