@@ -4,9 +4,9 @@ Import-Module (Join-Path $RootPath 'PSCoreUpdate.psd1') -Force
 Describe "Test-LatestVersion unit tests" {
 
     BeforeAll {
-        $Token = $env:GITHUB_ACCESS_TOKEN
+        $Token = $env:GH_API_ACCESS_TOKEN
         if ([string]::IsNullOrEmpty($Token)) {
-            Write-Host 'GITHUB_ACCESS_TOKEN is empty.'
+            Write-Host 'GH_API_ACCESS_TOKEN is empty.'
         }
     }
 
