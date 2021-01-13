@@ -1,6 +1,6 @@
 # PSCoreUpdate
 
-[![Build status](https://ci.appveyor.com/api/projects/status/pewb2qx34quqleu5?svg=true)](https://ci.appveyor.com/project/stknohg/pscoreupdate)
+![build](https://github.com/stknohg/PSCoreUpdate/workflows/build/badge.svg)
 
 PowerShell Core update tool.
 
@@ -38,7 +38,7 @@ Check if the current console is the latest version.
 
 ```powershell
 PS C:\> Test-LatestVersion
-No updates. PowerShell 6.2.2 is the latest version.
+No updates. PowerShell 7.1.0 is the latest version.
 ```
 
 ### Update-PowerShellCore
@@ -73,23 +73,16 @@ Find PowerShell Core release information from GitHub.
 ```powershell
 PS C:\> Find-PowerShellCore
 
-Version Name                              Published           PreRelease
-------- ----                              ---------           ----------
-6.2.2   v6.2.2 Release of PowerShell Core 2019/07/16 17:22:31 False
-6.1.5   v6.1.5 Release of PowerShell Core 2019/07/16 17:17:29 False
-6.2.1   v6.2.1 Release of PowerShell Core 2019/05/21 17:58:45 False
-6.1.4   v6.1.4 Release of PowerShell Core 2019/05/21 17:58:26 False
-6.2.0   v6.2.0 Release of PowerShell Core 2019/03/28 18:42:02 False
-6.1.3   v6.1.3 Release of PowerShell Core 2019/02/19 18:29:23 False
-6.1.2   v6.1.2 Release of PowerShell Core 2019/01/15 20:02:39 False
-6.1.1   v6.1.1 Release of PowerShell Core 2018/11/13 18:00:39 False
-6.0.5   v6.0.5 Release of PowerShell Core 2018/11/13 18:00:56 False
-6.1.0   v6.1.0 Release of PowerShell Core 2018/09/13 21:49:59 False
-6.0.4   v6.0.4 Release of PowerShell Core 2018/08/10 22:20:50 False
-6.0.3   v6.0.3 Release of PowerShell Core 2018/07/20 17:42:19 False
-6.0.2   v6.0.2 release of PowerShell Core 2018/03/15 18:00:46 False
-6.0.1   v6.0.1 release of PowerShell Core 2018/01/25 22:14:29 False
-6.0.0   v6.0.0 release of PowerShell Core 2018/01/20 0:19:22  False
+Version Name                              Published             PreRelease
+------- ----                              ---------             ----------
+7.1.0   v7.1.0 Release of PowerShell      11/11/2020 4:23:08 PM False
+7.0.3   v7.0.3 Release of PowerShell      7/16/2020 6:23:52 PM  False
+6.2.7   v6.2.7 Release of PowerShell      7/16/2020 6:19:53 PM  False
+7.0.2   v7.0.2 Release of Powershell      6/11/2020 9:02:14 PM  False
+6.2.6   v6.2.6 Release of PowerShell      6/11/2020 9:01:33 PM  False
+7.0.1   v7.0.1 Release of PowerShell      5/14/2020 10:52:22 PM False
+6.2.5   v6.2.5 Release of PowerShell      5/14/2020 10:29:44 PM False
+7.0.0   v7.0.0 Release of PowerShell      3/4/2020 5:00:08 PM   False
 ```
 
 ### Save-PowerShellCore
