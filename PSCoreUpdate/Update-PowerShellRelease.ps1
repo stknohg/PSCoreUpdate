@@ -30,7 +30,7 @@ function Update-PowerShellRelease {
     )
     # currently, supports windows only
     if (-not ($IsWindows -or $IsMacOS)) {
-        Write-Warning $Messages.Update_PowerShellCore_001
+        Write-Warning $Messages.Update_PowerShellRelease_001
         return
     }
 
@@ -49,18 +49,18 @@ function Update-PowerShellRelease {
         }
     }
     if ($null -eq $newVersion) {
-        Write-Warning $Messages.Update_PowerShellCore_002
+        Write-Warning $Messages.Update_PowerShellRelease_002
         return
     }
     if ($newVersion.Version -lt $PSVersionTable.PSVersion -and (-not $Force)) {
-        Write-Warning $Messages.Update_PowerShellCore_003
+        Write-Warning $Messages.Update_PowerShellRelease_003
         return
     }
     if ($newVersion.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
-        Write-Warning $Messages.Update_PowerShellCore_004
+        Write-Warning $Messages.Update_PowerShellRelease_004
         return
     }
-    WriteInfo ($Messages.Update_PowerShellCore_005 -f $newVersion.Version)
+    WriteInfo ($Messages.Update_PowerShellRelease_005 -f $newVersion.Version)
 
     # Download asset
     $downloadURL = @()
@@ -70,29 +70,29 @@ function Update-PowerShellRelease {
         $downloadURL = GetPKGDownloadUrl -Release $newVersion
     } else {
         # TODO : update
-        Write-Warning $Messages.Update_PowerShellCore_001
+        Write-Warning $Messages.Update_PowerShellRelease_001
         return
     }
     if (@($downloadURL).Length -eq 0) {
-        Write-Error $Messages.Update_PowerShellCore_006
+        Write-Error $Messages.Update_PowerShellRelease_006
         return
     }
     if (@($downloadURL).Length -gt 1) {
-        Write-Warning $Messages.Update_PowerShellCore_007
+        Write-Warning $Messages.Update_PowerShellRelease_007
         return
     }
     $fileName = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $downloadURL.split("/")[-1]
     if ($PSCmdlet.ShouldProcess('Download asset')) {
         DownloadFile -Uri $downloadURL -OutFile $fileName -Token $specifiedToken
     } else {
-        Write-Warning $Messages.Update_PowerShellCore_008
+        Write-Warning $Messages.Update_PowerShellRelease_008
     }
 
     # Install
-    WriteInfo ($Messages.Update_PowerShellCore_009 -f $newVersion.Version)
-    $shouldProcess = $PSCmdlet.ShouldProcess('Install PowerShell Core')
+    WriteInfo ($Messages.Update_PowerShellRelease_009 -f $newVersion.Version)
+    $shouldProcess = $PSCmdlet.ShouldProcess('Install PowerShell')
     if (-not $shouldProcess) {
-        Write-Warning $Messages.Update_PowerShellCore_010
+        Write-Warning $Messages.Update_PowerShellRelease_010
     }
     if ($IsWindows) {
         InstallMSI -NewVersion $newVersion.Version -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
@@ -100,13 +100,13 @@ function Update-PowerShellRelease {
         InstallPKG -PkgFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
     } else {
         # TODO : implement
-        Write-Warning $Messages.Update_PowerShellCore_001
+        Write-Warning $Messages.Update_PowerShellRelease_001
         return
     }
 
     # Exit PowerShel Console
     if ((-not $NotExitConsole) -or $Silent) {
-        WriteInfo $Messages.Update_PowerShellCore_011
+        WriteInfo $Messages.Update_PowerShellRelease_011
         Start-Sleep -Seconds 1
         exit 
     }
