@@ -11,8 +11,9 @@ Import-LocalizedData -BindingVariable "Messages" -FileName "Messages"
 . (Join-Path $PSScriptRoot 'Update-PowerShellCore.ps1')
 
 # Set alias
-Set-Alias -Name 'Download-PowerShellCore' -Value 'Save-PowerShellAsset'
+Set-Alias -Name 'Download-PowerShellAsset' -Value 'Save-PowerShellAsset'
 # alias for compatibility
+Set-Alias -Name 'Download-PowerShellCore' -Value 'Save-PowerShellAsset'
 Set-Alias -Name 'Find-PowerShellCore' -Value 'Find-PowerShellRelease'
 Set-Alias -Name 'Save-PowerShellCore' -Value 'Save-PowerShellAsset'
 Set-Alias -Name 'Set-PowerShellCoreApiToken' -Value 'Set-PowerShellGitHubApiToken'
