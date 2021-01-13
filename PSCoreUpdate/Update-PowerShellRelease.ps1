@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    Update PowerShell Core to the specified version.
+    Update PowerShell to the specified version.
 #>
-function Update-PowerShellCore {
+function Update-PowerShellRelease {
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Default')]

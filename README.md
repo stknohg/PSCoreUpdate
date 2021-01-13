@@ -41,12 +41,12 @@ PS C:\> Test-LatestVersion
 No updates. PowerShell 7.1.0 is the latest version.
 ```
 
-### Update-PowerShellCore
+### Update-PowerShellRelease
 
 Update PowerShell Core if the newer version found.   
 
 ```powershell
-PS C:\> Update-PowerShellCore -Latest
+PS C:\> Update-PowerShellRelease -Latest
 ```
 
 <img src="https://user-images.githubusercontent.com/720127/38464437-dfe8b956-3b48-11e8-8c39-8f76102a9073.gif" width="800">
@@ -54,7 +54,7 @@ PS C:\> Update-PowerShellCore -Latest
 You can do silent install with `-Silent` switch parameter.
 
 ```powershell
-PS C:\> Update-PowerShellCore -Latest -Silent
+PS C:\> Update-PowerShellRelease -Latest -Silent
 ```
 
 * This cmdlet supports only Windows and macOS.  
@@ -63,7 +63,7 @@ PS C:\> Update-PowerShellCore -Latest -Silent
 If you want to install the preview release, you can use `-IncludePreRelease` parameter.
 
 ```powershell
-PS C:\> Update-PowerShellCore -Latest -IncludePreRelease
+PS C:\> Update-PowerShellRelease -Latest -IncludePreRelease
 ```
 
 ### Find-PowerShellRelease

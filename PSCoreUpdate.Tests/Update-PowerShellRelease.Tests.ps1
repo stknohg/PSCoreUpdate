@@ -3,7 +3,7 @@ Import-Module (Join-Path $RootPath 'PSCoreUpdate.psd1') -Force
 
 InModuleScope 'PSCoreUpdate' {
 
-    Describe "Update-PowerShellCore unit tests" {
+    Describe "Update-PowerShellRelease unit tests" {
 
         BeforeAll {
             $Token = $env:GH_API_ACCESS_TOKEN
