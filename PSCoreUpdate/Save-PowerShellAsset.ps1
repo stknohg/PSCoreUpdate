@@ -1,8 +1,8 @@
 <#
 .SYNOPSIS
-    Download PowerShell Core Asset
+    Download PowerShell Asset
 #>
-function Save-PowerShellCore {
+function Save-PowerShellAsset {
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Default')]

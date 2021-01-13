@@ -85,12 +85,12 @@ Version Name                              Published             PreRelease
 7.0.0   v7.0.0 Release of PowerShell      3/4/2020 5:00:08 PM   False
 ```
 
-### Save-PowerShellCore
+### Save-PowerShellAsset
 
 Download PowerShell Core release assets.
 
 ```powershell
-PS C:\> Save-PowerShellCore -Latest -AssetType MSI_WIN32 -OutDirectory .\
+PS C:\> Save-PowerShellAsset -Latest -AssetType MSI_WIN32 -OutDirectory .\
 ```
 
 The types of assets are as follows.
