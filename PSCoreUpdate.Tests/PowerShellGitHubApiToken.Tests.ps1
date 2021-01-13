@@ -2,7 +2,7 @@ $RootPath = Join-Path (Split-Path $PSScriptRoot -Parent) 'PSCoreUpdate'
 Import-Module (Join-Path $RootPath 'PSCoreUpdate.psd1') -Force
 
 InModuleScope 'PSCoreUpdate' {
-    Describe "Set-PowerShellCoreApiToken, Get-PowerShellCoreApiToken, Remove-PowerShellCoreApiToken unit tests" {
+    Describe "Set-PowerShellGitHubApiToken, Get-PowerShellGitHubApiToken, Remove-PowerShellGitHubApiToken unit tests" {
 
         BeforeAll {
             $token = '1234567890'
@@ -23,23 +23,23 @@ InModuleScope 'PSCoreUpdate' {
         }
     
         It "Should create ~/.pscoreupdate configuration file" {
-            Set-PowerShellCoreApiToken -Token $token
+            Set-PowerShellGitHubApiToken -Token $token
             Test-Path -Path "~/.pscoreupdate" | Should -BeTrue
             $json = Get-Content -Path "~/.pscoreupdate" -Raw | ConvertFrom-Json 
             $json.GitHubApiToken | Should -Not -BeNullOrEmpty
         }
     
         It "Should get proper token" {
-            GetPowerShellCoreApiTokenImpl | Should -Be $token
+            GetPowerShellGitHubApiTokenImpl | Should -Be $token
         }
     
         It "Should display masked token" {
-            $info = Get-PowerShellCoreApiToken *>&1
+            $info = Get-PowerShellGitHubApiToken *>&1
             $info.MessageData.Message.Contains($maskedToken) | Should -BeTrue
         }
     
         It "Should remove ~/.pscoreupdate configuration file" {
-            Remove-PowerShellCoreApiToken
+            Remove-PowerShellGitHubApiToken
             Test-Path -Path "~/.pscoreupdate" | Should -BeFalse
         }
     }

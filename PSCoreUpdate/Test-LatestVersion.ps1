@@ -12,7 +12,7 @@ function Test-LatestVersion {
 
     $specifiedToken = $Token
     if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellCoreApiTokenImpl
+        $specifiedToken = GetPowerShellGitHubApiTokenImpl
     }
     $release = Find-PowerShellRelease -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
     if ($null -eq $release) {

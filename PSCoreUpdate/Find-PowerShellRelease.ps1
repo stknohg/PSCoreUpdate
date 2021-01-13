@@ -37,7 +37,7 @@ function Find-PowerShellRelease {
     }
     $specifiedToken = $Token
     if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellCoreApiTokenImpl
+        $specifiedToken = GetPowerShellGitHubApiTokenImpl
     }
     if ([string]::IsNullOrEmpty($specifiedToken)) {
         $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink

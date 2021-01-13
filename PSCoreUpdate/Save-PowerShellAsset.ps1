@@ -34,7 +34,7 @@ function Save-PowerShellAsset {
     # find release
     $specifiedToken = $Token
     if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellCoreApiTokenImpl
+        $specifiedToken = GetPowerShellGitHubApiTokenImpl
     }
     $release = $null
     switch ($PSCmdlet.ParameterSetName) {

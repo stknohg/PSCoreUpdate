@@ -13,7 +13,7 @@ function GetCustomSecureKey () {
 .SYNOPSIS
     Set default GitHub API token
 #>
-function Set-PowerShellCoreApiToken {
+function Set-PowerShellGitHubApiToken {
     [CmdletBinding()]
     param (
         [Parameter(Mandatory = $true)]
@@ -29,7 +29,7 @@ function Set-PowerShellCoreApiToken {
 .SYNOPSIS
     Remove default GitHub API token
 #>
-function Remove-PowerShellCoreApiToken {
+function Remove-PowerShellGitHubApiToken {
     [CmdletBinding()]
     param ()
 
@@ -43,10 +43,10 @@ function Remove-PowerShellCoreApiToken {
 .SYNOPSIS
     Display default GitHub API token
 #>
-function Get-PowerShellCoreApiToken {
+function Get-PowerShellGitHubApiToken {
     [CmdletBinding()]
     param ()
-    $token = GetPowerShellCoreApiTokenImpl
+    $token = GetPowerShellGitHubApiTokenImpl
 
     if ([string]::IsNullOrEmpty($token)) {
         Write-Warning $Messages.Get_PowerShellCoreApiToken_001
@@ -61,7 +61,7 @@ function Get-PowerShellCoreApiToken {
     Write-Host ($Messages.Get_PowerShellCoreApiToken_002 -f $maskedToken)
 }
 
-function GetPowerShellCoreApiTokenImpl () {
+function GetPowerShellGitHubApiTokenImpl () {
     $configFile = GetConfigFilePath
     if (-not (Test-Path $configFile -PathType Leaf)) {
         return ''

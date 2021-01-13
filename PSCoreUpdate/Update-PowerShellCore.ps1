@@ -38,7 +38,7 @@ function Update-PowerShellCore {
     $newVersion = $null
     $specifiedToken = $Token
     if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellCoreApiTokenImpl
+        $specifiedToken = GetPowerShellGitHubApiTokenImpl
     }
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
