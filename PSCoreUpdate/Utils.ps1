@@ -1,5 +1,24 @@
 # Utility functions, classes.
 
+class BuildStatus {
+
+    [ReleaseTypes]$Release;
+    
+    [datetime]$ReleaseDate;
+
+    [string]$BlobName;
+
+    [string]$ReleaseTag;
+
+    [semver]$Version;
+}
+
+enum ReleaseTypes {
+    Stable = 0
+    Preview = 1
+    LTS = 2
+}
+
 class PowerShellCoreRelease {
     
     [int]$ReleaseId;

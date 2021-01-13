@@ -1,6 +1,42 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <Configuration>
     <ViewDefinitions>
+        <!-- BuildStatus table view -->
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>BuildStatus</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                         <Label>Version</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                         <Label>Release</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                        <Label>ReleaseDate</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <PropertyName>Version</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>Release</PropertyName>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <PropertyName>ReleaseDate</PropertyName>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                 </TableRowEntries>
+            </TableControl>
+        </View>
+
         <!-- PowerShellCoreRelease table view -->
         <View>
             <Name>Default</Name>
