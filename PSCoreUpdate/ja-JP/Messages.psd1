@@ -18,7 +18,7 @@ Test_LatestVersion_006 = 近いうちに新しいバージョンがリリース�
 Update_PowerShellRelease_001 = このコマンドレットは Windows/macOS のみサポートします。
 Update_PowerShellRelease_002 = リリース情報が見つかりません。
 Update_PowerShellRelease_003 = 更新はありません。
-Update_PowerShellRelease_004 = 現在のバージョンが最新です。
+Update_PowerShellRelease_004 = 現在のバージョンが最新の{0}です。
 Update_PowerShellRelease_005 = 新しいバージョン PowerShell {0} が見つかりました...
 Update_PowerShellRelease_006 = Asset の Url を取得するのに失敗しました。
 Update_PowerShellRelease_007 = 複数の Asset が見つかりました。現在、この様なケースはサポートされていません。
@@ -26,4 +26,7 @@ Update_PowerShellRelease_008 = Asset ファイルのダウンロードをスキ�
 Update_PowerShellRelease_009 = PowerShell {0} のインストールを開始します...
 Update_PowerShellRelease_010 = PowerShell のインストールをスキップします。
 Update_PowerShellRelease_011 = 現在の PowerShell コンソールを終了します...
+Update_PowerShellRelease_012 = プレビューリリース
+Update_PowerShellRelease_013 = 長期サポート(LTS)リリース
+Update_PowerShellRelease_014 = リリース
 '@

@@ -7,6 +7,8 @@ function Update-PowerShellRelease {
     param (
         [Parameter(ParameterSetName = 'Default')]
         [Switch]$Latest,
+        [Parameter(ParameterSetName = 'Default')]
+        [ReleaseTypes]$Release = [ReleaseTypes]::Stable,
         [Parameter(ParameterSetName = 'Version')]
         [SemVer]$Version,
         [Parameter(ParameterSetName = 'Default')]
@@ -18,9 +20,6 @@ function Update-PowerShellRelease {
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [Switch]$NotExitConsole,
-        [Parameter(ParameterSetName = 'Default')]
-        [Parameter(ParameterSetName = 'Version')]
-        [Switch]$IncludePreRelease = $false,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [string]$Token,
@@ -42,10 +41,24 @@ function Update-PowerShellRelease {
     }
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellRelease -Version $Version -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
+            $newVersion = Find-PowerShellRelease -Version $Version -Token $specifiedToken -IncludePreRelease
         }
         Default {
-            $newVersion = Find-PowerShellRelease -Latest -Token $specifiedToken -IncludePreRelease:$IncludePreRelease
+            switch ($Release) {
+                'Preview' {
+                    $newVersion = Find-PowerShellRelease -Token $specifiedToken `
+                                    -Version ((Find-PowerShellBuildStatus -Release Preview).Version) `
+                                    -IncludePreRelease
+                }
+                'LTS' {
+                    $newVersion = Find-PowerShellRelease -Token $specifiedToken `
+                                    -Version ((Find-PowerShellBuildStatus -Release LTS).Version)
+                }
+                Default {
+                    $newVersion = Find-PowerShellRelease -Token $specifiedToken `
+                                    -Latest 
+                }
+            }
         }
     }
     if ($null -eq $newVersion) {
@@ -57,7 +70,17 @@ function Update-PowerShellRelease {
         return
     }
     if ($newVersion.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
-        Write-Warning $Messages.Update_PowerShellRelease_004
+        switch ($Release) {
+            'Preview' {
+                Write-Warning ($Messages.Update_PowerShellRelease_004 -f $Messages.Update_PowerShellRelease_012)
+            }
+            'LTS' {
+                Write-Warning ($Messages.Update_PowerShellRelease_004 -f $Messages.Update_PowerShellRelease_013)
+            }
+            Default {
+                Write-Warning ($Messages.Update_PowerShellRelease_004 -f $Messages.Update_PowerShellRelease_014)
+            }
+        }
         return
     }
     WriteInfo ($Messages.Update_PowerShellRelease_005 -f $newVersion.Version)
@@ -108,6 +131,9 @@ function Update-PowerShellRelease {
     if ((-not $NotExitConsole) -or $Silent) {
         WriteInfo $Messages.Update_PowerShellRelease_011
         Start-Sleep -Seconds 1
+        if (-not $shouldProcess) {
+            return 
+        }
         exit 
     }
 }
@@ -122,7 +148,8 @@ function GetMSIDownloadUrl ([PowerShellCoreRelease]$Release) {
 function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
     switch (GetDarwinVersion) {
         15 {
-            # OSX El Capitan (10.11)
+            # PKG_OSX1011
+            # * OSX El Capitan (10.11)
             $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX1011 }
             if ($null -ne $asset) {
                 return $asset.DownloadUrl.OriginalString
@@ -130,6 +157,7 @@ function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
             return
         } 
         {$_ -in (16, 17)} {
+            # PKG_OSX1012 or PKG_OSX
             # macOS Sierra (10.12)
             # macOS High Sierra (10.13)
             $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX }
@@ -143,6 +171,7 @@ function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
             return
         }
         Default {
+            # PKG_OSX
             $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX }
             if ($null -ne $asset) {
                 return $asset.DownloadUrl.OriginalString
@@ -157,9 +186,9 @@ function GetDarwinVersion () {
 }
 
 function InstallMSI ([SemVer]$NewVersion, [string]$MsiFile, [bool]$Silent, [hashtable]$InstallOptions, [bool]$ShouldProcess) {
-    $args = @('/i', $MsiFile)
+    $msiArgs = @('/i', $MsiFile)
     if ($Silent) {
-        $args += '/passive'
+        $msiArgs += '/passive'
     }
     # Set the default install options if not specified.
     # Note : These options are valid only for silent installation.
@@ -179,12 +208,12 @@ function InstallMSI ([SemVer]$NewVersion, [string]$MsiFile, [bool]$Silent, [hash
         #   ENABLE_PSREMOTING = [0|1] : Enable PowerShell remoting
         #   ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL = [0|1] : Add 'Open here' context menus to Explorer
         foreach ($key in $InstallOptions.Keys) {
-            $args += ('{0}={1}' -f $key, $InstallOptions[$key])
+            $msiArgs += ('{0}={1}' -f $key, $InstallOptions[$key])
         }
     }
-    WriteInfo ('msiexec.exe {0}' -f ($args -join ' '))
+    WriteInfo ('msiexec.exe {0}' -f ($msiArgs -join ' '))
     if ($ShouldProcess) {
-        Start-Process -FilePath 'msiexec.exe' -ArgumentList $args
+        Start-Process -FilePath 'msiexec.exe' -ArgumentList $msiArgs
     }
 }
 

@@ -18,7 +18,7 @@ Test_LatestVersion_006 = A new version may be released in the near future.
 Update_PowerShellRelease_001 = This cmdlet supports Windows/macOS Only.
 Update_PowerShellRelease_002 = No release found.
 Update_PowerShellRelease_003 = No updates found.
-Update_PowerShellRelease_004 = Current version is the latest.
+Update_PowerShellRelease_004 = Current version is the latest {0}.
 Update_PowerShellRelease_005 = Find new version PowerShell {0} ...
 Update_PowerShellRelease_006 = Failed to get asset url.
 Update_PowerShellRelease_007 = Multiple assets were found. This case is not supported currently.
@@ -26,4 +26,7 @@ Update_PowerShellRelease_008 = Skip downloading asset file.
 Update_PowerShellRelease_009 = Start install PowerShell {0} ...
 Update_PowerShellRelease_010 = Skip installing PowerShell.
 Update_PowerShellRelease_011 = Exit current PowerShell Console...
+Update_PowerShellRelease_012 = preview release
+Update_PowerShellRelease_013 = LTS release
+Update_PowerShellRelease_014 = release
 '@
