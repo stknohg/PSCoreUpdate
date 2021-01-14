@@ -15,30 +15,44 @@ Describe "Find-PowerShellRelease unit tests" {
         Find-PowerShellRelease -MaximumVersion 0.0.1 -Token $Token | Should -BeNullOrEmpty
     }
 
-    It "Should exclude prerelease version without -IncludePreRelease parameter" {
-        Find-PowerShellRelease -Version 6.0.0-alpha.18 -Token $Token | Should -BeNullOrEmpty
-        Find-PowerShellRelease -Version 6.0.0-beta.1 -Token $Token | Should -BeNullOrEmpty
-        Find-PowerShellRelease -Version 6.0.0-rc.1 -Token $Token | Should -BeNullOrEmpty
+    It "Should get stable version specified -Version parameter" {
+        $actual = Find-PowerShellRelease -Version 7.0.0 -Token $Token
+        $actual.Count | Should -Be 1
+        $actual.Version | Should -Be '7.0.0'
     }
 
-    It "Should get the latest release information" {
+    It "Should get prerelease version specified -Version parameter" {
+        $actual = Find-PowerShellRelease -Version 7.1.0-preview.1 -Token $Token
+        $actual.Count | Should -Be 1
+        $actual.Version | Should -Be '7.1.0-preview.1'
+    }
+
+    It "Should get the latest stable release information" {
         $target = Find-PowerShellRelease -Latest -Token $Token
-        $expected = Find-PowerShellRelease -MinimumVersion 6.0.0 -IncludePreRelease -Token $Token | 
-            Where-Object { -not $_.PreRelease } |
-            Sort-Object -Property Version -Top 1 -Descending
+        $expected = Find-PowerShellBuildStatus -Release Stable 
+        $target.Version | Should -Be $expected.Version
+        #
+        $target = Find-PowerShellRelease -Latest -Release Stable -Token $Token
+        $expected = Find-PowerShellBuildStatus -Release Stable 
         $target.Version | Should -Be $expected.Version
     }
 
-    It "Should get the latest release with -IncludePreRelease parameter" {
-        Find-PowerShellRelease -Latest -IncludePreRelease -Token $Token | Should -Not -BeNullOrEmpty
-        $release = Find-PowerShellRelease -Latest -IncludePreRelease -Token $Token 
-        $release.Count | Should -Be 1
+    It "Should get the latest preview release information" {
+        $target = Find-PowerShellRelease -Latest -Release Preview -Token $Token
+        $expected = Find-PowerShellBuildStatus -Release Preview 
+        $target.Version | Should -Be $expected.Version
+    }
+
+    It "Should get the latest LTS release information" {
+        $target = Find-PowerShellRelease -Latest -Release LTS -Token $Token
+        $expected = Find-PowerShellBuildStatus -Release LTS 
+        $target.Version | Should -Be $expected.Version
     }
 
     It "Should get the range releases information(specify MinimumVersion)" {
-        $release = Find-PowerShellRelease -MinimumVersion '6.0.0' -Token $Token
+        $release = Find-PowerShellRelease -MinimumVersion '7.0.0' -Token $Token
         $release.Count | Should -BeGreaterThan 1
-        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.0.0' -Token $Token
+        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '7.0.0' -Token $Token
         $release.Count | Should -BeGreaterThan 1
     }
 
@@ -49,11 +63,52 @@ Describe "Find-PowerShellRelease unit tests" {
         $release.Count | Should -Be 1
     }
 
+    It "Should treat the special versions as Preview" {
+        # 6.1 preview 1 - 3
+        $release = Find-PowerShellRelease -Version '6.1.0-preview.3' -Token $Token
+        $release.PreRelease | Should -BeTrue
+        $release = Find-PowerShellRelease -Version '6.1.0-preview.2' -Token $Token
+        $release.PreRelease | Should -BeTrue
+        $release = Find-PowerShellRelease -Version '6.1.0-preview.1' -Token $Token
+        $release.PreRelease | Should -BeTrue
+        # before 6.0
+        $release = Find-PowerShellRelease -Version '6.0.0-rc.2' -Token $Token
+        $release.PreRelease | Should -BeTrue
+    }
+
     It "Should get the range releases information(specify MinimumVersion, MaximumVersion)" {
-        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.0.0' -MaximumVersion '6.0.1' -Token $Token
-        $release.Count | Should -Be 2
-        $release = Find-PowerShellRelease -MinimumVersion '6.0.0' -MaximumVersion '6.0.1' -Token $Token
-        $release.Count | Should -Be 2
+        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.0.0' -MaximumVersion '6.1.0' -Token $Token
+        $release.Count | Should -Be 12
+        $release = Find-PowerShellRelease -MinimumVersion '6.0.0' -MaximumVersion '6.1.0' -Token $Token
+        $release.Count | Should -Be 7
+    }
+
+    It "Should be result values sorted by default" {
+        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -Token $Token
+        $release.Count | Should -BeGreaterThan 5
+        $release[0].Version | Should -Be '6.2.0'
+        $release[1].Version | Should -Be '6.2.0-rc.1'
+        $release[2].Version | Should -Be '6.2.0-preview.4'
+        $release[3].Version | Should -Be '6.2.0-preview.3'
+        $release[4].Version | Should -Be '6.2.0-preview.2'
+    }
+
+    It "Should -First Parameter returns correct results" {
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 0 -Token $Token
+        $release.Count | Should -Be 0
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 1 -Token $Token
+        $release.Count | Should -Be 1
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 5 -Token $Token
+        $release.Count | Should -Be 5
+    }
+
+    It "Should -First Parameter returns correct results with -AsStream parameter." {
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 0 -AsStream -Token $Token
+        $release.Count | Should -Be 0
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 1 -AsStream -Token $Token
+        $release.Count | Should -Be 1
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 5 -AsStream -Token $Token
+        $release.Count | Should -Be 5
     }
 
     It "Should get proper properties" {

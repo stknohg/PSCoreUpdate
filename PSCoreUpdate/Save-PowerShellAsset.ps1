@@ -7,6 +7,8 @@ function Save-PowerShellAsset {
     param (
         [Parameter(ParameterSetName = 'Default')]
         [Switch]$Latest,
+        [Parameter(ParameterSetName = 'Default')]
+        [ReleaseTypes]$Release = [ReleaseTypes]::Stable,
         [Parameter(ParameterSetName = 'Version')]
         [SemVer]$Version,
         [Parameter(ParameterSetName = 'Default', Mandatory = $true)]
@@ -31,29 +33,29 @@ function Save-PowerShellAsset {
         }
     }
 
-    # find release
+    # find PowerShell release
     $specifiedToken = $Token
     if ([string]::IsNullOrEmpty($specifiedToken)) {
         $specifiedToken = GetPowerShellGitHubApiTokenImpl
     }
-    $release = $null
+    $psReleaseInfo = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $release = Find-PowerShellRelease -Version $Version -IncludePreRelease -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Version $Version -Token $specifiedToken
         }
         Default {
-            $release = Find-PowerShellRelease -Latest -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $specifiedToken
         }
     }
-    if ($null -eq $release) {
+    if (-not $psReleaseInfo) {
         Write-Warning $Messages.Save_PowerShellAsset_003
         return
     }
-    WriteInfo ($Messages.Save_PowerShellAsset_004 -f $release.Version)
+    WriteInfo ($Messages.Save_PowerShellAsset_004 -f $psReleaseInfo.Version)
 
     # download
     foreach ($at in $AssetType) {
-        $downloadUrls = ($release.Assets | Where-Object { $_.Architecture -eq $at }).DownloadUrl.OriginalString
+        $downloadUrls = ($psReleaseInfo.Assets | Where-Object { $_.Architecture -eq $at }).DownloadUrl.OriginalString
         if (@($downloadUrls).Length -eq 0) {
             Write-Error $Messages.Save_PowerShellAsset_005
             return

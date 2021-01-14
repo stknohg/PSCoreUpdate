@@ -60,10 +60,16 @@ PS C:\> Update-PowerShellRelease -Latest -Silent
 * This cmdlet supports only Windows and macOS.  
   You can use a package management tool like yum, apt etc. on Linux.
 
-If you want to install the preview release, you can use `-IncludePreRelease` parameter.
+If you want to install the preview release, you can use `-Release Preview` parameter.
 
 ```powershell
-PS C:\> Update-PowerShellRelease -Latest -IncludePreRelease
+PS C:\> Update-PowerShellRelease -Latest -Release Preview
+```
+
+if you use LTS version PowerShell, you can can use `-Release LTS` parameter.
+
+```powershell
+PS C:\> Update-PowerShellRelease -Latest -Release LTS
 ```
 
 ### Find-PowerShellRelease
@@ -71,18 +77,20 @@ PS C:\> Update-PowerShellRelease -Latest -IncludePreRelease
 Find PowerShell Core release information from GitHub.
 
 ```powershell
-PS C:\> Find-PowerShellRelease
+PS C:\> Find-PowerShellRelease -First 10
 
 Version Name                              Published             PreRelease
 ------- ----                              ---------             ----------
 7.1.0   v7.1.0 Release of PowerShell      11/11/2020 4:23:08 PM False
 7.0.3   v7.0.3 Release of PowerShell      7/16/2020 6:23:52 PM  False
-6.2.7   v6.2.7 Release of PowerShell      7/16/2020 6:19:53 PM  False
 7.0.2   v7.0.2 Release of Powershell      6/11/2020 9:02:14 PM  False
-6.2.6   v6.2.6 Release of PowerShell      6/11/2020 9:01:33 PM  False
 7.0.1   v7.0.1 Release of PowerShell      5/14/2020 10:52:22 PM False
-6.2.5   v6.2.5 Release of PowerShell      5/14/2020 10:29:44 PM False
 7.0.0   v7.0.0 Release of PowerShell      3/4/2020 5:00:08 PM   False
+6.2.7   v6.2.7 Release of PowerShell      7/16/2020 6:19:53 PM  False
+6.2.6   v6.2.6 Release of PowerShell      6/11/2020 9:01:33 PM  False
+6.2.5   v6.2.5 Release of PowerShell      5/14/2020 10:29:44 PM False
+6.2.4   v6.2.4 Release of PowerShell      1/27/2020 10:19:26 PM False
+6.2.3   v6.2.3 Release of PowerShell Core 9/12/2019 9:22:38 PM  False
 ```
 
 ### Save-PowerShellAsset
@@ -102,8 +110,11 @@ The types of assets are as follows.
 |PKG_OSX|[PowerShell version]-osx-x64.pkg|
 |RPM_RHEL7|[PowerShell version]-rhel.7.x86_64.rpm|
 |DEB_DEBIAN9|[PowerShell version]-debian.9_amd64.deb|
+|DEB_DEBIAN10|[PowerShell version]-debian.10_amd64.deb|
+|DEB_DEBIAN11|[PowerShell version]-debian.11_amd64.deb|
 |DEB_UBUNTU16|[PowerShell version]-ubuntu.16.nn_amd64.deb|
-|DEB_UBUNTU18|[PowerShell version]-ubuntu.17.nn_amd64.deb|
+|DEB_UBUNTU18|[PowerShell version]-ubuntu.18.nn_amd64.deb|
+|DEB_UBUNTU20|[PowerShell version]-ubuntu.20.nn_amd64.deb|
 |TAR_LINUXARM32|[PowerShell version]-linux-arm32.tar.gz|
 |TAR_LINUXARM64|[PowerShell version]-linux-arm64.tar.gz|
 |TAR_LINUXALPINE64|[PowerShell version]-linux-alpine-x64.tar.gz|

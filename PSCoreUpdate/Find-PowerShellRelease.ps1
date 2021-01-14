@@ -11,136 +11,230 @@ function Find-PowerShellRelease {
         [SemVer]$MaximumVersion,
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [SemVer]$Version,
-        [Parameter(ParameterSetName = 'Latest')]
+        [Parameter(ParameterSetName = 'VersionTag', Mandatory = $true)]
+        [string]$VersionTag,
+        [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
         [Switch]$Latest,
-        [Parameter(ParameterSetName = 'Default')]
-        [Parameter(ParameterSetName = 'Version')]
         [Parameter(ParameterSetName = 'Latest')]
+        [ReleaseTypes]$Release = [ReleaseTypes]::Stable,
+        [Parameter(ParameterSetName = 'Default')]
         [Switch]$IncludePreRelease = $false,
         [Parameter(ParameterSetName = 'Default')]
+        [int]$First = [int]::MaxValue,
+        [Parameter(ParameterSetName = 'Default')]
+        [Switch]$AsStream,
+        [Parameter(ParameterSetName = 'Default')]
+        [int]$MaximumFollowRelLink = [int]::MaxValue,
+        [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
+        [Parameter(ParameterSetName = 'VersionTag')]
         [Parameter(ParameterSetName = 'Latest')]
         [string]$Token
     )
-    
-    $uri = ''
-    switch ($PSCmdlet.ParameterSetName) {
-        'Latest' {
-            $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
-            if ($IncludePreRelease) {
-                $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
+    begin {
+        # validate parameters
+        $_AbortProcess = $false
+        switch ($PSCmdlet.ParameterSetName) {
+            'VersionTag' {
+                if ( -not (GetVersionFromTag -VersionTag $VersionTag) ) {
+                    Write-Error ($Messages.Find_PowerShellRelease_002 -f $VersionTag)
+                    $_AbortProcess = $true
+                    return
+                }
             }
         }
-        Default {
-            $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases'
+        if ($First -le 0) {
+            $_AbortProcess = $true
+            return
+        }
+        # set api token
+        $specifiedToken = $Token
+        if ([string]::IsNullOrEmpty($specifiedToken)) {
+            $specifiedToken = GetPowerShellGitHubApiTokenImpl
         }
     }
-    $specifiedToken = $Token
-    if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellGitHubApiTokenImpl
-    }
-    if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink
-    } else {
-        $releaseSets = Invoke-RestMethod -Uri $uri -FollowRelLink -Headers @{Authorization = "token $specifiedToken"}
-    }
-    if (@($releaseSets).Length -eq 0) {
-        Write-Warning $Messages.Find_PowerShellRelease_001
-        return
-    }
-
-    $outputObjects = @()
-    if ($releaseSets -is [Object[]]) {
-        # when $releaseSets contains some links.
-        foreach ($releases in $releaseSets) {
-            $outputObjects += GetPowerShellCoreRelease -Releases $releases -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
+    process {
+        if ($_AbortProcess) {
+            return
         }
-    } elseif ($releaseSets -is [PSCustomObject]) {
-        # when $releaseSets has no link.
-        $outputObjects += GetPowerShellCoreRelease -Releases $releaseSets -Version $Version -MinimumVersion $MinimumVersion -MaximumVersion $MaximumVersion
-    }
 
-    # output
-    if ($Latest) {
-        $outputObjects | Sort-Object -Top 1 -Property Version -Descending
-    } else {
-        foreach ($o in $outputObjects) {
-            Write-Output $o
+        $ghReseponses = switch ($PSCmdlet.ParameterSetName) {
+            'Latest' {
+                $specifiedVersionTag = (Find-PowerShellBuildStatus -Release $Release).ReleaseTag
+                Write-Verbose "current -Latest version tag is $($specifiedVersionTag)"
+                GetGitHubResponseByTag -VersionTagName $specifiedVersionTag -Token $specifiedToken
+            }
+            'VersionTag' {
+                GetGitHubResponseByTag -VersionTagName $VersionTag -Token $specifiedToken
+            }
+            'Version' {
+                $specifiedVersionTag = GetTagNameFromVersion -Version $Version
+                Write-Verbose "current -Version version tag is $($specifiedVersionTag)"
+                GetGitHubResponseByTag -VersionTagName $specifiedVersionTag -Token $specifiedToken
+            }
+            Default {
+                GetGitHubResponseByRange -FromVer $MinimumVersion -ToVer $MaximumVersion -Token $specifiedToken -MaximumFollowRelLink $MaximumFollowRelLink
+            }
+        }
+        if (-not $ghReseponses) {
+            Write-Warning $Messages.Find_PowerShellRelease_001
+            return
+        }
+
+        # output object
+        $streamedCount = 0
+        $objectsForOutput = [System.Collections.ArrayList]::new()
+        foreach ($r in $ghReseponses) {
+            $obj = ConvertResponseItemToObject -ResponseItem $r -SpecifiedVersion $Version
+            # excude pre release version by default
+            if ($PSCmdlet.ParameterSetName -eq 'Default') {
+                if (-not $IncludePreRelease -and $obj.PreRelease) {
+                    Write-Verbose "-IncludePreRelease filter excludes version $($obj.Version)"
+                    continue
+                }
+                # stream output (non sorted)
+                if ($AsStream.IsPresent) {
+                    if ($streamedCount -lt $First) {
+                        Write-Output $obj
+                    }
+                    $streamedCount += 1
+                    continue
+                }
+            }
+            [void]$objectsForOutput.Add($obj)
+        }
+    }
+    end {
+        switch ($objectsForOutput.Count) {
+            0 {
+                # do nothing
+            }
+            1 {
+                $objectsForOutput[0]
+            }
+            Default {
+                $objectsForOutput | Sort-Object -Property Version -Descending | Select-Object -First $First
+            }
         }
     }
 }
 
-function GetPowerShellCoreRelease ([PSCustomObject]$Releases, [SemVer]$Version, [SemVer]$MinimumVersion, [SemVer]$MaximumVersion) {
-    foreach ($release in $Releases) {
-        # check version
-        $currentVer = $null
-        try {
-            if ($release.tag_name -match "^v(?<Major>\d+)\.(?<Minor>\d+)\.(?<Patch>\d+)($|-(?<Label>.+$))") {
-                $currentVer = [SemVer]::new($Matches.Major, $Matches.Minor, $Matches.Patch, $Matches.Label)
-            } else {
-                Write-Warning ($Messages.Find_PowerShellRelease_002 -f $release.tag_name)
+function GetTagNameFromVersion ([semver]$Version) {
+    return ('v{0}' -f $Version)
+} 
+
+function GetVersionFromTag ([string]$VersionTag) {
+    try {
+        if ($VersionTag -match "^v(?<Major>\d+)\.(?<Minor>\d+)\.(?<Patch>\d+)($|-(?<Label>.+$))") {
+            return [SemVer]::new($Matches.Major, $Matches.Minor, $Matches.Patch, $Matches.Label)
+        }
+        return $null
+    } catch {
+        return $null
+    }
+}
+
+function SetHttpHeaders ([string]$Token) {
+    if ([string]::IsNullOrEmpty($Token)) {
+        return @{Accept = 'application/vnd.github.v3+json'}
+    }
+    return @{Accept = 'application/vnd.github.v3+json'; Authorization = "token $Token"}
+}
+
+function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {
+    $uri = if ($VersionTagName -eq 'latest') {
+        # treat 'latest' as special
+        'https://api.github.com/repos/PowerShell/PowerShell/releases/latest'
+    } else {
+        ('https://api.github.com/repos/PowerShell/PowerShell/releases/tags/{0}' -f $VersionTagName)
+    }
+    try {
+        return (Invoke-RestMethod -Uri $uri -Headers (SetHttpHeaders -Token $Token))
+    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+        Write-Verbose ('GetGitHubResponseByTag request error : {0}' -f $_)
+        return $null
+    } catch {
+        Write-Error $_
+        return $null
+    }
+}
+
+function GetGitHubResponseByRange ([semver]$FromVer, [semver]$ToVer, [string]$Token, [int]$MaximumFollowRelLink) {
+    # per_page=100 is max value...
+    $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100'
+    $resPages = @()
+    try {
+        $resPages += (Invoke-RestMethod -Uri $uri -MaximumFollowRelLink $MaximumFollowRelLink -FollowRelLink -Headers (SetHttpHeaders -Token $Token))
+    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+        Write-Verbose ('GetGitHubResponseByRange request error : {0}' -f $_)
+        return $null
+    } catch {
+        Write-Error $_
+        return $null
+    }
+    foreach ($page in $resPages) {
+        foreach ($res in @($page)) {
+            # filter verssion
+            $currentVer = GetVersionFromTag -VersionTag ($res.tag_name)
+            if (-not $currentVer) {
                 continue
             }
-        } catch {
-            continue
-        }
-
-        # is prerelease
-        $isPreRelease = $release.prerelease -or (-not [string]::IsNullOrEmpty($currentVer.PreReleaseLabel)) -or $currentVer.Major -lt 6
-
-        # filter required version
-        $isOutput = $true
-        switch ($PSCmdlet.ParameterSetName) {
-            'Version' {
-                if ($currentVer -ne $Version) {
-                    $isOutput = $false
-                }
+            if ($FromVer -and ($currentVer -lt $FromVer)) {
+                Write-Verbose "FromVer filter exculedes version $currentVer"
+                continue          
             }
-            'Default' {
-                if ($null -ne $MinimumVersion) {
-                    if ($currentVer -lt $MinimumVersion) {
-                        $isOutput = $false
-                    }
-                }
-                if ($null -ne $MaximumVersion) {
-                    if ($currentVer -gt $MaximumVersion) {
-                        $isOutput = $false
-                    }
-                }
+            if ($ToVer -and ($currentVer -gt $ToVer)) {
+                Write-Verbose "ToVer filter exculedes version $currentVer"
+                continue
             }
+            Write-Output $res
         }
-        if (-not $IncludePreRelease) {
-            if ($isPreRelease) {
-                $isOutput = $false
-            }
-        }
-        if (-not $isOutput) {
-            continue
-        }
+   }
+}
 
-        # convert to class
-        $obj = [PowerShellCoreRelease]::new()
-        $obj.ReleaseId = $release.Id
-        $obj.Version = $currentVer
-        $obj.Tag = $release.tag_name
-        $obj.Name = $release.name
-        $obj.Url = $release.url
-        $obj.HtmlUrl = $release.html_url
-        $obj.PreRelease = $isPreRelease
-        $obj.Published = $release.published_at
-        $obj.Description = $release.body
-        # set assets
-        $obj.Assets = [System.Collections.Generic.List[PowerShellCoreAsset]]::new()
-        foreach ($asset in $release.assets) {
-            $item = [PowerShellCoreAsset]::new()
-            $item.Name = $asset.name
-            $item.Url = $asset.url
-            $item.Label = $asset.label
-            $item.Created = $asset.created_at
-            $item.Size = $asset.size
-            $item.DownloadUrl = $asset.browser_download_url
-            $obj.Assets.Add($item)
-        }
-        Write-Output $obj
+function ConvertResponseItemToObject ([PSCustomObject]$ResponseItem, [semver]$SpecifiedVersion) {
+    if (-not $ResponseItem) {
+        return $null
     }
+    # convert to class
+    $obj = [PowerShellCoreRelease]::new()
+    $obj.ReleaseId = $ResponseItem.Id
+    $obj.Tag = $ResponseItem.tag_name
+    $obj.Version = if ($specifiedVersion) {
+        $specifiedVersion
+    } else {
+        # detect version from tag
+        GetVersionFromTag -VersionTag ($ResponseItem.tag_name)
+    }
+    $obj.Name = $ResponseItem.name
+    $obj.Url = $ResponseItem.url
+    $obj.HtmlUrl = $ResponseItem.html_url
+    $obj.PreRelease = $ResponseItem.prerelease
+    # treat some special versions as pre-release (before GitHub pre-release management versions)
+    switch ($obj.Version) {
+        { $_ -in ('6.1.0-preview.1', '6.1.0-preview.2', '6.1.0-preview.3') } { 
+            $obj.PreRelease = $true
+        }
+        { $_ -lt '6.0.0' } {
+            $obj.PreRelease = $true
+        }
+        Default {
+            # do nothing
+        }
+    }
+    $obj.Published = $ResponseItem.published_at
+    $obj.Description = $ResponseItem.body
+    # set assets
+    $obj.Assets = [System.Collections.Generic.List[PowerShellCoreAsset]]::new()
+    foreach ($asset in $ResponseItem.assets) {
+        $item = [PowerShellCoreAsset]::new()
+        $item.Name = $asset.name
+        $item.Url = $asset.url
+        $item.Label = $asset.label
+        $item.Created = $asset.created_at
+        $item.Size = $asset.size
+        $item.DownloadUrl = $asset.browser_download_url
+        $obj.Assets.Add($item)
+    }
+    return $obj
 }

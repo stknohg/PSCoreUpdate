@@ -34,42 +34,28 @@ function Update-PowerShellRelease {
     }
 
     # find update version
-    $newVersion = $null
     $specifiedToken = $Token
     if ([string]::IsNullOrEmpty($specifiedToken)) {
         $specifiedToken = GetPowerShellGitHubApiTokenImpl
     }
+    $psReleaseInfo = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $newVersion = Find-PowerShellRelease -Version $Version -Token $specifiedToken -IncludePreRelease
+            $psReleaseInfo = Find-PowerShellRelease -Version $Version -Token $specifiedToken
         }
         Default {
-            switch ($Release) {
-                'Preview' {
-                    $newVersion = Find-PowerShellRelease -Token $specifiedToken `
-                                    -Version ((Find-PowerShellBuildStatus -Release Preview).Version) `
-                                    -IncludePreRelease
-                }
-                'LTS' {
-                    $newVersion = Find-PowerShellRelease -Token $specifiedToken `
-                                    -Version ((Find-PowerShellBuildStatus -Release LTS).Version)
-                }
-                Default {
-                    $newVersion = Find-PowerShellRelease -Token $specifiedToken `
-                                    -Latest 
-                }
-            }
+            $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $specifiedToken
         }
     }
-    if ($null -eq $newVersion) {
+    if ($null -eq $psReleaseInfo) {
         Write-Warning $Messages.Update_PowerShellRelease_002
         return
     }
-    if ($newVersion.Version -lt $PSVersionTable.PSVersion -and (-not $Force)) {
+    if ($psReleaseInfo.Version -lt $PSVersionTable.PSVersion -and (-not $Force)) {
         Write-Warning $Messages.Update_PowerShellRelease_003
         return
     }
-    if ($newVersion.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
+    if ($psReleaseInfo.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
         switch ($Release) {
             'Preview' {
                 Write-Warning ($Messages.Update_PowerShellRelease_004 -f $Messages.Update_PowerShellRelease_012)
@@ -83,14 +69,14 @@ function Update-PowerShellRelease {
         }
         return
     }
-    WriteInfo ($Messages.Update_PowerShellRelease_005 -f $newVersion.Version)
+    WriteInfo ($Messages.Update_PowerShellRelease_005 -f $psReleaseInfo.Version)
 
     # Download asset
     $downloadURL = @()
     if ($IsWindows) {
-        $downloadURL = GetMSIDownloadUrl -Release $newVersion
+        $downloadURL = GetMSIDownloadUrl -Release $psReleaseInfo
     } elseif ($IsMacOS) {
-        $downloadURL = GetPKGDownloadUrl -Release $newVersion
+        $downloadURL = GetPKGDownloadUrl -Release $psReleaseInfo
     } else {
         # TODO : update
         Write-Warning $Messages.Update_PowerShellRelease_001
@@ -112,13 +98,13 @@ function Update-PowerShellRelease {
     }
 
     # Install
-    WriteInfo ($Messages.Update_PowerShellRelease_009 -f $newVersion.Version)
+    WriteInfo ($Messages.Update_PowerShellRelease_009 -f $psReleaseInfo.Version)
     $shouldProcess = $PSCmdlet.ShouldProcess('Install PowerShell')
     if (-not $shouldProcess) {
         Write-Warning $Messages.Update_PowerShellRelease_010
     }
     if ($IsWindows) {
-        InstallMSI -NewVersion $newVersion.Version -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
+        InstallMSI -NewVersion $psReleaseInfo.Version -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
     } elseif ($IsMacOS) {
         InstallPKG -PkgFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
     } else {
