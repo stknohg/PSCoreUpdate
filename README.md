@@ -2,13 +2,13 @@
 
 ![build](https://github.com/stknohg/PSCoreUpdate/workflows/build/badge.svg)
 
-PowerShell Core update tool.
+New cross-platform PowerShell update tool.
 
 ## Motivation
 
-PSCoreUpdate supports automation update of PowerShell Core.  
+PSCoreUpdate supports automation update of new cross-platform PowerShell (pwsh).  
 
-Currently, PowerShell Team is planning on supporting security updates of PowerShell Core through Microsoft Update on Windows ([#6118](https://github.com/PowerShell/PowerShell/issues/6118)), but it will take some time for realization.  
+Currently, PowerShell Team is planning on supporting security updates of PowerShell through Microsoft Update on Windows ([#6118](https://github.com/PowerShell/PowerShell/issues/6118)), but it will take some time for realization.  
 [Homebrew Cask](https://caskroom.github.io/) is now available on macOS, but the installation of Homebrew is a bit heavy.  
 
 This module is a little tool to solve such inconvenience.
@@ -23,7 +23,7 @@ Install-Module PSCoreUpdate -Scope CurrentUser
 
 ### First-time installation scripts
 
-This module is for updating PowerShell Core.  
+This module is for updating PowerShell.  
 So, the first-time installation must be performed manually.
 
 We prepared the following page to facilitate the first-time installation.
@@ -41,9 +41,21 @@ PS C:\> Test-LatestVersion
 No updates. PowerShell 7.1.0 is the latest version.
 ```
 
+If you use preview release PowerShell, you can use `-Release Preview` parameter.
+
+```powershell
+PS C:\> Test-LatestVersion -Release Preview
+```
+
+if you use LTS version PowerShell, you can can use `-Release LTS` parameter.
+
+```powershell
+PS C:\> Test-LatestVersion -Release LTS
+```
+
 ### Update-PowerShellRelease
 
-Update PowerShell Core if the newer version found.   
+Update PowerShell if the newer version found.   
 
 ```powershell
 PS C:\> Update-PowerShellRelease -Latest
@@ -51,16 +63,7 @@ PS C:\> Update-PowerShellRelease -Latest
 
 <img src="https://user-images.githubusercontent.com/720127/38464437-dfe8b956-3b48-11e8-8c39-8f76102a9073.gif" width="800">
 
-You can do silent install with `-Silent` switch parameter.
-
-```powershell
-PS C:\> Update-PowerShellRelease -Latest -Silent
-```
-
-* This cmdlet supports only Windows and macOS.  
-  You can use a package management tool like yum, apt etc. on Linux.
-
-If you want to install the preview release, you can use `-Release Preview` parameter.
+If you want to update preview release, you can use `-Release Preview` parameter.
 
 ```powershell
 PS C:\> Update-PowerShellRelease -Latest -Release Preview
@@ -72,9 +75,18 @@ if you use LTS version PowerShell, you can can use `-Release LTS` parameter.
 PS C:\> Update-PowerShellRelease -Latest -Release LTS
 ```
 
+You can do silent install with `-Silent` switch parameter.
+
+```powershell
+PS C:\> Update-PowerShellRelease -Latest -Silent
+```
+
+* This cmdlet supports only Windows and macOS.  
+  You can use a package management tool like yum, apt etc. on Linux.
+
 ### Find-PowerShellRelease
 
-Find PowerShell Core release information from GitHub.
+Find PowerShell release information from GitHub.
 
 ```powershell
 PS C:\> Find-PowerShellRelease -First 10
@@ -95,7 +107,7 @@ Version Name                              Published             PreRelease
 
 ### Save-PowerShellAsset
 
-Download PowerShell Core release assets.
+Download PowerShell release assets.
 
 ```powershell
 PS C:\> Save-PowerShellAsset -Latest -AssetType MSI_WIN32 -OutDirectory .\
