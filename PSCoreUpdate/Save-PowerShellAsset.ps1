@@ -59,9 +59,10 @@ function Save-PowerShellAsset {
         foreach ($url in $downloadUrls) {
             $outFile = Join-Path $OutDirectory $url.split("/")[-1]
             if ($PSCmdlet.ShouldProcess('Download file')) {
-                DownloadFile -Uri $url -OutFile $outFile -Token $specifiedToken
+                DownloadFile -Uri $url -OutFile $outFile -Token $Token
             } else {
                 Write-Warning $Messages.Save_PowerShellAsset_006
+                WriteInfo ("(Skip) Download {0}`r`n       To {1}..." -f $url, $outFile)
             }
         }
     }
