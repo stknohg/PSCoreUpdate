@@ -19,7 +19,7 @@
     AliasesToExport      = @('Download-PowerShellAsset')
     PrivateData          = @{
         PSData = @{
-            Prerelease = 'beta1'
+            Prerelease = 'beta2'
             LicenseUri = 'https://github.com/stknohg/PSCoreUpdate/blob/master/LICENSE'
             ProjectUri = 'https://github.com/stknohg/PSCoreUpdate'
         }
