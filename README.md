@@ -105,6 +105,18 @@ Version Name                              Published             PreRelease
 6.2.3   v6.2.3 Release of PowerShell Core 9/12/2019 9:22:38 PM  False
 ```
 
+### Find-PowerShellBuildStatus
+
+Find PowerShell build status.
+
+```powershell
+PS C:\> Find-PowerShellBuildStatus
+
+Version Release ReleaseDate
+------- ------- -----------
+7.1.0   Stable  11/11/2020 4:03:21 PM
+```
+
 ### Save-PowerShellAsset
 
 Download PowerShell release assets.
