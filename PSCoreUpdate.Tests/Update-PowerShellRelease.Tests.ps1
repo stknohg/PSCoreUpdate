@@ -91,7 +91,6 @@ InModuleScope 'PSCoreUpdate' {
                     ShouldProcess  = $false # this parameter must be false for testing
                 }
             }
-            (InstallMSI @params *>&1)[-1] | Should -Be '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" Custom1=ABC Custom2=123'
             $actual = (InstallMSI @params *>&1)[-1]
             # MSI optional parameter is not orderd...
             $actual | Should -BeLike '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi"*Custom1=ABC*'
