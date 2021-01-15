@@ -47,11 +47,6 @@ function Find-PowerShellRelease {
             $_AbortProcess = $true
             return
         }
-        # set api token
-        $specifiedToken = $Token
-        if ([string]::IsNullOrEmpty($specifiedToken)) {
-            $specifiedToken = GetPowerShellGitHubApiTokenImpl
-        }
     }
     process {
         if ($_AbortProcess) {
@@ -62,18 +57,18 @@ function Find-PowerShellRelease {
             'Latest' {
                 $specifiedVersionTag = (Find-PowerShellBuildStatus -Release $Release).ReleaseTag
                 Write-Verbose "current -Latest version tag is $($specifiedVersionTag)"
-                GetGitHubResponseByTag -VersionTagName $specifiedVersionTag -Token $specifiedToken
+                GetGitHubResponseByTag -VersionTagName $specifiedVersionTag -Token $Token
             }
             'VersionTag' {
-                GetGitHubResponseByTag -VersionTagName $VersionTag -Token $specifiedToken
+                GetGitHubResponseByTag -VersionTagName $VersionTag -Token $Token
             }
             'Version' {
                 $specifiedVersionTag = GetTagNameFromVersion -Version $Version
                 Write-Verbose "current -Version version tag is $($specifiedVersionTag)"
-                GetGitHubResponseByTag -VersionTagName $specifiedVersionTag -Token $specifiedToken
+                GetGitHubResponseByTag -VersionTagName $specifiedVersionTag -Token $Token
             }
             Default {
-                GetGitHubResponseByRange -FromVer $MinimumVersion -ToVer $MaximumVersion -Token $specifiedToken -MaximumFollowRelLink $MaximumFollowRelLink
+                GetGitHubResponseByRange -FromVer $MinimumVersion -ToVer $MaximumVersion -Token $Token -MaximumFollowRelLink $MaximumFollowRelLink
             }
         }
         if (-not $ghReseponses) {

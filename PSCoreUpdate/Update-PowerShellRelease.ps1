@@ -34,17 +34,13 @@ function Update-PowerShellRelease {
     }
 
     # Find update version
-    $specifiedToken = $Token
-    if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellGitHubApiTokenImpl
-    }
     $psReleaseInfo = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $psReleaseInfo = Find-PowerShellRelease -Version $Version -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Version $Version -Token $Token
         }
         Default {
-            $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $Token
         }
     }
     if (-not $psReleaseInfo) {
@@ -78,7 +74,7 @@ function Update-PowerShellRelease {
     }
     $localInstallerPath = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $installerAssetUrls.split("/")[-1]
     if ($PSCmdlet.ShouldProcess('Download PowerShell installer asset')) {
-        DownloadFile -Uri $installerAssetUrls -OutFile $localInstallerPath -Token $specifiedToken
+        DownloadFile -Uri $installerAssetUrls -OutFile $localInstallerPath -Token $Token
     } else {
         Write-Warning $Messages.Update_PowerShellRelease_008
         WriteInfo ("(Skip) Download {0}`r`n       To {1}..." -f $installerAssetUrls, $localInstallerPath)

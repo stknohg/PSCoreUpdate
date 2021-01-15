@@ -34,17 +34,13 @@ function Save-PowerShellAsset {
     }
 
     # find PowerShell release
-    $specifiedToken = $Token
-    if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellGitHubApiTokenImpl
-    }
     $psReleaseInfo = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $psReleaseInfo = Find-PowerShellRelease -Version $Version -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Version $Version -Token $Token
         }
         Default {
-            $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $Token
         }
     }
     if (-not $psReleaseInfo) {
