@@ -206,7 +206,7 @@ function InstallMSI ([SemVer]$NewVersion, [InstallCommonParameters]$CommonParame
     # Note : These options are valid only for silent installation.
     if ($null -eq $CommonParameters.InstallOptions) {
         if ($NewVersion -ge '6.1.0-preview.2') {
-            $CommonParameters.InstallOptions = [ordered]@{
+            $CommonParameters.InstallOptions = @{
                 ADD_PATH          = 1;
                 REGISTER_MANIFEST = 1;
             }

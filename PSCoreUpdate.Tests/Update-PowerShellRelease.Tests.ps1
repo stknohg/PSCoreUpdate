@@ -59,7 +59,10 @@ InModuleScope 'PSCoreUpdate' {
                     ShouldProcess  = $false # this parameter must be false for testing
                 }
             }
-            (InstallMSI @params *>&1)[-1] | Should -Be '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" ADD_PATH=1 REGISTER_MANIFEST=1'
+            $actual = (InstallMSI @params *>&1)[-1]
+            # MSI default optional parameter is not orderd...
+            $actual | Should -BeLike '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi"*ADD_PATH=1*'
+            $actual | Should -BeLike '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi"*REGISTER_MANIFEST=1*'
         }
 
         It "InstallMSI should set proper parameters (silent)" {
@@ -72,7 +75,10 @@ InModuleScope 'PSCoreUpdate' {
                     ShouldProcess  = $false # this parameter must be false for testing
                 }
             }
-            (InstallMSI @params *>&1)[-1] | Should -Be '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" /passive ADD_PATH=1 REGISTER_MANIFEST=1'
+            $actual = (InstallMSI @params *>&1)[-1]
+            # MSI default optional parameter is not orderd...
+            $actual | Should -BeLike '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" /passive*ADD_PATH=1*'
+            $actual | Should -BeLike '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" /passive*REGISTER_MANIFEST=1*'
         }
 
         It "InstallMSI should set proper parameters with custom options (interactive)" {
