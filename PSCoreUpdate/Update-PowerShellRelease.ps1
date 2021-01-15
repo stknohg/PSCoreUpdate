@@ -27,13 +27,13 @@ function Update-PowerShellRelease {
         [Parameter(ParameterSetName = 'Version')]
         [Switch]$Force
     )
-    # currently, supports windows only
+    # This function supports Windows, macOS only
     if (-not ($IsWindows -or $IsMacOS)) {
         Write-Warning $Messages.Update_PowerShellRelease_001
         return
     }
 
-    # find update version
+    # Find update version
     $specifiedToken = $Token
     if ([string]::IsNullOrEmpty($specifiedToken)) {
         $specifiedToken = GetPowerShellGitHubApiTokenImpl
@@ -47,7 +47,7 @@ function Update-PowerShellRelease {
             $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $specifiedToken
         }
     }
-    if ($null -eq $psReleaseInfo) {
+    if (-not $psReleaseInfo) {
         Write-Warning $Messages.Update_PowerShellRelease_002
         return
     }
@@ -56,82 +56,89 @@ function Update-PowerShellRelease {
         return
     }
     if ($psReleaseInfo.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
-        switch ($Release) {
-            'Preview' {
-                Write-Warning ($Messages.Update_PowerShellRelease_004 -f $Messages.Update_PowerShellRelease_012)
-            }
-            'LTS' {
-                Write-Warning ($Messages.Update_PowerShellRelease_004 -f $Messages.Update_PowerShellRelease_013)
-            }
-            Default {
-                Write-Warning ($Messages.Update_PowerShellRelease_004 -f $Messages.Update_PowerShellRelease_014)
-            }
+        $releaseName = switch ($Release) {
+            'Preview' { $Messages.Update_PowerShellRelease_012 }
+            'LTS'     { $Messages.Update_PowerShellRelease_013 }
+            Default   {$Messages.Update_PowerShellRelease_014 }
         }
+        Write-Warning ($Messages.Update_PowerShellRelease_004 -f $releaseName)
         return
     }
     WriteInfo ($Messages.Update_PowerShellRelease_005 -f $psReleaseInfo.Version)
 
-    # Download asset
-    $downloadURL = @()
-    if ($IsWindows) {
-        $downloadURL = GetMSIDownloadUrl -Release $psReleaseInfo
-    } elseif ($IsMacOS) {
-        $downloadURL = GetPKGDownloadUrl -Release $psReleaseInfo
-    } else {
-        # TODO : update
-        Write-Warning $Messages.Update_PowerShellRelease_001
-        return
-    }
-    if (@($downloadURL).Length -eq 0) {
+    # Download installer asset
+    $installerAssetUrls = GetInstallerAssetUrls -Release $psReleaseInfo
+    if (@($installerAssetUrls).Count -eq 0) {
         Write-Error $Messages.Update_PowerShellRelease_006
         return
     }
-    if (@($downloadURL).Length -gt 1) {
+    if (@($installerAssetUrls).Count -gt 1) {
         Write-Warning $Messages.Update_PowerShellRelease_007
         return
     }
-    $fileName = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $downloadURL.split("/")[-1]
-    if ($PSCmdlet.ShouldProcess('Download asset')) {
-        DownloadFile -Uri $downloadURL -OutFile $fileName -Token $specifiedToken
+    $localInstallerPath = Join-Path -Path ([IO.Path]::GetTempPath()) -ChildPath $installerAssetUrls.split("/")[-1]
+    if ($PSCmdlet.ShouldProcess('Download PowerShell installer asset')) {
+        DownloadFile -Uri $installerAssetUrls -OutFile $localInstallerPath -Token $specifiedToken
     } else {
         Write-Warning $Messages.Update_PowerShellRelease_008
+        WriteInfo ("(Skip) Download {0}`r`n       To {1}..." -f $installerAssetUrls, $localInstallerPath)
     }
 
-    # Install
+    # Do install
+    $shouldInstall = $PSCmdlet.ShouldProcess('Install PowerShell')
     WriteInfo ($Messages.Update_PowerShellRelease_009 -f $psReleaseInfo.Version)
-    $shouldProcess = $PSCmdlet.ShouldProcess('Install PowerShell')
-    if (-not $shouldProcess) {
-        Write-Warning $Messages.Update_PowerShellRelease_010
+    $params = @{
+        CustomParameters = @{
+            Windows = @{
+                NewVersion = $psReleaseInfo.Version
+            }
+        }
+        CommonParameters = [InstallCommonParameters]@{
+            InstallerPath  = $localInstallerPath
+            InstallOptions = $InstallOptions
+            Silent         = $Silent
+            ShouldProcess  = $shouldInstall
+        }
+        
     }
-    if ($IsWindows) {
-        InstallMSI -NewVersion $psReleaseInfo.Version -MsiFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
-    } elseif ($IsMacOS) {
-        InstallPKG -PkgFile $fileName -Silent $Silent -InstallOptions $InstallOptions -ShouldProcess $shouldProcess
-    } else {
-        # TODO : implement
-        Write-Warning $Messages.Update_PowerShellRelease_001
-        return
-    }
+    DoInstall @params
 
     # Exit PowerShel Console
     if ((-not $NotExitConsole) -or $Silent) {
         WriteInfo $Messages.Update_PowerShellRelease_011
-        Start-Sleep -Seconds 1
-        if (-not $shouldProcess) {
+        if ($shouldInstall) {
+            Start-Sleep -Seconds 1
+            exit 
+        } else {
+            WriteInfo '(skip) exit console.'
             return 
         }
-        exit 
     }
 }
 
-function GetMSIDownloadUrl ([PowerShellCoreRelease]$Release) {
+function GetInstallerAssetUrls ([PowerShellCoreRelease]$Release) {
+    if ($IsWindows) {
+        return GetMSIAssetUrls -Release $Release
+    } 
+    if ($IsMacOS) {
+        return GetPKGAssetUrls -Release $Release
+    }
+    return
+}
+
+function GetMSIAssetUrls ([PowerShellCoreRelease]$Release) {
     if (IsCurrentProcess64bit) {
         return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN64 }).DownloadUrl.OriginalString
     }
     return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN32 }).DownloadUrl.OriginalString
 }
 
-function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
+# this function is for unit tests mainly
+function GetDarwinVersion () {
+    return [System.Environment]::OSVersion.Version.Major
+}
+
+function GetPKGAssetUrls ([PowerShellCoreRelease]$Release) {
     switch (GetDarwinVersion) {
         15 {
             # PKG_OSX1011
@@ -167,59 +174,88 @@ function GetPKGDownloadUrl ([PowerShellCoreRelease]$Release) {
     }
 }
 
-function GetDarwinVersion () {
-    return [System.Environment]::OSVersion.Version.Major
+class InstallCommonParameters {
+
+    [string]$InstallerPath
+
+    [hashtable]$InstallOptions
+
+    [bool]$Silent
+
+    [bool]$ShouldProcess
 }
 
-function InstallMSI ([SemVer]$NewVersion, [string]$MsiFile, [bool]$Silent, [hashtable]$InstallOptions, [bool]$ShouldProcess) {
-    $msiArgs = @('/i', $MsiFile)
-    if ($Silent) {
+function DoInstall ([hashtable]$CustomParameters, [InstallCommonParameters]$CommonParameters) {
+    if ($IsWindows) {
+        InstallMSI -NewVersion $CustomParameters["Windows"]["NewVersion"] -CommonParameters $CommonParameters
+        return
+    }
+    if ($IsMacOS) {
+        InstallPKG -CommonParameters $CommonParameters
+        return
+    }
+    return
+}
+
+function InstallMSI ([SemVer]$NewVersion, [InstallCommonParameters]$CommonParameters) { 
+    $msiArgs = @('/i', '"{0}"' -f $CommonParameters.InstallerPath)
+    if ($CommonParameters.Silent) {
         $msiArgs += '/passive'
     }
     # Set the default install options if not specified.
     # Note : These options are valid only for silent installation.
-    if ($null -eq $InstallOptions) {
+    if ($null -eq $CommonParameters.InstallOptions) {
         if ($NewVersion -ge '6.1.0-preview.2') {
-            $InstallOptions = @{
+            $CommonParameters.InstallOptions = [ordered]@{
                 ADD_PATH          = 1;
                 REGISTER_MANIFEST = 1;
             }
         }
     }
-    if ($null -ne $InstallOptions) {
+    if ($null -ne $CommonParameters.InstallOptions) {
         # Currently following parameters are allowed.
         #   INSTALLFOLDER = "C:\PowerShell\" : Install folder
         #   ADD_PATH = [0|1]          : Add PowerShell to Path Environment Variable
         #   REGISTER_MANIFEST = [0|1] : Register Windows Event Logging Manifest
         #   ENABLE_PSREMOTING = [0|1] : Enable PowerShell remoting
         #   ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL = [0|1] : Add 'Open here' context menus to Explorer
-        foreach ($key in $InstallOptions.Keys) {
-            $msiArgs += ('{0}={1}' -f $key, $InstallOptions[$key])
+        foreach ($key in $CommonParameters.InstallOptions.Keys) {
+            $msiArgs += ('{0}={1}' -f $key, $CommonParameters.InstallOptions[$key])
         }
     }
-    WriteInfo ('msiexec.exe {0}' -f ($msiArgs -join ' '))
-    if ($ShouldProcess) {
+    if ($CommonParameters.ShouldProcess) {
+        WriteInfo ('msiexec.exe {0}' -f ($msiArgs -join ' '))
         Start-Process -FilePath 'msiexec.exe' -ArgumentList $msiArgs
+    } else {
+        Write-Warning $Messages.Update_PowerShellRelease_010
+        WriteInfo ('(skip) msiexec.exe {0}' -f ($msiArgs -join ' '))
     }
 }
 
-function InstallPKG ([string]$PkgFile, [bool]$Silent, [hashtable]$InstallOptions, [bool]$ShouldProcess) {
+function InstallPKG ([InstallCommonParameters]$CommonParameters) { 
+    # [string]$PkgFile, [bool]$Silent, [hashtable]$InstallOptions, [bool]$ShouldProcess) {
     $targetVolume = '/'
-    if ($null -ne $InstallOptions) {
+    if ($null -ne $CommonParameters.InstallOptions) {
         # Install volume
-        if ($InstallOptions.ContainsKey('target')) {
-            $targetVolume = $InstallOptions['target']
+        if ($CommonParameters.InstallOptions.ContainsKey('target')) {
+            $targetVolume = $CommonParameters.InstallOptions['target']
         }
     }
-    if ($Silent) {
-        WriteInfo "/usr/bin/sudo /usr/sbin/installer -pkg ""$PkgFile"" -target $targetVolume"
-        if ($ShouldProcess) {
-            /usr/bin/sudo /usr/sbin/installer -pkg "$PkgFile" -target $targetVolume
+    if ($CommonParameters.Silent) {
+        if ($CommonParameters.ShouldProcess) {
+            WriteInfo "/usr/bin/sudo /usr/sbin/installer -pkg ""$($CommonParameters.InstallerPath)"" -target $targetVolume"
+            /usr/bin/sudo /usr/sbin/installer -pkg "$($CommonParameters.InstallerPath)" -target $targetVolume
+        } else {
+            Write-Warning $Messages.Update_PowerShellRelease_010
+            WriteInfo "(skip) /usr/bin/sudo /usr/sbin/installer -pkg ""$($CommonParameters.InstallerPath)"" -target $targetVolume"
         }
         return
     }
-    WriteInfo "Invoke-Item $PkgFile"
-    if ($ShouldProcess) {
-        Invoke-Item $PkgFile
+    if ($CommonParameters.ShouldProcess) {
+        WriteInfo "Invoke-Item ""$($CommonParameters.InstallerPath)"""
+        Invoke-Item "$($CommonParameters.InstallerPath)"
+    } else {
+        Write-Warning $Messages.Update_PowerShellRelease_010
+        WriteInfo "(skip) Invoke-Item ""$($CommonParameters.InstallerPath)"""
     }
 }

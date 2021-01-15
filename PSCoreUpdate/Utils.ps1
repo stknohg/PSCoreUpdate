@@ -197,8 +197,7 @@ function IsCurrentProcess64bit () {
 }
 
 function DownloadFile ([string]$Uri, [string]$OutFile, [string]$Token) {
-    WriteInfo ('Download {0}' -f $Uri)
-    WriteInfo ('  To {0} ...' -f $OutFile)
+    WriteInfo ("Download {0}`r`n  To {1} ..." -f $Uri, $OutFile)
     if ([string]::IsNullOrEmpty($Token)) {
         Invoke-WebRequest -Uri $Uri -OutFile $OutFile
     } else {

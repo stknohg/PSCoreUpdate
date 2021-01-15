@@ -16,7 +16,7 @@ InModuleScope 'PSCoreUpdate' {
             @{Pattern = '64bit'; Is64bit = $true; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x64.msi'},
             @{Pattern = '32bit'; Is64bit = $false; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x86.msi'}
         )
-        It "GetMSIDownloadUrl should get proper url (<Pattern>)" -TestCases $testCases {
+        It "GetMSIAssetUrls should get proper url (<Pattern>)" -TestCases $testCases {
             param($Pattern, $Is64bit, $DownloadUrl)
 
             Mock -CommandName IsCurrentProcess64bit -MockWith { return $Is64bit }
@@ -26,7 +26,7 @@ InModuleScope 'PSCoreUpdate' {
             $asset = [PowerShellCoreAsset]::new()
             $asset.DownloadUrl = $DownloadUrl
             $release.Assets.Add($asset)
-            GetMSIDownloadUrl -Release $release | Should -Be $DownloadUrl
+            GetMSIAssetUrls -Release $release | Should -Be $DownloadUrl
         }
 
         $testCases = @(
@@ -36,7 +36,7 @@ InModuleScope 'PSCoreUpdate' {
             @{Pattern = 'macOS High Sierra (10.13) - PKG_OSX'; DarwinVersion = 17; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx.x64.pkg'},
             @{Pattern = 'macOS High Sierra (10.13) - PKG_OSX1012'; DarwinVersion = 17; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx.10.12-x64.pkg'}
         )
-        It "GetPKGDownloadUrl should get proper url (<Pattern>)" -TestCases $testCases {
+        It "GetPKGAssetUrls should get proper url (<Pattern>)" -TestCases $testCases {
             param($Pattern, $DarwinVersion, $DownloadUrl)
 
             Mock -CommandName GetDarwinVersion -MockWith { return $DarwinVersion }
@@ -46,7 +46,82 @@ InModuleScope 'PSCoreUpdate' {
             $asset = [PowerShellCoreAsset]::new()
             $asset.DownloadUrl = $DownloadUrl
             $release.Assets.Add($asset)
-            GetPKGDownloadUrl -Release $release | Should -Be $DownloadUrl
+            GetPKGAssetUrls -Release $release | Should -Be $DownloadUrl
+        }
+
+        It "InstallMSI should set proper parameters (interactive)" {
+            $params = @{
+                NewVersion = '7.1.0'
+                CommonParameters = [InstallCommonParameters]@{
+                    InstallerPath  = "C:\Temp\PowerShell-7.1.1-win-x64.msi"
+                    InstallOptions = $null
+                    Silent         = $false
+                    ShouldProcess  = $false # this parameter must be false for testing
+                }
+            }
+            (InstallMSI @params *>&1)[-1] | Should -Be '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" ADD_PATH=1 REGISTER_MANIFEST=1'
+        }
+
+        It "InstallMSI should set proper parameters (silent)" {
+            $params = @{
+                NewVersion = '7.1.0'
+                CommonParameters = [InstallCommonParameters]@{
+                    InstallerPath  = "C:\Temp\PowerShell-7.1.1-win-x64.msi"
+                    InstallOptions = $null
+                    Silent         = $true
+                    ShouldProcess  = $false # this parameter must be false for testing
+                }
+            }
+            (InstallMSI @params *>&1)[-1] | Should -Be '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" /passive ADD_PATH=1 REGISTER_MANIFEST=1'
+        }
+
+        It "InstallMSI should set proper parameters with custom options (interactive)" {
+            $params = @{
+                NewVersion = '7.1.0'
+                CommonParameters = [InstallCommonParameters]@{
+                    InstallerPath  = "C:\Temp\PowerShell-7.1.1-win-x64.msi"
+                    InstallOptions = [ordered]@{ Custom1="ABC"; Custom2="123" }
+                    Silent         = $false
+                    ShouldProcess  = $false # this parameter must be false for testing
+                }
+            }
+            (InstallMSI @params *>&1)[-1] | Should -Be '(skip) msiexec.exe /i "C:\Temp\PowerShell-7.1.1-win-x64.msi" Custom1=ABC Custom2=123'
+        }
+
+        It "InstallPKG should set proper parameters (interactive)" {
+            $params = @{
+                CommonParameters = [InstallCommonParameters]@{
+                    InstallerPath  = "/tmp/powershell-7.1.1-osx-x64.pkg"
+                    InstallOptions = $null
+                    Silent         = $false
+                    ShouldProcess  = $false # this parameter must be false for testing
+                }
+            }
+            (InstallPKG @params *>&1)[-1] | Should -Be '(skip) Invoke-Item "/tmp/powershell-7.1.1-osx-x64.pkg"'
+        }
+
+        It "InstallPKG should set proper parameters (silent)" {
+            $params = @{
+                CommonParameters = [InstallCommonParameters]@{
+                    InstallerPath  = "/tmp/powershell-7.1.1-osx-x64.pkg"
+                    InstallOptions = $null
+                    Silent         = $true
+                    ShouldProcess  = $false # this parameter must be false for testing
+                }
+            }
+            (InstallPKG @params *>&1)[-1] | Should -Be '(skip) /usr/bin/sudo /usr/sbin/installer -pkg "/tmp/powershell-7.1.1-osx-x64.pkg" -target /'
+        }
+
+        It "InstallPKG should set proper parameters to install cutom volume (silent)" {
+            $params = @{
+                CommonParameters = [InstallCommonParameters]@{
+                    InstallerPath  = "/tmp/powershell-7.1.1-osx-x64.pkg"
+                    InstallOptions = [ordered]@{ target='/test-target/' }
+                    Silent         = $true
+                    ShouldProcess  = $false # this parameter must be false for testing
+                }
+            }
+            (InstallPKG @params *>&1)[-1] | Should -Be '(skip) /usr/bin/sudo /usr/sbin/installer -pkg "/tmp/powershell-7.1.1-osx-x64.pkg" -target /test-target/'
         }
     }
 
