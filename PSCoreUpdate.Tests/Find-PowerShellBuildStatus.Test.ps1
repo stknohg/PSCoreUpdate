@@ -41,4 +41,12 @@ Describe "Find-PowerShellBuildStatus unit tests" {
         $actual.ReleaseDate | Should -Be $expected.ReleaseDate
         $actual.ReleaseTag | Should -Be $expected.ReleaseTag
     }
+
+    It "Get all build status when -All parameter is set" {
+        $actual = Find-PowerShellBuildStatus -All
+        $actual.Count | Should -Be 3
+        $actual[0].Release | Should -Be 'Stable'
+        $actual[1].Release | Should -Be 'Preview'
+        $actual[2].Release | Should -Be 'LTS'
+    }
 }

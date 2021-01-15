@@ -6,8 +6,28 @@ function Find-PowerShellBuildStatus {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Default')]
-        [ReleaseTypes]$Release = [ReleaseTypes]::Stable
+        [ReleaseTypes]$Release = [ReleaseTypes]::Stable,
+        [Parameter(ParameterSetName = 'ShowAll')]
+        [switch]$All
     )
+    switch ($PSCmdlet.ParameterSetName) {
+        'ShowAll' {
+            if (-not $All.IsPresent) {
+                return
+            }
+            $items = @()
+            foreach ($r in ('Stable', 'Preview', 'LTS')) {
+                $items += FindPowerShellBuildStatusImpl -Release $r
+            }
+            return $items
+        }
+        Default {
+            FindPowerShellBuildStatusImpl -Release $Release
+        }
+    }
+}
+
+function FindPowerShellBuildStatusImpl ([ReleaseTypes]$Release) {
     $buildInfoUri = switch ($Release) {
         'Preview' {
             'https://aka.ms/pwsh-buildinfo-preview'
