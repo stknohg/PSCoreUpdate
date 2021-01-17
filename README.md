@@ -61,7 +61,7 @@ Update PowerShell if the newer version found.
 PS C:\> Update-PowerShellRelease -Latest
 ```
 
-<img src="https://user-images.githubusercontent.com/720127/38464437-dfe8b956-3b48-11e8-8c39-8f76102a9073.gif" width="800">
+![Update-PowerShellRelease.gif](./assets/Update-PowerShellRelease.gif)
 
 If you want to update preview release, you can use `-Release Preview` parameter.
 
