@@ -20,11 +20,9 @@ function Find-PowerShellRelease {
         [Parameter(ParameterSetName = 'Default')]
         [Switch]$IncludePreRelease = $false,
         [Parameter(ParameterSetName = 'Default')]
-        [int]$First = [int]::MaxValue,
+        [int]$MaxItems = [int]::MaxValue,
         [Parameter(ParameterSetName = 'Default')]
         [Switch]$AsStream,
-        [Parameter(ParameterSetName = 'Default')]
-        [int]$MaximumFollowRelLink = [int]::MaxValue,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [Parameter(ParameterSetName = 'VersionTag')]
@@ -43,10 +41,24 @@ function Find-PowerShellRelease {
                 }
             }
         }
-        if ($First -le 0) {
-            $_AbortProcess = $true
-            return
+        $MaximumFollowRelLink = [int]::MaxValue
+        switch ($MaxItems) {
+            { $_ -le 0 } {
+                $_AbortProcess = $true
+                return
+            }
+            ([int]::MaxValue) {
+                # do nothing
+            }
+            Default {
+                # Currently, GitHub API per_page parameter is 100.
+                # (call GET https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100)
+                $MaximumFollowRelLink = [System.Math]::Ceiling($MaxItems / 100)
+                Write-Verbose "Set -MaxItems = $MaxItems, -MaximumFollowRelLink = $MaximumFollowRelLink"
+            }
         }
+        
+        
     }
     process {
         if ($_AbortProcess) {
@@ -89,7 +101,7 @@ function Find-PowerShellRelease {
                 }
                 # stream output (non sorted)
                 if ($AsStream.IsPresent) {
-                    if ($streamedCount -lt $First) {
+                    if ($streamedCount -lt $MaxItems) {
                         Write-Output $obj
                     }
                     $streamedCount += 1
@@ -108,7 +120,7 @@ function Find-PowerShellRelease {
                 $objectsForOutput[0]
             }
             Default {
-                $objectsForOutput | Sort-Object -Property Version -Descending | Select-Object -First $First
+                $objectsForOutput | Sort-Object -Property Version -Descending | Select-Object -First $MaxItems
             }
         }
     }

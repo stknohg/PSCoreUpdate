@@ -89,7 +89,7 @@ PS C:\> Update-PowerShellRelease -Latest -Silent
 Find PowerShell release information from GitHub.
 
 ```powershell
-PS C:\> Find-PowerShellRelease -First 10
+PS C:\> Find-PowerShellRelease -MaxItems 10
 
 Version Name                              Published             PreRelease
 ------- ----                              ---------             ----------

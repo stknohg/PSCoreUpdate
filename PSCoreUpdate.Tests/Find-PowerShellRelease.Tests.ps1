@@ -93,21 +93,21 @@ Describe "Find-PowerShellRelease unit tests" {
         $release[4].Version | Should -Be '6.2.0-preview.2'
     }
 
-    It "Should -First Parameter returns correct results" {
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 0 -Token $Token
+    It "Should -MaxItems Parameter returns correct results" {
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 0 -Token $Token
         $release.Count | Should -Be 0
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 1 -Token $Token
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 1 -Token $Token
         $release.Count | Should -Be 1
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 5 -Token $Token
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 5 -Token $Token
         $release.Count | Should -Be 5
     }
 
-    It "Should -First Parameter returns correct results with -AsStream parameter." {
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 0 -AsStream -Token $Token
+    It "Should -MaxItems Parameter returns correct results with -AsStream parameter." {
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 0 -AsStream -Token $Token
         $release.Count | Should -Be 0
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 1 -AsStream -Token $Token
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 1 -AsStream -Token $Token
         $release.Count | Should -Be 1
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -First 5 -AsStream -Token $Token
+        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 5 -AsStream -Token $Token
         $release.Count | Should -Be 5
     }
 
