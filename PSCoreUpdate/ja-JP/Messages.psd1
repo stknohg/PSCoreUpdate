@@ -1,6 +1,7 @@
 ConvertFrom-StringData @'
 Find_PowerShellRelease_001 = PowerShell のリリース情報が見つかりません。
-Find_PowerShellRelease_002 = ""{0}"" は正しいバージョンタグではありません。
+Find_PowerShellRelease_002 = "{0}" は正しいバージョンタグではありません。
+Find_PowerShellRelease_003 = "{0}" は正しいバージョン範囲ではありません。\r\nバージョン範囲はNuGetの文法に従う必要があります。\r\n参考 : https://docs.microsoft.com/ja-jp/nuget/concepts/package-versioning#version-ranges
 Get_PowerShellGitHubApiToken_001 = GitHub API token は保存されていません。
 Get_PowerShellGitHubApiToken_002 = 保存された GitHub API token は {0} です。
 Save_PowerShellAsset_001 = 不正な AssetType 。

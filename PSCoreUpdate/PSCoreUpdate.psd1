@@ -7,6 +7,7 @@
     Copyright            = '(c) Takuya Shibata. All rights reserved.'
     Description          = 'PowerShell Core update tool'
     PowerShellVersion    = '6.0.0'
+    RequiredAssemblies   = @("NuGet.Versioning.dll")
     TypesToProcess       = @('PSCoreUpdate.types.ps1xml')
     FormatsToProcess     = @('PSCoreUpdate.format.ps1xml')
     NestedModules        = @('PSCoreUpdate.psm1')

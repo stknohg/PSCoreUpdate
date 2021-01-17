@@ -5,12 +5,10 @@
 function Find-PowerShellRelease {
     [CmdletBinding(DefaultParameterSetName = 'Default')]
     param (
-        [Parameter(ParameterSetName = 'Default')]
-        [SemVer]$MinimumVersion,
-        [Parameter(ParameterSetName = 'Default')]
-        [SemVer]$MaximumVersion,
         [Parameter(ParameterSetName = 'Version', Mandatory = $true)]
         [SemVer]$Version,
+        [Parameter(ParameterSetName = 'Default')]
+        [string]$VersionRange,
         [Parameter(ParameterSetName = 'VersionTag', Mandatory = $true)]
         [string]$VersionTag,
         [Parameter(ParameterSetName = 'Latest', Mandatory = $true)]
@@ -57,8 +55,16 @@ function Find-PowerShellRelease {
                 Write-Verbose "Set -MaxItems = $MaxItems, -MaximumFollowRelLink = $MaximumFollowRelLink"
             }
         }
-        
-        
+        # validate version range
+        if ($PSCmdlet.ParameterSetName -eq 'Default') {
+            $parseResult, $MinVersion, $IsMinInclusive, $MaxVersion, $IsMaxInclusive = ParseVersionQuery -Query $VersionRange
+            if (-not $parseResult) {
+                Write-Error ($Messages.Find_PowerShellRelease_003 -f $VersionRange)
+                $_AbortProcess = $true
+                return
+            }
+            Write-Verbose "Set FromVersion $(if($IsMinInclusive){'=>'}else{('>')}) $MinVersion, ToVersion $(if($IsMaxInclusive){'=<'}else{('<')}) $MaxVersion"
+        }
     }
     process {
         if ($_AbortProcess) {
@@ -80,7 +86,9 @@ function Find-PowerShellRelease {
                 GetGitHubResponseByTag -VersionTagName $specifiedVersionTag -Token $Token
             }
             Default {
-                GetGitHubResponseByRange -FromVer $MinimumVersion -ToVer $MaximumVersion -Token $Token -MaximumFollowRelLink $MaximumFollowRelLink
+                GetGitHubResponseByRange -FromVer $MinVersion -IsFromInclusive $IsMinInclusive `
+                                         -ToVer $MaxVersion -IsToInclusive $IsMaxInclusive `
+                                         -Token $Token -MaximumFollowRelLink $MaximumFollowRelLink
             }
         }
         if (-not $ghReseponses) {
@@ -126,6 +134,34 @@ function Find-PowerShellRelease {
     }
 }
 
+function ParseVersionQuery ([string]$Query) {
+    # This function return ([bool]result,  MinVersion, IsMinInclusive, MaxVersion, IsMinInclusive) array
+    if ([string]::IsNullOrEmpty($Query)) {
+        return $true, $null, $true, $null, $true
+    }
+    if ($Query -eq '*') {
+        return $true, $null, $true, $null, $true
+    }
+    # try parse single version
+    # ref : https://docs.microsoft.com/ja-jp/nuget/concepts/package-versioning#version-ranges
+    $parsedVer = $null
+    if ([semver]::TryParse($Query, [ref]$parsedVer)) {
+        return $true, $parsedVer, $true, $null, $true
+    }
+    # try parse range version
+    $parsedVer = $null
+    if ([NuGet.Versioning.VersionRange]::TryParse($Query, [ref]$parsedVer)) {
+        
+        return $true, 
+               $(if($parsedVer.MinVersion){[semver]$parsedVer.MinVersion.ToFullString()}else{$null}),
+               $parsedVer.IsMinInclusive,
+               $(if($parsedVer.MaxVersion){[semver]$parsedVer.MaxVersion.ToFullString()}else{$null}),
+               $parsedVer.IsMaxInclusive
+    }
+    # faled parse
+    return $false, $null, $null
+}
+
 function GetTagNameFromVersion ([semver]$Version) {
     return ('v{0}' -f $Version)
 } 
@@ -166,7 +202,9 @@ function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {
     }
 }
 
-function GetGitHubResponseByRange ([semver]$FromVer, [semver]$ToVer, [string]$Token, [int]$MaximumFollowRelLink) {
+function GetGitHubResponseByRange ([semver]$FromVer, [bool]$IsFromInclusive,
+                                   [semver]$ToVer, [bool]$IsToInclusive,
+                                   [string]$Token, [int]$MaximumFollowRelLink) {
     # per_page=100 is max value...
     $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100'
     $resPages = @()
@@ -181,16 +219,25 @@ function GetGitHubResponseByRange ([semver]$FromVer, [semver]$ToVer, [string]$To
     }
     foreach ($page in $resPages) {
         foreach ($res in @($page)) {
-            # filter verssion
+            # filter version
             $currentVer = GetVersionFromTag -VersionTag ($res.tag_name)
             if (-not $currentVer) {
+                Write-Verbose "Failed to get version from $($res.tag_name)"
                 continue
             }
             if ($FromVer -and ($currentVer -lt $FromVer)) {
                 Write-Verbose "FromVer filter exculedes version $currentVer"
                 continue          
             }
+            if ($FromVer -and ($currentVer -eq $FromVer) -and (-not $IsFromInclusive)) {
+                Write-Verbose "FromVer filter exculedes version $currentVer"
+                continue          
+            }
             if ($ToVer -and ($currentVer -gt $ToVer)) {
+                Write-Verbose "ToVer filter exculedes version $currentVer"
+                continue
+            }
+            if ($ToVer -and ($currentVer -eq $ToVer) -and (-not $IsToInclusive)) {
                 Write-Verbose "ToVer filter exculedes version $currentVer"
                 continue
             }

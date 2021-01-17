@@ -11,8 +11,8 @@ Describe "Find-PowerShellRelease unit tests" {
     }
 
     It "Returns nothing when specified invalid version" {
-        Find-PowerShellRelease -MinimumVersion 999.0.0 -Token $Token | Should -BeNullOrEmpty
-        Find-PowerShellRelease -MaximumVersion 0.0.1 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellRelease -Version 999.0.0 -Token $Token | Should -BeNullOrEmpty
+        Find-PowerShellRelease -Version 0.0.1 -Token $Token | Should -BeNullOrEmpty
     }
 
     It "Should get stable version specified -Version parameter" {
@@ -49,19 +49,47 @@ Describe "Find-PowerShellRelease unit tests" {
         $target.Version | Should -Be $expected.Version
     }
 
-    It "Should get the range releases information(specify MinimumVersion)" {
-        $release = Find-PowerShellRelease -MinimumVersion '7.0.0' -Token $Token
+    It "Should get the range releases information(specify single version = set incusive minimum)" {
+        $release = Find-PowerShellRelease -VersionRange '7.0.0' -Token $Token
         $release.Count | Should -BeGreaterThan 1
-        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '7.0.0' -Token $Token
+        $release[-1].Version | Should -Be '7.0.0'
+        $release = Find-PowerShellRelease -IncludePreRelease -VersionRange '7.0.0' -Token $Token
         $release.Count | Should -BeGreaterThan 1
+        $release[-1].Version | Should -Be '7.0.0'
     }
 
-    It "Should get the range releases information(specify MaximumVersion)" {
-        $release = Find-PowerShellRelease -IncludePreRelease -MaximumVersion '6.0.0' -Token $Token
+    It "Should get the range releases information(specify mimimun version only - 1)" {
+        $release = Find-PowerShellRelease -VersionRange '[7.0.0,]' -Token $Token
+        $release.Count | Should -BeGreaterThan 1
+        $release[-1].Version | Should -Be '7.0.0'
+        $release = Find-PowerShellRelease -IncludePreRelease -VersionRange '[7.0.0,]' -Token $Token
+        $release.Count | Should -BeGreaterThan 1
+        $release[-1].Version | Should -Be '7.0.0'
+    }
+
+    It "Should get the range releases information(specify mimimun version only - 2)" {
+        $release = Find-PowerShellRelease -VersionRange '(7.0.0,]' -Token $Token
+        $release.Count | Should -BeGreaterThan 1
+        $release[-1].Version | Should -Not -Be '7.0.0'
+        $release = Find-PowerShellRelease -IncludePreRelease -VersionRange '(7.0.0,]' -Token $Token
+        $release.Count | Should -BeGreaterThan 1
+        $release[-1].Version | Should -Not -Be '7.0.0'
+    }
+
+    It "Should get the range releases information(specify maximum verson only - 1)" {
+        $release = Find-PowerShellRelease -IncludePreRelease -VersionRange '[,6.0.0]' -Token $Token
         $release.Count | Should -Be 30
-        $release = Find-PowerShellRelease -MaximumVersion '6.0.0' -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[,6.0.0]' -Token $Token
         $release.Count | Should -Be 1
     }
+
+    It "Should get the range releases information(specify maximum verson only - 2)" {
+        $release = Find-PowerShellRelease -IncludePreRelease -VersionRange '[,6.0.0)' -Token $Token
+        $release.Count | Should -Be 29
+        $release = Find-PowerShellRelease -VersionRange '[,6.0.0)' -Token $Token
+        $release.Count | Should -Be 0
+    }
+
 
     It "Should treat the special versions as Preview" {
         # 6.1 preview 1 - 3
@@ -77,14 +105,14 @@ Describe "Find-PowerShellRelease unit tests" {
     }
 
     It "Should get the range releases information(specify MinimumVersion, MaximumVersion)" {
-        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.0.0' -MaximumVersion '6.1.0' -Token $Token
+        $release = Find-PowerShellRelease -IncludePreRelease -VersionRange '[6.0.0,6.1.0]' -Token $Token
         $release.Count | Should -Be 12
-        $release = Find-PowerShellRelease -MinimumVersion '6.0.0' -MaximumVersion '6.1.0' -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[6.0.0,6.1.0]' -Token $Token
         $release.Count | Should -Be 7
     }
 
     It "Should be result values sorted by default" {
-        $release = Find-PowerShellRelease -IncludePreRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -Token $Token
+        $release = Find-PowerShellRelease -IncludePreRelease -VersionRange '[6.1.0,6.2.0]' -Token $Token
         $release.Count | Should -BeGreaterThan 5
         $release[0].Version | Should -Be '6.2.0'
         $release[1].Version | Should -Be '6.2.0-rc.1'
@@ -94,20 +122,20 @@ Describe "Find-PowerShellRelease unit tests" {
     }
 
     It "Should -MaxItems Parameter returns correct results" {
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 0 -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 0 -Token $Token
         $release.Count | Should -Be 0
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 1 -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 1 -Token $Token
         $release.Count | Should -Be 1
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 5 -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 5 -Token $Token
         $release.Count | Should -Be 5
     }
 
     It "Should -MaxItems Parameter returns correct results with -AsStream parameter." {
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 0 -AsStream -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 0 -AsStream -Token $Token
         $release.Count | Should -Be 0
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 1 -AsStream -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 1 -AsStream -Token $Token
         $release.Count | Should -Be 1
-        $release = Find-PowerShellRelease -MinimumVersion '6.1.0' -MaximumVersion '6.2.0' -MaxItems 5 -AsStream -Token $Token
+        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 5 -AsStream -Token $Token
         $release.Count | Should -Be 5
     }
 
