@@ -49,9 +49,13 @@ function Find-PowerShellRelease {
                 # do nothing
             }
             Default {
-                # Currently, GitHub API per_page parameter is 100.
-                # (call GET https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100)
-                $MaximumFollowRelLink = [System.Math]::Ceiling($MaxItems / 100)
+                # * By default, we need to get all values ​​for sorting.
+                #   If -AsStream parameter is present, change MaximumFollowRelLink with MaxItems parameter.
+                if ($AsStream.IsPresent) {
+                    # Currently, GitHub API per_page parameter is 100.
+                    # (call GET https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100)
+                    $MaximumFollowRelLink = [System.Math]::Ceiling($MaxItems / 100)
+                }
                 Write-Verbose "Set -MaxItems = $MaxItems, -MaximumFollowRelLink = $MaximumFollowRelLink"
             }
         }
