@@ -2,6 +2,8 @@
 Import-LocalizedData -BindingVariable "Messages" -FileName "Messages"
 
 # Load assembly
+$PSModule = $ExecutionContext.SessionState.Module
+$PSModuleRoot = $PSModule.ModuleBase
 if ($PSModuleRoot) {
     Add-Type -AssemblyName (Join-Path -Path $PSModuleRoot -ChildPath 'NuGet.Versioning.dll')
 } else {
