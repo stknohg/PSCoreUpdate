@@ -47,7 +47,7 @@ Check if the current console is the latest version.
 
 ```powershell
 PS C:\> Test-LatestVersion
-No updates. PowerShell 7.1.0 is the latest version.
+No updates. PowerShell 7.1.1 is the latest version.
 ```
 
 If you use preview release PowerShell, you can use `-Release Preview` parameter.
@@ -100,18 +100,18 @@ Find PowerShell release information from GitHub.
 ```powershell
 PS C:\> Find-PowerShellRelease -MaxItems 10
 
-Version Name                              Published             PreRelease
-------- ----                              ---------             ----------
-7.1.0   v7.1.0 Release of PowerShell      11/11/2020 4:23:08 PM False
-7.0.3   v7.0.3 Release of PowerShell      7/16/2020 6:23:52 PM  False
-7.0.2   v7.0.2 Release of Powershell      6/11/2020 9:02:14 PM  False
-7.0.1   v7.0.1 Release of PowerShell      5/14/2020 10:52:22 PM False
-7.0.0   v7.0.0 Release of PowerShell      3/4/2020 5:00:08 PM   False
-6.2.7   v6.2.7 Release of PowerShell      7/16/2020 6:19:53 PM  False
-6.2.6   v6.2.6 Release of PowerShell      6/11/2020 9:01:33 PM  False
-6.2.5   v6.2.5 Release of PowerShell      5/14/2020 10:29:44 PM False
-6.2.4   v6.2.4 Release of PowerShell      1/27/2020 10:19:26 PM False
-6.2.3   v6.2.3 Release of PowerShell Core 9/12/2019 9:22:38 PM  False
+Version Name                         Published             PreRelease
+------- ----                         ---------             ----------
+7.1.1   v7.1.1 Release of PowerShell 1/14/2021 11:50:05 PM False
+7.1.0   v7.1.0 Release of PowerShell 11/11/2020 4:23:08 PM False
+7.0.3   v7.0.3 Release of PowerShell 7/16/2020 6:23:52 PM  False
+7.0.2   v7.0.2 Release of Powershell 6/11/2020 9:02:14 PM  False
+7.0.1   v7.0.1 Release of PowerShell 5/14/2020 10:52:22 PM False
+7.0.0   v7.0.0 Release of PowerShell 3/4/2020 5:00:08 PM   False
+6.2.7   v6.2.7 Release of PowerShell 7/16/2020 6:19:53 PM  False
+6.2.6   v6.2.6 Release of PowerShell 6/11/2020 9:01:33 PM  False
+6.2.5   v6.2.5 Release of PowerShell 5/14/2020 10:29:44 PM False
+6.2.4   v6.2.4 Release of PowerShell 1/27/2020 10:19:26 PM False
 ```
 
 ### Find-PowerShellBuildStatus
@@ -119,11 +119,13 @@ Version Name                              Published             PreRelease
 Find PowerShell build status.
 
 ```powershell
-PS C:\> Find-PowerShellBuildStatus
+PS C:\> Find-PowerShellBuildStatus -All
 
-Version Release ReleaseDate
-------- ------- -----------
-7.1.0   Stable  11/11/2020 4:03:21 PM
+Version         Release ReleaseDate
+-------         ------- -----------
+7.1.1           Stable  1/14/2021 11:56:26 PM
+7.2.0-preview.2 Preview 12/15/2020 9:33:47 PM
+7.0.3           LTS     7/16/2020 6:24:54 PM
 ```
 
 ### Save-PowerShellAsset
