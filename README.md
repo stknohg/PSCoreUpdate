@@ -18,7 +18,16 @@ This module is a little tool to solve such inconvenience.
 You can install it from [PowerShell gallery](https://www.powershellgallery.com/packages/PSCoreUpdate).
 
 ```powershell
-Install-Module PSCoreUpdate -Scope CurrentUser
+Install-Module PSCoreUpdate
+```
+
+### Upgrade from version 2
+
+If you use PSCoreUpdate version 2 or earlier, please uninstall all version first.
+
+```powershell
+Uninstall-Module PSCoreUpdate -AllVersions
+Install-Module PSCoreUpdate
 ```
 
 ### First-time installation scripts
