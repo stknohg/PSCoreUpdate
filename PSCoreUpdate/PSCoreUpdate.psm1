@@ -1,6 +1,13 @@
 # Load messages
 Import-LocalizedData -BindingVariable "Messages" -FileName "Messages"
 
+# Load assembly
+if ($PSModuleRoot) {
+    Add-Type -AssemblyName (Join-Path -Path $PSModuleRoot -ChildPath 'NuGet.Versioning.dll')
+} else {
+    Add-Type -AssemblyName (Join-Path -Path $PSScriptRoot -ChildPath 'NuGet.Versioning.dll')
+}
+
 # Import functions
 . (Join-Path $PSScriptRoot 'Utils.ps1')
 . (Join-Path $PSScriptRoot 'PowerShellGitHubApiToken.ps1')
