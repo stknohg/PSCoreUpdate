@@ -18,6 +18,7 @@ $output.VerboseLogs.Add("Loaded Assembly : $([NuGet.Versioning.VersionRange].Ass
 $output.VerboseLogs.Add("Assembly Location : $([NuGet.Versioning.VersionRange].Assembly.Location)")
 
 # early return
+$Query = $Query.Trim()
 if ([string]::IsNullOrEmpty($Query)) {
     $output.Result = $true
     return $output
