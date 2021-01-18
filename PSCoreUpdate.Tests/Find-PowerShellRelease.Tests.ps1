@@ -130,15 +130,6 @@ Describe "Find-PowerShellRelease unit tests" {
         $release.Count | Should -Be 5
     }
 
-    It "Should -MaxItems Parameter returns correct results with -AsStream parameter." {
-        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 0 -AsStream -Token $Token
-        $release.Count | Should -Be 0
-        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 1 -AsStream -Token $Token
-        $release.Count | Should -Be 1
-        $release = Find-PowerShellRelease -VersionRange '[6.1.0,6.2.0]' -MaxItems 5 -AsStream -Token $Token
-        $release.Count | Should -Be 5
-    }
-
     It "Should get proper properties" {
         $release = Find-PowerShellRelease -Version 6.0.0 -Token $Token
         $release.Count | Should -Be 1

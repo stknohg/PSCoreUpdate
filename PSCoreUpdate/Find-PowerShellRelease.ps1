@@ -20,7 +20,7 @@ function Find-PowerShellRelease {
         [Parameter(ParameterSetName = 'Default')]
         [int]$MaxItems = [int]::MaxValue,
         [Parameter(ParameterSetName = 'Default')]
-        [Switch]$AsStream,
+        [Switch]$NoCache,
         [Parameter(ParameterSetName = 'Default')]
         [Parameter(ParameterSetName = 'Version')]
         [Parameter(ParameterSetName = 'VersionTag')]
@@ -38,40 +38,37 @@ function Find-PowerShellRelease {
                     return
                 }
             }
-        }
-        $MaximumFollowRelLink = [int]::MaxValue
-        switch ($MaxItems) {
-            { $_ -le 0 } {
-                $_AbortProcess = $true
-                return
-            }
-            ([int]::MaxValue) {
-                # do nothing
-            }
-            Default {
-                # * By default, we need to get all values ​​for sorting.
-                #   If -AsStream parameter is present, change MaximumFollowRelLink with MaxItems parameter.
-                if ($AsStream.IsPresent) {
-                    # Currently, GitHub API per_page parameter is 100.
-                    # (call GET https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100)
-                    $MaximumFollowRelLink = [System.Math]::Ceiling($MaxItems / 100)
+            'Default' {
+                # validate max items
+                switch ($MaxItems) {
+                    { $_ -le 0 } {
+                        $_AbortProcess = $true
+                        return
+                    }
+                    Default {
+                        # do nothing
+                        Write-Verbose "Set -MaxItems = $MaxItems"
+                    }
                 }
-                Write-Verbose "Set -MaxItems = $MaxItems, -MaximumFollowRelLink = $MaximumFollowRelLink"
+                # validate version range
+                $parseResult = ParseVersionQuery -Query $VersionRange
+                if (-not $parseResult.Result) {
+                    Write-Error ($Messages.Find_PowerShellRelease_003 -f $VersionRange)
+                    $_AbortProcess = $true
+                    return
+                }
+                $MinVersion = $parseResult.MinVersion
+                $IsMinInclusive = $parseResult.IsMinInclusive
+                $MaxVersion = $parseResult.MaxVersion
+                $IsMaxInclusive = $parseResult.IsMaxInclusive
+                Write-Verbose "Set FromVersion $(if($IsMinInclusive){'=>'}else{('>')}) $MinVersion, ToVersion $(if($IsMaxInclusive){'=<'}else{('<')}) $MaxVersion"
+                # validate NoCache
+                if ($NoCache.IsPresent) {
+                    Write-Verbose "Set cache is expired."
+                    $global:g_GitHubReleaseCache.ExpireAt = [datetime]::MinValue
+                    $global:g_GitHubReleaseCache.Pages = $null
+                }
             }
-        }
-        # validate version range
-        if ($PSCmdlet.ParameterSetName -eq 'Default') {
-            $parseResult = ParseVersionQuery -Query $VersionRange
-            if (-not $parseResult.Result) {
-                Write-Error ($Messages.Find_PowerShellRelease_003 -f $VersionRange)
-                $_AbortProcess = $true
-                return
-            }
-            $MinVersion = $parseResult.MinVersion
-            $IsMinInclusive = $parseResult.IsMinInclusive
-            $MaxVersion = $parseResult.MaxVersion
-            $IsMaxInclusive = $parseResult.IsMaxInclusive
-            Write-Verbose "Set FromVersion $(if($IsMinInclusive){'=>'}else{('>')}) $MinVersion, ToVersion $(if($IsMaxInclusive){'=<'}else{('<')}) $MaxVersion"
         }
     }
     process {
@@ -95,8 +92,7 @@ function Find-PowerShellRelease {
             }
             Default {
                 GetGitHubResponseByRange -FromVer $MinVersion -IsFromInclusive $IsMinInclusive `
-                                         -ToVer $MaxVersion -IsToInclusive $IsMaxInclusive `
-                                         -Token $Token -MaximumFollowRelLink $MaximumFollowRelLink
+                                         -ToVer $MaxVersion -IsToInclusive $IsMaxInclusive -Token $Token
             }
         }
         if (-not $ghReseponses) {
@@ -105,7 +101,6 @@ function Find-PowerShellRelease {
         }
 
         # output object
-        $streamedCount = 0
         $objectsForOutput = [System.Collections.ArrayList]::new()
         foreach ($r in $ghReseponses) {
             $obj = ConvertResponseItemToObject -ResponseItem $r -SpecifiedVersion $Version
@@ -113,14 +108,6 @@ function Find-PowerShellRelease {
             if ($PSCmdlet.ParameterSetName -eq 'Default') {
                 if (-not $IncludePreRelease -and $obj.PreRelease) {
                     Write-Verbose "-IncludePreRelease filter excludes version $($obj.Version)"
-                    continue
-                }
-                # stream output (non sorted)
-                if ($AsStream.IsPresent) {
-                    if ($streamedCount -lt $MaxItems) {
-                        Write-Output $obj
-                    }
-                    $streamedCount += 1
                     continue
                 }
             }
@@ -143,7 +130,7 @@ function Find-PowerShellRelease {
 }
 
 function ParseVersionQuery ([string]$Query) {
-    # To avoid Nuget.Versioning.dll assembly load conflit, we call test script as a job (as a external process).
+    # To avoid Nuget.Versioning.dll assembly load conflict, we call test script as a job (as a external process).
     # Note : Don't use ThreadJob.
     try {
         $job = Start-Job (Join-Path $PSScriptRoot 'Test-NugetVersionRange.ps1') -ArgumentList ($Query) -WorkingDirectory $PSScriptRoot
@@ -205,20 +192,37 @@ function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {
     }
 }
 
+
+# very simple cache
+$global:g_GH_CACHE_MINUTES = 10
+$global:g_GitHubReleaseCache = [PSCustomObject]@{
+    ExpireAt = [datetime]::MinValue;
+    Pages = $null;
+}
+
 function GetGitHubResponseByRange ([semver]$FromVer, [bool]$IsFromInclusive,
-                                   [semver]$ToVer, [bool]$IsToInclusive,
-                                   [string]$Token, [int]$MaximumFollowRelLink) {
-    # per_page=100 is max value...
-    $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100'
-    $resPages = @()
-    try {
-        $resPages += (Invoke-RestMethod -Uri $uri -MaximumFollowRelLink $MaximumFollowRelLink -FollowRelLink -Headers (SetHttpHeaders -Token $Token))
-    } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
-        Write-Verbose ('GetGitHubResponseByRange request error : {0}' -f $_)
-        return $null
-    } catch {
-        Write-Error $_
-        return $null
+                                   [semver]$ToVer, [bool]$IsToInclusive, [string]$Token) {
+
+    if ([datetime]::Now -ge $global:g_GitHubReleaseCache.ExpireAt) {
+        # per_page=100 is max value...
+        $uri = 'https://api.github.com/repos/PowerShell/PowerShell/releases?per_page=100'
+        $resPages = @()
+        try {
+            $resPages += (Invoke-RestMethod -Uri $uri -FollowRelLink -Headers (SetHttpHeaders -Token $Token))
+        } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
+            Write-Verbose ('GetGitHubResponseByRange request error : {0}' -f $_)
+            return $null
+        } catch {
+            Write-Error $_
+            return $null
+        }
+        # set cache
+        $global:g_GitHubReleaseCache.ExpireAt = [datetime]::Now.AddMinutes($global:g_GH_CACHE_MINUTES)
+        $global:g_GitHubReleaseCache.Pages = $resPages
+        Write-Verbose "Set cache response : ExpireAt = $($global:g_GitHubReleaseCache.ExpireAt), Pages = $($global:g_GitHubReleaseCache.Pages.Count)"
+    } else {
+        Write-Verbose "Use cache response : ExpireAt = $($global:g_GitHubReleaseCache.ExpireAt), Pages = $($global:g_GitHubReleaseCache.Pages.Count)"
+        $resPages = $global:g_GitHubReleaseCache.Pages
     }
     foreach ($page in $resPages) {
         foreach ($res in @($page)) {

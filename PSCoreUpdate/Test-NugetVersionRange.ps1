@@ -1,5 +1,5 @@
 # This script for internal use only.
-# To avoid Nuget.Versioning.dll assembly load conflit, we call this script as a job (as a external process).
+# To avoid Nuget.Versioning.dll assembly load conflict, we call this script as a job (as a external process).
 param ([string]$Query)
 
 # Load assembly
