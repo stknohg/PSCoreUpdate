@@ -6,20 +6,20 @@
     CompanyName          = 'Takuya Shibata'
     Copyright            = '(c) Takuya Shibata. All rights reserved.'
     Description          = 'PowerShell Core update tool'
-    PowerShellVersion    = '6.0.0'
+    PowerShellVersion    = '7.0.0'
     TypesToProcess       = @('PSCoreUpdate.types.ps1xml')
     FormatsToProcess     = @('PSCoreUpdate.format.ps1xml')
     NestedModules        = @('PSCoreUpdate.psm1')
     FunctionsToExport    = @('Find-PowerShellBuildStatus', 'Find-PowerShellRelease', 
-                             'Get-PowerShellGitHubApiToken', 'Remove-PowerShellGitHubApiToken', 'Save-PowerShellAsset', 'Set-PowerShellGitHubApiToken',
-                             'Test-LatestVersion', 'Update-PowerShellRelease', 
+                             'Test-LatestVersion', 'Update-PowerShellRelease', 'Save-PowerShellAsset', 
+                             'Get-PowerShellGitHubApiToken', 'Remove-PowerShellGitHubApiToken', 'Set-PowerShellGitHubApiToken',
                              'Enable-PSCoreUpdateLegacyAlias')
     CmdletsToExport      = @()
     VariablesToExport    = '*'
     AliasesToExport      = @('Download-PowerShellAsset')
     PrivateData          = @{
         PSData = @{
-            Prerelease = 'beta3'
+            Prerelease = 'beta4'
             LicenseUri = 'https://github.com/stknohg/PSCoreUpdate/blob/master/LICENSE'
             ProjectUri = 'https://github.com/stknohg/PSCoreUpdate'
         }
