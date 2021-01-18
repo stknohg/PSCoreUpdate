@@ -61,12 +61,16 @@ function Find-PowerShellRelease {
         }
         # validate version range
         if ($PSCmdlet.ParameterSetName -eq 'Default') {
-            $parseResult, $MinVersion, $IsMinInclusive, $MaxVersion, $IsMaxInclusive = ParseVersionQuery -Query $VersionRange
-            if (-not $parseResult) {
+            $parseResult = ParseVersionQuery -Query $VersionRange
+            if (-not $parseResult.Result) {
                 Write-Error ($Messages.Find_PowerShellRelease_003 -f $VersionRange)
                 $_AbortProcess = $true
                 return
             }
+            $MinVersion = $parseResult.MinVersion
+            $IsMinInclusive = $parseResult.IsMinInclusive
+            $MaxVersion = $parseResult.MaxVersion
+            $IsMaxInclusive = $parseResult.IsMaxInclusive
             Write-Verbose "Set FromVersion $(if($IsMinInclusive){'=>'}else{('>')}) $MinVersion, ToVersion $(if($IsMaxInclusive){'=<'}else{('<')}) $MaxVersion"
         }
     }
@@ -139,31 +143,26 @@ function Find-PowerShellRelease {
 }
 
 function ParseVersionQuery ([string]$Query) {
-    # This function return ([bool]result,  MinVersion, IsMinInclusive, MaxVersion, IsMinInclusive) array
-    if ([string]::IsNullOrEmpty($Query)) {
-        return $true, $null, $true, $null, $true
+    # To avoid Nuget.Versioning.dll assembly load conflit, we call test script as a job (as a external process).
+    # Note : Don't use ThreadJob.
+    try {
+        $job = Start-Job (Join-Path $PSScriptRoot 'Test-NugetVersionRange.ps1') -ArgumentList ($Query) -WorkingDirectory $PSScriptRoot
+        $result = $job | Receive-Job -Wait
+    } finally {
+        if ($job) {
+            $job | Remove-Job
+        }
     }
-    if ($Query -eq '*') {
-        return $true, $null, $true, $null, $true
+    foreach ($log in $result.VerboseLogs) {
+        Write-Verbose $log
     }
-    # try parse single version
-    # ref : https://docs.microsoft.com/ja-jp/nuget/concepts/package-versioning#version-ranges
-    $parsedVer = $null
-    if ([semver]::TryParse($Query, [ref]$parsedVer)) {
-        return $true, $parsedVer, $true, $null, $true
+    return [PSCustomObject]@{
+        Result = $result.Result
+        MinVersion = [semver]$result.MinVersionString
+        IsMinInclusive = $result.IsMinInclusive
+        MaxVersion = [semver]$result.MaxVersionString
+        IsMaxInclusive = $result.IsMaxInclusive
     }
-    # try parse range version
-    $parsedVer = $null
-    if ([NuGet.Versioning.VersionRange]::TryParse($Query, [ref]$parsedVer)) {
-        
-        return $true, 
-               $(if($parsedVer.MinVersion){[semver]$parsedVer.MinVersion.ToFullString()}else{$null}),
-               $parsedVer.IsMinInclusive,
-               $(if($parsedVer.MaxVersion){[semver]$parsedVer.MaxVersion.ToFullString()}else{$null}),
-               $parsedVer.IsMaxInclusive
-    }
-    # faled parse
-    return $false, $null, $null
 }
 
 function GetTagNameFromVersion ([semver]$Version) {
