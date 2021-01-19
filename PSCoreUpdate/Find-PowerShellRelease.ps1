@@ -185,7 +185,10 @@ function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {
         return (Invoke-RestMethod -Uri $uri -Headers (SetHttpHeaders -Token $Token))
     } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
         Write-Verbose ('GetGitHubResponseByTag request error : {0}' -f $_)
-        Write-Warning ("GitHub API error : {0}" -f $_.Exception.Message)
+        # Ignore 404 error for the case of searching tags 
+        if ($_.Exception.Response.StatusCode -ne 404) {
+            Write-Warning ("GitHub API error : {0}" -f $_.Exception.Message)
+        }
         return $null
     } catch {
         Write-Error $_
