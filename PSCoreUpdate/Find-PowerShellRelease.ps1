@@ -185,6 +185,7 @@ function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {
         return (Invoke-RestMethod -Uri $uri -Headers (SetHttpHeaders -Token $Token))
     } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
         Write-Verbose ('GetGitHubResponseByTag request error : {0}' -f $_)
+        Write-Warning ("GitHub API error : {0}" -f $_.Exception.Message)
         return $null
     } catch {
         Write-Error $_
@@ -211,6 +212,7 @@ function GetGitHubResponseByRange ([semver]$FromVer, [bool]$IsFromInclusive,
             $resPages += (Invoke-RestMethod -Uri $uri -FollowRelLink -Headers (SetHttpHeaders -Token $Token))
         } catch [Microsoft.PowerShell.Commands.HttpResponseException] {
             Write-Verbose ('GetGitHubResponseByRange request error : {0}' -f $_)
+            Write-Warning ("GitHub API error : {0}" -f $_.Exception.Message)
             return $null
         } catch {
             Write-Error $_
