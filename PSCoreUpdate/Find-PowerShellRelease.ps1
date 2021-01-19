@@ -92,7 +92,7 @@ function Find-PowerShellRelease {
             }
             Default {
                 GetGitHubResponseByRange -FromVer $MinVersion -IsFromInclusive $IsMinInclusive `
-                                         -ToVer $MaxVersion -IsToInclusive $IsMaxInclusive -Token $Token
+                    -ToVer $MaxVersion -IsToInclusive $IsMaxInclusive -Token $Token
             }
         }
         if (-not $ghReseponses) {
@@ -144,10 +144,10 @@ function ParseVersionQuery ([string]$Query) {
         Write-Verbose $log
     }
     return [PSCustomObject]@{
-        Result = $result.Result
-        MinVersion = [semver]$result.MinVersionString
+        Result         = $result.Result
+        MinVersion     = [semver]$result.MinVersionString
         IsMinInclusive = $result.IsMinInclusive
-        MaxVersion = [semver]$result.MaxVersionString
+        MaxVersion     = [semver]$result.MaxVersionString
         IsMaxInclusive = $result.IsMaxInclusive
     }
 }
@@ -169,9 +169,9 @@ function GetVersionFromTag ([string]$VersionTag) {
 
 function SetHttpHeaders ([string]$Token) {
     if ([string]::IsNullOrEmpty($Token)) {
-        return @{Accept = 'application/vnd.github.v3+json'}
+        return @{ Accept = 'application/vnd.github.v3+json' }
     }
-    return @{Accept = 'application/vnd.github.v3+json'; Authorization = "token $Token"}
+    return @{ Accept = 'application/vnd.github.v3+json'; Authorization = "token $Token" }
 }
 
 function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {
@@ -201,11 +201,11 @@ function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {
 $global:g_GH_CACHE_MINUTES = 10
 $global:g_GitHubReleaseCache = [PSCustomObject]@{
     ExpireAt = [datetime]::MinValue;
-    Pages = $null;
+    Pages    = $null;
 }
 
 function GetGitHubResponseByRange ([semver]$FromVer, [bool]$IsFromInclusive,
-                                   [semver]$ToVer, [bool]$IsToInclusive, [string]$Token) {
+    [semver]$ToVer, [bool]$IsToInclusive, [string]$Token) {
 
     if ([datetime]::Now -ge $global:g_GitHubReleaseCache.ExpireAt) {
         # per_page=100 is max value...
@@ -255,7 +255,7 @@ function GetGitHubResponseByRange ([semver]$FromVer, [bool]$IsFromInclusive,
             }
             Write-Output $res
         }
-   }
+    }
 }
 
 function ConvertResponseItemToObject ([PSCustomObject]$ResponseItem, [semver]$SpecifiedVersion) {

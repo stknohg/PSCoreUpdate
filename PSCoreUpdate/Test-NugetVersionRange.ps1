@@ -6,12 +6,12 @@ param ([string]$Query)
 Add-Type -AssemblyName './NuGet.Versioning.dll'
 
 $output = [pscustomobject]@{
-    Result = $false
+    Result           = $false
     MinVersionString = $null
-    IsMinInclusive = $true
+    IsMinInclusive   = $true
     MaxVersionString = $null
-    IsMaxInclusive = $true
-    VerboseLogs = [System.Collections.Generic.List[string]]::new()
+    IsMaxInclusive   = $true
+    VerboseLogs      = [System.Collections.Generic.List[string]]::new()
 }
 $output.VerboseLogs.Add("Parameters : Query = $($Query), WorkingDirectory = $($pwd.Path)")
 $output.VerboseLogs.Add("Loaded Assembly : $([NuGet.Versioning.VersionRange].Assembly.FullName)")
@@ -42,9 +42,9 @@ $parsedVer = $null
 if ([NuGet.Versioning.VersionRange]::TryParse($Query, [ref]$parsedVer)) {
     $output.Result = $true
     $output.VerboseLogs.Add("Parsed value : IsMinInclusive = $($parsedVer.IsMinInclusive), IsMaxInclusive = $($parsedVer.IsMaxInclusive)")
-    $output.MinVersionString = $(if($parsedVer.MinVersion){$parsedVer.MinVersion.ToFullString()}else{$null})
+    $output.MinVersionString = $(if ($parsedVer.MinVersion) { $parsedVer.MinVersion.ToFullString() }else { $null })
     $output.IsMinInclusive = $parsedVer.IsMinInclusive
-    $output.MaxVersionString = $(if($parsedVer.MaxVersion){$parsedVer.MaxVersion.ToFullString()}else{$null})
+    $output.MaxVersionString = $(if ($parsedVer.MaxVersion) { $parsedVer.MaxVersion.ToFullString() }else { $null })
     $output.IsMaxInclusive = $parsedVer.IsMaxInclusive
     return $output
 }

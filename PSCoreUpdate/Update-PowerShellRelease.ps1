@@ -54,8 +54,8 @@ function Update-PowerShellRelease {
     if ($psReleaseInfo.Version -eq $PSVersionTable.PSVersion -and (-not $Force)) {
         $releaseName = switch ($Release) {
             'Preview' { $Messages.Update_PowerShellRelease_012 }
-            'LTS'     { $Messages.Update_PowerShellRelease_013 }
-            Default   {$Messages.Update_PowerShellRelease_014 }
+            'LTS' { $Messages.Update_PowerShellRelease_013 }
+            Default { $Messages.Update_PowerShellRelease_014 }
         }
         Write-Warning ($Messages.Update_PowerShellRelease_004 -f $releaseName)
         return
@@ -145,7 +145,7 @@ function GetPKGAssetUrls ([PowerShellCoreRelease]$Release) {
             }
             return
         } 
-        {$_ -in (16, 17)} {
+        { $_ -in (16, 17) } {
             # PKG_OSX1012 or PKG_OSX
             # macOS Sierra (10.12)
             # macOS High Sierra (10.13)

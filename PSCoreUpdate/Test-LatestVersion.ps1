@@ -47,7 +47,7 @@ function NotifyNewVersion ([datetime]$Published, [ReleaseTypes]$Release) {
     if ($Release -eq 'LTS') {
         return
     }
-    $span = if ($Release -eq 'Preview') {[timespan]::new(21, 0, 0, 0)} else {[timespan]::new(180, 0, 0, 0)}
+    $span = if ($Release -eq 'Preview') { [timespan]::new(21, 0, 0, 0) } else { [timespan]::new(180, 0, 0, 0) }
     $elapsed = (Get-Date).Subtract($Published)
     if ($elapsed -ge $span) {
         WriteInfo ""
