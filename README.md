@@ -142,7 +142,12 @@ The types of assets are as follows.
 |----|----|
 |MSI_WIN32|[PowerShell version]-win-x86.msi|
 |MSI_WIN64|[PowerShell version]-win-x64.msi|
+|MSIX_WIN32|[PowerShell version]-win-x86.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
+|MSIX_WIN64|[PowerShell version]-win-x64.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
+|MSIX_WINARM32|[PowerShell version]-win-arm32.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
+|MSIX_WINARM64|[PowerShell version]-win-arm64.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
 |PKG_OSX|[PowerShell version]-osx-x64.pkg|
+|RPM_RHEL8|[PowerShell version]-centos.8.x86_64.rpm|
 |RPM_RHEL7|[PowerShell version]-rhel.7.x86_64.rpm|
 |DEB_DEBIAN9|[PowerShell version]-debian.9_amd64.deb|
 |DEB_DEBIAN10|[PowerShell version]-debian.10_amd64.deb|
@@ -161,8 +166,7 @@ The types of assets are as follows.
 |ZIP_WIN32|[PowerShell version]-win-x86.zip|
 |ZIP_WIN64|[PowerShell version]-win-x64.zip|
 |ZIP_WINFXDEPENDENT|[PowerShell version]-win-fxdependent.zip|
-|WIXPDB32|[PowerShell version]-win-x86.wixpdb|
-|WIXPDB64|[PowerShell version]-win-x64.wixpdb|
+|ZIP_WINFXDEPENDENTDESKTOP|[PowerShell version]-win-fxdependentWinDesktop.zip|
 
 #### Old release assets
 
@@ -176,3 +180,5 @@ The types of assets are as follows.
 |DEB_UBUNTU14|[PowerShell version]-ubuntu.14.nn_amd64.deb|
 |DEB_UBUNTU17|[PowerShell version]-ubuntu.17.nn_amd64.deb|
 |APPIMAGE|[PowerShell version]-x86_64.AppImage|
+|WIXPDB32|[PowerShell version]-win-x86.wixpdb|
+|WIXPDB64|[PowerShell version]-win-x64.wixpdb|
