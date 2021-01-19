@@ -29,10 +29,4 @@ Describe "Save-PowerShellAsset unit tests" {
         Test-Path -LiteralPath 'TestDrive:\PowerShell-6.0.0-linux-arm32.tar.gz' | Should -BeTrue
         Test-Path -LiteralPath 'TestDrive:\PowerShell-6.0.0-win-arm32.zip' | Should -BeTrue
     }
-
-    It "Should get multiple proper assets(alpha version)" {
-        Save-PowerShellAsset -Version '6.0.0-alpha.18' -AssetType RPM_RHEL7 -OutDirectory $TestDrive -Token $Token
-        Test-Path -LiteralPath 'TestDrive:\powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm' | Should -BeTrue
-        Test-Path -LiteralPath 'TestDrive:\powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm' | Should -BeTrue
-    }
 }
