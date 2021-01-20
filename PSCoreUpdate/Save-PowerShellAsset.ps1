@@ -1,12 +1,14 @@
 <#
 .SYNOPSIS
-    Download PowerShell Core Asset
+    Download PowerShell Asset
 #>
-function Save-PowerShellCore {
+function Save-PowerShellAsset {
     [CmdletBinding(SupportsShouldProcess, DefaultParameterSetName = 'Default')]
     param (
         [Parameter(ParameterSetName = 'Default')]
         [Switch]$Latest,
+        [Parameter(ParameterSetName = 'Default')]
+        [ReleaseTypes]$Release = [ReleaseTypes]::Stable,
         [Parameter(ParameterSetName = 'Version')]
         [SemVer]$Version,
         [Parameter(ParameterSetName = 'Default', Mandatory = $true)]
@@ -21,49 +23,46 @@ function Save-PowerShellCore {
     )
     if (@($AssetType).Length -eq 1) {
         if ($AssetType[0] -eq [AssetArchtectures]::Unknown) {
-            Write-Error $Messages.Save_PowerShellCore_001
+            Write-Error $Messages.Save_PowerShellAsset_001
             return
         }
     } else {
         if ($AssetType -contains [AssetArchtectures]::Unknown) {
-            Write-Error $Messages.Save_PowerShellCore_002
+            Write-Error $Messages.Save_PowerShellAsset_002
             return
         }
     }
 
-    # find release
-    $specifiedToken = $Token
-    if ([string]::IsNullOrEmpty($specifiedToken)) {
-        $specifiedToken = GetPowerShellCoreApiTokenImpl
-    }
-    $release = $null
+    # find PowerShell release
+    $psReleaseInfo = $null
     switch ($PSCmdlet.ParameterSetName) {
         'Version' {  
-            $release = Find-PowerShellCore -Version $Version -IncludePreRelease -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Version $Version -Token $Token
         }
         Default {
-            $release = Find-PowerShellCore -Latest -Token $specifiedToken
+            $psReleaseInfo = Find-PowerShellRelease -Latest -Release $Release -Token $Token
         }
     }
-    if ($null -eq $release) {
-        Write-Warning $Messages.Save_PowerShellCore_003
+    if (-not $psReleaseInfo) {
+        Write-Warning $Messages.Save_PowerShellAsset_003
         return
     }
-    WriteInfo ($Messages.Save_PowerShellCore_004 -f $release.Version)
+    WriteInfo ($Messages.Save_PowerShellAsset_004 -f $psReleaseInfo.Version)
 
     # download
     foreach ($at in $AssetType) {
-        $downloadUrls = ($release.Assets | Where-Object { $_.Architecture -eq $at }).DownloadUrl.OriginalString
+        $downloadUrls = ($psReleaseInfo.Assets | Where-Object { $_.Architecture -eq $at }).DownloadUrl.OriginalString
         if (@($downloadUrls).Length -eq 0) {
-            Write-Error $Messages.Save_PowerShellCore_005
+            Write-Error $Messages.Save_PowerShellAsset_005
             return
         }
         foreach ($url in $downloadUrls) {
             $outFile = Join-Path $OutDirectory $url.split("/")[-1]
             if ($PSCmdlet.ShouldProcess('Download file')) {
-                DownloadFile -Uri $url -OutFile $outFile -Token $specifiedToken
+                DownloadFile -Uri $url -OutFile $outFile -Token $Token
             } else {
-                Write-Warning $Messages.Save_PowerShellCore_006
+                Write-Warning $Messages.Save_PowerShellAsset_006
+                WriteInfo ("(Skip) Download {0}`r`n       To {1}..." -f $url, $outFile)
             }
         }
     }

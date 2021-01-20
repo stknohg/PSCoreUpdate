@@ -9,10 +9,17 @@ InModuleScope 'PSCoreUpdate' {
             @{Expected = [AssetArchtectures]::MSI_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x64.msi'},
             @{Expected = [AssetArchtectures]::MSI_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win10-win2016-x64.msi'},
             @{Expected = [AssetArchtectures]::MSI_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.msi'},
+            @{Expected = [AssetArchtectures]::MSIX_WIN32; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-x86.msix'},
+            @{Expected = [AssetArchtectures]::MSIX_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-x64.msix'},
+            @{Expected = [AssetArchtectures]::MSIX_WINARM32; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-arm32.msix'},
+            @{Expected = [AssetArchtectures]::MSIX_WINARM64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/PowerShell-7.0.2-win-arm64.msix'},            
             @{Expected = [AssetArchtectures]::PKG_OSX; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx.x64.pkg'},
             @{Expected = [AssetArchtectures]::PKG_OSX1011; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0-alpha.18-osx.10.11-x64.pkg'},
+            @{Expected = [AssetArchtectures]::PKG_OSX1011; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0-alpha.17.pkg'},
             @{Expected = [AssetArchtectures]::PKG_OSX1012; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx.10.12-x64.pkg'},
             @{Expected = [AssetArchtectures]::RPM_RHEL7; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-1.rhel.7.x86_64.rpm'},
+            @{Expected = [AssetArchtectures]::RPM_RHEL7; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell-6.0.0_beta.1-1.el7.centos.x86_64.rpm'},
+            @{Expected = [AssetArchtectures]::RPM_RHEL8; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-1.centos.8.x86_64.rpm'},
             @{Expected = [AssetArchtectures]::DEB_DEBIAN8; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.debian.8_amd64.deb'},
             @{Expected = [AssetArchtectures]::DEB_DEBIAN9; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell_6.0.0-1.debian.9_amd64.deb'},
             @{Expected = [AssetArchtectures]::DEB_DEBIAN10; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.1.0/powershell_7.1.0-1.debian.10_amd64.deb'},
@@ -36,7 +43,8 @@ InModuleScope 'PSCoreUpdate' {
             @{Expected = [AssetArchtectures]::ZIP_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x64.zip'},
             @{Expected = [AssetArchtectures]::ZIP_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win10-win2016-x64.zip'},
             @{Expected = [AssetArchtectures]::ZIP_WIN64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.zip'},
-            @{Expected = [AssetArchtectures]::ZIP_WINFXDEPENDENT; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.2.2/PowerShell-6.2.2-win-fxdependent.zip'}
+            @{Expected = [AssetArchtectures]::ZIP_WINFXDEPENDENT; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.1.1/PowerShell-7.1.1-win-fxdependent.zip'}
+            @{Expected = [AssetArchtectures]::ZIP_WINFXDEPENDENTDESKTOP; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.1.1/PowerShell-7.1.1-win-fxdependentWinDesktop.zip'}
             @{Expected = [AssetArchtectures]::WIXPDB32; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x86.wixpdb'},
             @{Expected = [AssetArchtectures]::WIXPDB64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.3/PowerShell-6.0.3-win-x64.wixpdb'},
             @{Expected = [AssetArchtectures]::Unknown; DownloadUrl = ''}
