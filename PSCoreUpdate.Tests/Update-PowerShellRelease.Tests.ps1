@@ -30,23 +30,55 @@ InModuleScope 'PSCoreUpdate' {
         }
 
         $testCases = @(
-            @{Pattern = 'OSX El Capitan (10.11)'; DarwinVersion = 15; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0-alpha.18-osx.10.11-x64.pkg'},
-            @{Pattern = 'macOS Sierra (10.12) - PKG_OSX'; DarwinVersion = 16; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx.x64.pkg'},
-            @{Pattern = 'macOS Sierra (10.12) - PKG_OSX1012'; DarwinVersion = 16; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx.10.12-x64.pkg'}
-            @{Pattern = 'macOS High Sierra (10.13) - PKG_OSX'; DarwinVersion = 17; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx.x64.pkg'},
-            @{Pattern = 'macOS High Sierra (10.13) - PKG_OSX1012'; DarwinVersion = 17; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx.10.12-x64.pkg'}
+            @{Pattern = 'OSX El Capitan (10.11)'; OSXMajorVer = 10; OSXMinorVer = 11; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0-alpha.18-osx.10.11-x64.pkg'},
+            @{Pattern = 'macOS Sierra (10.12) - PKG_OSX'; OSXMajorVer = 10; OSXMinorVer = 12; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx.x64.pkg'},
+            @{Pattern = 'macOS Sierra (10.12) - PKG_OSX1012'; OSXMajorVer = 10; OSXMinorVer = 12; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx.10.12-x64.pkg'},
+            @{Pattern = 'macOS High Sierra (10.13) - PKG_OSX'; OSXMajorVer = 10; OSXMinorVer = 13; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.1.0-preview.3/powershell-6.1.0-preview.3-osx.x64.pkg'},
+            @{Pattern = 'macOS High Sierra (10.13) - PKG_OSX1012'; OSXMajorVer = 10; OSXMinorVer = 13; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx.10.12-x64.pkg'},
+            @{Pattern = 'macOS Mojave (10.14) - PKG_OSX'; OSXMajorVer = 10; OSXMinorVer = 14; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.1.1/powershell-7.1.1-osx-x64.pkg'},
+            @{Pattern = 'macOS Catalina (10.15) - PKG_OSX'; OSXMajorVer = 10; OSXMinorVer = 15; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.1.1/powershell-7.1.1-osx-x64.pkg'},
+            @{Pattern = 'macOS Big Sur (11.1) - PKG_OSX'; OSXMajorVer = 11; OSXMinorVer = 1; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.1.1/powershell-7.1.1-osx-x64.pkg'}
         )
         It "GetPKGAssetUrls should get proper url (<Pattern>)" -TestCases $testCases {
-            param($Pattern, $DarwinVersion, $DownloadUrl)
+            param($Pattern, $OSXMajorVer, $OSXMinorVer, $DownloadUrl)
 
-            Mock -CommandName GetDarwinVersion -MockWith { return $DarwinVersion }
+            Mock -CommandName GetMacOSProductVersion -MockWith { return ($OSXMajorVer, $OSXMinorVer) }
             
             $release = [PowerShellCoreRelease]::new()
             $release.Assets = [System.Collections.Generic.List[PowerShellCoreAsset]]::new()
             $asset = [PowerShellCoreAsset]::new()
             $asset.DownloadUrl = $DownloadUrl
+            $asset.Name = $DownloadUrl.split("/")[-1]
             $release.Assets.Add($asset)
             GetPKGAssetUrls -Release $release | Should -Be $DownloadUrl
+        }
+
+        $testCases = @(
+            @{Pattern = 'macOS Sierra (10.12) - PKG_OSX'; OSXMajorVer = 10; OSXMinorVer = 12; 
+                DownloadUrls = @('https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-7.0.4-osx-x64.pkg', 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts-7.0.4-osx-x64.pkg')},
+            @{Pattern = 'macOS High Sierra (10.13) - PKG_OSX'; OSXMajorVer = 10; OSXMinorVer = 13; 
+                DownloadUrls = @('https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-7.0.4-osx-x64.pkg', 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts-7.0.4-osx-x64.pkg')},
+            @{Pattern = 'macOS Mojave (10.14) - PKG_OSX'; OSXMajorVer = 10; OSXMinorVer = 14; 
+                DownloadUrls = @('https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-7.0.4-osx-x64.pkg', 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts-7.0.4-osx-x64.pkg')},
+            @{Pattern = 'macOS Big Sur (11.1) - PKG_OSX'; OSXMajorVer = 11; OSXMinorVer = 1; 
+                DownloadUrls = @('https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-7.0.4-osx-x64.pkg', 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.4/powershell-lts-7.0.4-osx-x64.pkg')}
+        )
+        It "GetPKGAssetUrls should return single url at LTS release (<Pattern>)" -TestCases $testCases {
+            param($Pattern, $OSXMajorVer, $OSXMinorVer, $DownloadUrls)
+
+            Mock -CommandName GetMacOSProductVersion -MockWith { return ($OSXMajorVer, $OSXMinorVer) }
+
+            $release = [PowerShellCoreRelease]::new()
+            $release.Assets = [System.Collections.Generic.List[PowerShellCoreAsset]]::new()
+            $asset1 = [PowerShellCoreAsset]::new()
+            $asset1.DownloadUrl = $DownloadUrls[0]
+            $asset1.Name = $DownloadUrls[0].split("/")[-1]
+            $release.Assets.Add($asset1)
+            $asset2 = [PowerShellCoreAsset]::new()
+            $asset2.DownloadUrl = $DownloadUrls[1]
+            $asset2.Name = $DownloadUrls[1].split("/")[-1]
+            $release.Assets.Add($asset2)
+            GetPKGAssetUrls -Release $release | Should -Be $DownloadUrls[0]
         }
 
         It "InstallMSI should set proper parameters (interactive)" {

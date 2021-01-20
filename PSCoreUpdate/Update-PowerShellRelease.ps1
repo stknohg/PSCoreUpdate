@@ -130,42 +130,61 @@ function GetMSIAssetUrls ([PowerShellCoreRelease]$Release) {
 }
 
 # this function is for unit tests mainly
-function GetDarwinVersion () {
-    return [System.Environment]::OSVersion.Version.Major
+function GetMacOSProductVersion () {
+    try {
+        # e.g. macOS Big Sur returns 11.1.
+        $major, $minor = (/usr/bin/sw_vers -productVersion).Split('.')
+        return ($major, $minor)
+    } catch {
+        return (0, 0)
+    }
 }
 
 function GetPKGAssetUrls ([PowerShellCoreRelease]$Release) {
-    switch (GetDarwinVersion) {
-        15 {
-            # PKG_OSX1011
-            # * OSX El Capitan (10.11)
-            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX1011 }
-            if ($null -ne $asset) {
-                return $asset.DownloadUrl.OriginalString
-            }
-            return
-        } 
-        { $_ -in (16, 17) } {
-            # PKG_OSX1012 or PKG_OSX
-            # macOS Sierra (10.12)
-            # macOS High Sierra (10.13)
-            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX }
-            if ($null -ne $asset) {
-                return $asset.DownloadUrl.OriginalString
-            }
-            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX1012 }
-            if ($null -ne $asset) {
-                return $asset.DownloadUrl.OriginalString
-            }
-            return
+    # On macOS, Package file may be "powershell-[version].*.pkg" or "powershell-lts-[version].*.pkg"
+    # So we ignore "powershell-lts-[version].*.pkg". 
+    $majorVer, $minorVer = GetMacOSProductVersion
+    if ($majorVer -ge 11) {
+        # PKG_OSX
+        $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+        if ($null -ne $asset) {
+            return $asset.DownloadUrl.OriginalString
         }
-        Default {
-            # PKG_OSX
-            $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX }
-            if ($null -ne $asset) {
-                return $asset.DownloadUrl.OriginalString
+        return
+    }
+    if ($majorVer -eq 10) {
+        switch ($minorVer) {
+            11 {
+                # PKG_OSX1011
+                #  * OSX El Capitan (10.11)
+                $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX1011 }
+                if ($null -ne $asset) {
+                    return $asset.DownloadUrl.OriginalString
+                }
+                return
+            } 
+            { $_ -in (12, 13) } {
+                # PKG_OSX1012 or PKG_OSX
+                #  * macOS Sierra (10.12)
+                #  * macOS High Sierra (10.13)
+                $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+                if ($null -ne $asset) {
+                    return $asset.DownloadUrl.OriginalString
+                }
+                $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX1012 }
+                if ($null -ne $asset) {
+                    return $asset.DownloadUrl.OriginalString
+                }
+                return
             }
-            return
+            Default {
+                # PKG_OSX
+                $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+                if ($null -ne $asset) {
+                    return $asset.DownloadUrl.OriginalString
+                }
+                return
+            }
         }
     }
 }
