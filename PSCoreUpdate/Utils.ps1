@@ -44,6 +44,7 @@ class PowerShellCoreRelease {
 
 enum AssetArchtectures {
     Unknown = 0
+    HASHES_SHA256
     MSI_WIN32
     MSI_WIN64
     MSIX_WIN32
@@ -51,10 +52,13 @@ enum AssetArchtectures {
     MSIX_WINARM32
     MSIX_WINARM64
     PKG_OSX
+    PKG_OSXARM64
     PKG_OSX1011
     PKG_OSX1012
+    RPM_RH
     RPM_RHEL8
     RPM_RHEL7
+    DEB_DEB64
     DEB_DEBIAN8
     DEB_DEBIAN9
     DEB_DEBIAN10
@@ -72,6 +76,7 @@ enum AssetArchtectures {
     TAR_LINUX64
     TAR_LINUX64FXDEPENDENT
     TAR_OSX
+    TAR_OSXARM64
     ZIP_WINARM32
     ZIP_WINARM64
     ZIP_WIN32
@@ -98,6 +103,9 @@ class PowerShellCoreAsset {
 
     [AssetArchtectures] GetArchitecture () {
         switch ($this.DownloadUrl.OriginalString.Split("/")[-1]) {
+            { $_ -match "^hashes.sha256$" } {
+                return [AssetArchtectures]::HASHES_SHA256
+            }
             # Note : PowerShell 6 beta MSI file name is OS specific.
             # e.g. PowerShell-6.0.0-beta.6-win10-win2016-x64.msi
             { $_ -match "^.+win.*-x86.msi$" } {
@@ -118,34 +126,20 @@ class PowerShellCoreAsset {
             { $_ -match "^.+win-arm64.msix$" } {
                 return [AssetArchtectures]::MSIX_WINARM64
             }
-            # Note : PKG_OSX is for macOS 10.13 or later
+            # Note : PKG_OSX, PKG_OSXARM64 is for macOS 10.13 or later
             { $_ -match "^.+osx.x64.pkg$" } {
                 return [AssetArchtectures]::PKG_OSX
             }
-            { $_ -match "^.+(rhel.7.x86_64|el7.centos.x86_64|el7.x86_64|x86_64-centos.7-x64).rpm$" } {
-                return [AssetArchtectures]::RPM_RHEL7
+            { $_ -match "^.+osx.arm64.pkg$" } {
+                return [AssetArchtectures]::PKG_OSXARM64
             }
-            # Currently, RPM_RHEL8 includes centos 8...
-            { $_ -match "^.+(rhel|centos).8.x86_64.rpm$" } {
-                return [AssetArchtectures]::RPM_RHEL8
+            # Universal rpm packeage 
+            { $_ -match "^.+rh.x86_64.rpm$" } {
+                return [AssetArchtectures]::RPM_RH
             }
-            { $_ -match "^.+debian.9_amd64.deb$" } {
-                return [AssetArchtectures]::DEB_DEBIAN9
-            }
-            { $_ -match "^.+debian.10_amd64.deb$" } {
-                return [AssetArchtectures]::DEB_DEBIAN10
-            }
-            { $_ -match "^.+debian.11_amd64.deb$" } {
-                return [AssetArchtectures]::DEB_DEBIAN11
-            }
-            { $_ -match "^.+(ubuntu|ubuntu1).16.\d\d.*(_amd64|-x64).deb$" } {
-                return [AssetArchtectures]::DEB_UBUNTU16
-            }
-            { $_ -match "^.+ubuntu.18.\d\d.*_amd64.deb$" } {
-                return [AssetArchtectures]::DEB_UBUNTU18
-            }
-            { $_ -match "^.+ubuntu.20.\d\d.*_amd64.deb$" } {
-                return [AssetArchtectures]::DEB_UBUNTU20
+            # Universal deb packeage 
+            { $_ -match "^.+deb_amd64.deb$" } {
+                return [AssetArchtectures]::DEB_DEB64
             }
             { $_ -match "^.+linux-arm32.tar.gz$" } {
                 return [AssetArchtectures]::TAR_LINUXARM32
@@ -164,6 +158,9 @@ class PowerShellCoreAsset {
             }
             { $_ -match "^.+osx-x64.tar.gz$" } {
                 return [AssetArchtectures]::TAR_OSX
+            }
+            { $_ -match "^.+osx-arm64.tar.gz$" } {
+                return [AssetArchtectures]::TAR_OSXARM64
             }
             { $_ -match "^.+win-arm32.zip$" } {
                 return [AssetArchtectures]::ZIP_WINARM32
@@ -198,14 +195,38 @@ class PowerShellCoreAsset {
             { $_ -match "^.+osx.10.12-x64.pkg$" } {
                 return [AssetArchtectures]::PKG_OSX1012
             }
+            { $_ -match "^.+(rhel|centos).8.x86_64.rpm$" } {
+                return [AssetArchtectures]::RPM_RHEL8
+            }
+            { $_ -match "^.+(rhel.7.x86_64|el7.centos.x86_64|el7.x86_64|x86_64-centos.7-x64).rpm$" } {
+                return [AssetArchtectures]::RPM_RHEL7
+            }
             { $_ -match "^.+debian.8_amd64.deb$" } {
                 return [AssetArchtectures]::DEB_DEBIAN8
+            }
+            { $_ -match "^.+debian.9_amd64.deb$" } {
+                return [AssetArchtectures]::DEB_DEBIAN9
+            }
+            { $_ -match "^.+debian.10_amd64.deb$" } {
+                return [AssetArchtectures]::DEB_DEBIAN10
+            }
+            { $_ -match "^.+debian.11_amd64.deb$" } {
+                return [AssetArchtectures]::DEB_DEBIAN11
             }
             { $_ -match "^.+(ubuntu|ubuntu1).14.\d\d.*(_amd64|-x64).deb$" } {
                 return [AssetArchtectures]::DEB_UBUNTU14
             }
+            { $_ -match "^.+(ubuntu|ubuntu1).16.\d\d.*(_amd64|-x64).deb$" } {
+                return [AssetArchtectures]::DEB_UBUNTU16
+            }
             { $_ -match "^.+ubuntu.17.\d\d.*_amd64.deb$" } {
                 return [AssetArchtectures]::DEB_UBUNTU17
+            }
+            { $_ -match "^.+ubuntu.18.\d\d.*_amd64.deb$" } {
+                return [AssetArchtectures]::DEB_UBUNTU18
+            }
+            { $_ -match "^.+ubuntu.20.\d\d.*_amd64.deb$" } {
+                return [AssetArchtectures]::DEB_UBUNTU20
             }
             { $_ -match "^.+.AppImage$" } {
                 return [AssetArchtectures]::APPIMAGE
@@ -244,6 +265,10 @@ function WriteInfo ([string]$message) {
 
 function IsCurrentProcess64bit () {
     return ([System.IntPtr]::Size -eq 8)
+}
+
+function IsArmCPU () {
+    return ((Get-ComputerInfo -Property OsArchitecture).OsArchitecture -like "ARM*Processor")
 }
 
 function DownloadFile ([string]$Uri, [string]$OutFile, [string]$Token) {

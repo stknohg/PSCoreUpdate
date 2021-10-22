@@ -145,8 +145,13 @@ function GetPKGAssetUrls ([PowerShellCoreRelease]$Release) {
     # So we ignore "powershell-lts-[version].*.pkg". 
     $majorVer, $minorVer = GetMacOSProductVersion
     if ($majorVer -ge 11) {
-        # PKG_OSX
-        $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+        $asset = if (IsArmCPU) {
+            # PKG_OSXARM64
+            $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSXARM64 }
+        } else {
+            # PKG_OSX
+            $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+        }
         if ($null -ne $asset) {
             return $asset.DownloadUrl.OriginalString
         }
@@ -178,8 +183,13 @@ function GetPKGAssetUrls ([PowerShellCoreRelease]$Release) {
                 return
             }
             Default {
-                # PKG_OSX
-                $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+                $asset = if (IsArmCPU) {
+                    # PKG_OSXARM64
+                    $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSXARM64 }
+                } else {
+                    # PKG_OSX
+                    $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+                }
                 if ($null -ne $asset) {
                     return $asset.DownloadUrl.OriginalString
                 }
@@ -226,6 +236,10 @@ function InstallMSI ([SemVer]$NewVersion, [InstallCommonParameters]$CommonParame
                 REGISTER_MANIFEST = 1;
             }
         }
+        if ($NewVersion -ge '7.2.0-preview.8') {
+            $CommonParameters.InstallOptions["ENABLE_MU"] = 1
+            $CommonParameters.InstallOptions["USE_MU"] = 1
+        }
     }
     if ($null -ne $CommonParameters.InstallOptions) {
         # Currently following parameters are allowed.
@@ -234,6 +248,9 @@ function InstallMSI ([SemVer]$NewVersion, [InstallCommonParameters]$CommonParame
         #   REGISTER_MANIFEST = [0|1] : Register Windows Event Logging Manifest
         #   ENABLE_PSREMOTING = [0|1] : Enable PowerShell remoting
         #   ADD_EXPLORER_CONTEXT_MENU_OPENPOWERSHELL = [0|1] : Add 'Open here' context menus to Explorer
+        #   ADD_FILE_CONTEXT_MENU_RUNPOWERSHELL = [0|1] : Add 'Run with PowerShell' context menu for PowerShell files
+        #   ENABLE_MU = [0|1] : Enable updating PowerShell through Microsoft Update or WSUS (recommended)
+        #   USE_MU = [0|1] : Use Microsoft Update when I check for updates (recommended)
         foreach ($key in $CommonParameters.InstallOptions.Keys) {
             $msiArgs += ('{0}={1}' -f $key, $CommonParameters.InstallOptions[$key])
         }
