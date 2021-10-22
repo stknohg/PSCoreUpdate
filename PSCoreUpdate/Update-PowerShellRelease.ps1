@@ -145,8 +145,13 @@ function GetPKGAssetUrls ([PowerShellCoreRelease]$Release) {
     # So we ignore "powershell-lts-[version].*.pkg". 
     $majorVer, $minorVer = GetMacOSProductVersion
     if ($majorVer -ge 11) {
-        # PKG_OSX
-        $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+        $asset = if (IsArmCPU) {
+            # PKG_OSXARM64
+            $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSXARM64 }
+        } else {
+            # PKG_OSX
+            $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+        }
         if ($null -ne $asset) {
             return $asset.DownloadUrl.OriginalString
         }
@@ -178,8 +183,13 @@ function GetPKGAssetUrls ([PowerShellCoreRelease]$Release) {
                 return
             }
             Default {
-                # PKG_OSX
-                $asset = $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+                $asset = if (IsArmCPU) {
+                    # PKG_OSXARM64
+                    $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSXARM64 }
+                } else {
+                    # PKG_OSX
+                    $Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::PKG_OSX -and $_.Name -notlike 'powershell-lts-*.pkg' }
+                }
                 if ($null -ne $asset) {
                     return $asset.DownloadUrl.OriginalString
                 }

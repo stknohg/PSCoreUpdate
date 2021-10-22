@@ -267,6 +267,10 @@ function IsCurrentProcess64bit () {
     return ([System.IntPtr]::Size -eq 8)
 }
 
+function IsArmCPU () {
+    return ((Get-ComputerInfo -Property OsArchitecture).OsArchitecture -like "ARM*Processor")
+}
+
 function DownloadFile ([string]$Uri, [string]$OutFile, [string]$Token) {
     WriteInfo ("Download {0}`r`n  To {1} ..." -f $Uri, $OutFile)
     if ([string]::IsNullOrEmpty($Token)) {
