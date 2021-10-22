@@ -170,6 +170,7 @@ The types of assets are as follows.
 
 |Value|Asset|
 |----|----|
+|HASHES_SHA256|hashes.sha256|
 |MSI_WIN32|[PowerShell version]-win-x86.msi|
 |MSI_WIN64|[PowerShell version]-win-x64.msi|
 |MSIX_WIN32|[PowerShell version]-win-x86.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
@@ -177,20 +178,16 @@ The types of assets are as follows.
 |MSIX_WINARM32|[PowerShell version]-win-arm32.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
 |MSIX_WINARM64|[PowerShell version]-win-arm64.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
 |PKG_OSX|[PowerShell version]-osx-x64.pkg|
-|RPM_RHEL8|[PowerShell version]-centos.8.x86_64.rpm|
-|RPM_RHEL7|[PowerShell version]-rhel.7.x86_64.rpm|
-|DEB_DEBIAN9|[PowerShell version]-debian.9_amd64.deb|
-|DEB_DEBIAN10|[PowerShell version]-debian.10_amd64.deb|
-|DEB_DEBIAN11|[PowerShell version]-debian.11_amd64.deb|
-|DEB_UBUNTU16|[PowerShell version]-ubuntu.16.nn_amd64.deb|
-|DEB_UBUNTU18|[PowerShell version]-ubuntu.18.nn_amd64.deb|
-|DEB_UBUNTU20|[PowerShell version]-ubuntu.20.nn_amd64.deb|
+|PKG_OSXARM64|[PowerShell version]-osx-arm64.pkg|
+|RPM_RH|[PowerShell version]-rh.x86_64.rpm|
+|DEB_DEB64|[PowerShell version]-deb_amd64.deb|
 |TAR_LINUXARM32|[PowerShell version]-linux-arm32.tar.gz|
 |TAR_LINUXARM64|[PowerShell version]-linux-arm64.tar.gz|
 |TAR_LINUXALPINE64|[PowerShell version]-linux-alpine-x64.tar.gz|
 |TAR_LINUX64FXDEPENDENT|[PowerShell version]-linux-x64-fxdependent.tar.gz|
 |TAR_LINUX64|[PowerShell version]-linux-x64.tar.gz|
 |TAR_OSX|[PowerShell version]-osx-x64.tar.gz|
+|TAR_OSXARM64|[PowerShell version]-osx-arm64.tar.gz|
 |ZIP_WINARM32|[PowerShell version]-win-arm32.zip|
 |ZIP_WINARM64|[PowerShell version]-win-arm64.zip|
 |ZIP_WIN32|[PowerShell version]-win-x86.zip|
@@ -206,9 +203,17 @@ The types of assets are as follows.
 |----|----|
 |PKG_OSX1011|[PowerShell version]-osx.10.11-x64.pkg|
 |PKG_OSX1012|[PowerShell version]-osx.10.12-x64.pkg|
+|RPM_RHEL8|[PowerShell version]-centos.8.x86_64.rpm|
+|RPM_RHEL7|[PowerShell version]-rhel.7.x86_64.rpm|
 |DEB_DEBIAN8|[PowerShell version]-debian.8_amd64.deb|
+|DEB_DEBIAN9|[PowerShell version]-debian.9_amd64.deb|
+|DEB_DEBIAN10|[PowerShell version]-debian.10_amd64.deb|
+|DEB_DEBIAN11|[PowerShell version]-debian.11_amd64.deb|
 |DEB_UBUNTU14|[PowerShell version]-ubuntu.14.nn_amd64.deb|
+|DEB_UBUNTU16|[PowerShell version]-ubuntu.16.nn_amd64.deb|
 |DEB_UBUNTU17|[PowerShell version]-ubuntu.17.nn_amd64.deb|
+|DEB_UBUNTU18|[PowerShell version]-ubuntu.18.nn_amd64.deb|
+|DEB_UBUNTU20|[PowerShell version]-ubuntu.20.nn_amd64.deb|
 |APPIMAGE|[PowerShell version]-x86_64.AppImage|
 |WIXPDB32|[PowerShell version]-win-x86.wixpdb|
 |WIXPDB64|[PowerShell version]-win-x64.wixpdb|
