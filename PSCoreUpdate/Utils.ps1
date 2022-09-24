@@ -51,10 +51,12 @@ enum AssetArchtectures {
     MSIX_WIN64
     MSIX_WINARM32
     MSIX_WINARM64
+    MSIXBUNDLE
     PKG_OSX
     PKG_OSXARM64
     PKG_OSX1011
     PKG_OSX1012
+    RPM_CM 
     RPM_RH
     RPM_RHEL8
     RPM_RHEL7
@@ -126,12 +128,19 @@ class PowerShellCoreAsset {
             { $_ -match "^.+win-arm64.msix$" } {
                 return [AssetArchtectures]::MSIX_WINARM64
             }
+            { $_ -match "^.+win.msixbundle$" } {
+                return [AssetArchtectures]::MSIXBUNDLE
+            }
             # Note : PKG_OSX, PKG_OSXARM64 is for macOS 10.13 or later
             { $_ -match "^.+osx.x64.pkg$" } {
                 return [AssetArchtectures]::PKG_OSX
             }
             { $_ -match "^.+osx.arm64.pkg$" } {
                 return [AssetArchtectures]::PKG_OSXARM64
+            }
+            # CBL-Mariner rpm package
+            { $_ -match "^.+cm.x86_64.rpm$" } {
+                return [AssetArchtectures]::RPM_CM
             }
             # Universal rpm packeage 
             { $_ -match "^.+rh.x86_64.rpm$" } {
