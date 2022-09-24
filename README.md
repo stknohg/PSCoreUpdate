@@ -34,14 +34,16 @@ Note : PSCoreUpdate version.3 has many breaking changes.
 
 * See the [release note](https://github.com/stknohg/PSCoreUpdate/releases/tag/v3.0.0) for detail.
 
-### First-time installation scripts
+### First-time installation
 
 This module is for updating PowerShell.  
 So, the first-time installation must be performed manually.
 
-We prepared the following page to facilitate the first-time installation.
+You can use the [official installation script](https://github.com/PowerShell/PowerShell/blob/master/tools/install-powershell.ps1-README.md).
 
-* [First-time installation scripts](./FirstTimeInstaller/)
+```powershell
+Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -UseMSI -Quiet"
+```
 
 ## Usage
 

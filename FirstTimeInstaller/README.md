@@ -1,5 +1,25 @@
 # First-time installation scripts
 
+You should use official installation scripts now.
+
+### Windows
+
+* [install-powershell.ps1](https://github.com/PowerShell/PowerShell/blob/master/tools/install-powershell.ps1-README.md)
+
+```powershell
+Invoke-Expression "& { $(Invoke-RestMethod 'https://aka.ms/install-powershell.ps1') } -UseMSI -Quiet"
+```
+
+### Linux, macOS
+
+* [install-powershell.sh](https://github.com/PowerShell/PowerShell/blob/master/tools/install-powershell.sh-README.md)
+
+```bash
+wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh | sudo bash -s
+```
+
+# [Outdated] Previous scripts
+
 __NOTE:__ If you are worried, please inspect each script before doing it for safety.
 
 Each script is based on the official installation instructions.
