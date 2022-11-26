@@ -277,7 +277,11 @@ function IsCurrentProcess64bit () {
 }
 
 function IsArmCPU () {
-    return ((Get-ComputerInfo -Property OsArchitecture).OsArchitecture -like "ARM*Processor")
+    if ($IsWindows) {
+        return ((Get-ComputerInfo -Property OsArchitecture).OsArchitecture -like "ARM*Processor")
+    } else {
+        return ((uname -m) -like 'arm*')
+    }
 }
 
 function DownloadFile ([string]$Uri, [string]$OutFile, [string]$Token) {
