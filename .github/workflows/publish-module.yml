@@ -7,7 +7,7 @@ jobs:
     runs-on: windows-2022
     steps:
     # checkout
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     # validate
     - name: validate module
       shell: pwsh
