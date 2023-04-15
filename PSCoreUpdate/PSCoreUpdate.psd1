@@ -9,7 +9,7 @@
     PowerShellVersion    = '7.0.0'
     TypesToProcess       = @('PSCoreUpdate.types.ps1xml')
     FormatsToProcess     = @('PSCoreUpdate.format.ps1xml')
-    NestedModules        = @('PSCoreUpdate.psm1')
+    RootModule           = 'PSCoreUpdate.psm1'
     FunctionsToExport    = @('Find-PowerShellBuildStatus', 'Find-PowerShellRelease', 
                              'Test-LatestVersion', 'Update-PowerShellRelease', 'Save-PowerShellAsset', 
                              'Get-PowerShellGitHubApiToken', 'Remove-PowerShellGitHubApiToken', 'Set-PowerShellGitHubApiToken',
