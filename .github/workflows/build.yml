@@ -18,11 +18,11 @@ jobs:
     runs-on: windows-2022
     steps:
       # checkout
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # Runs Pester all *.tests.ps1 scripts
       - name: Run Pester tests
         env:
-          GH_API_ACCESS_TOKEN: ${{ secrets.GH_API_ACCESS_TOKEN }}
+          GH_API_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Install the latest Pester module
           Install-Module Pester -Force

@@ -47,6 +47,7 @@ enum AssetArchtectures {
     HASHES_SHA256
     MSI_WIN32
     MSI_WIN64
+    MSI_ARM64
     MSIX_WIN32
     MSIX_WIN64
     MSIX_WINARM32
@@ -56,7 +57,8 @@ enum AssetArchtectures {
     PKG_OSXARM64
     PKG_OSX1011
     PKG_OSX1012
-    RPM_CM 
+    RPM_CM
+    RPM_CMARM64
     RPM_RH
     RPM_RHEL8
     RPM_RHEL7
@@ -77,6 +79,7 @@ enum AssetArchtectures {
     TAR_LINUXALPINE64
     TAR_LINUX64
     TAR_LINUX64FXDEPENDENT
+    TAR_LINUXALPINE64FXDEPENDENT
     TAR_OSX
     TAR_OSXARM64
     ZIP_WINARM32
@@ -116,6 +119,10 @@ class PowerShellCoreAsset {
             { $_ -match "^.+win.*-x64.msi$" } {
                 return [AssetArchtectures]::MSI_WIN64
             }
+            # Note : ARM64 MSI installer was released since v7.4.3
+            { $_ -match "^.+win-arm64.msi$" } {
+                return [AssetArchtectures]::MSI_ARM64
+            }
             { $_ -match "^.+win-x86.msix$" } {
                 return [AssetArchtectures]::MSIX_WIN32
             }
@@ -142,6 +149,9 @@ class PowerShellCoreAsset {
             { $_ -match "^.+cm.x86_64.rpm$" } {
                 return [AssetArchtectures]::RPM_CM
             }
+            { $_ -match "^.+cm.aarch64.rpm$" } {
+                return [AssetArchtectures]::RPM_CMARM64
+            }
             # Universal rpm packeage 
             { $_ -match "^.+rh.x86_64.rpm$" } {
                 return [AssetArchtectures]::RPM_RH
@@ -164,6 +174,9 @@ class PowerShellCoreAsset {
             }
             { $_ -match "^.+linux-x64-fxdependent.tar.gz$" } {
                 return [AssetArchtectures]::TAR_LINUX64FXDEPENDENT
+            }
+            { $_ -match "^.+linux-x64-(musl-noopt|alpine)-fxdependent.tar.gz$" } {
+                return [AssetArchtectures]::TAR_LINUXALPINE64FXDEPENDENT
             }
             { $_ -match "^.+osx-x64.tar.gz$" } {
                 return [AssetArchtectures]::TAR_OSX
