@@ -37,6 +37,42 @@
             </TableControl>
         </View>
 
+        <!-- PowerShellSupportStatus table view -->
+        <View>
+            <Name>Default</Name>
+            <ViewSelectedBy>
+                <TypeName>PowerShellSupportStatus</TypeName>
+            </ViewSelectedBy>
+            <TableControl>
+                <TableHeaders>
+                    <TableColumnHeader>
+                         <Label>Version</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                         <Label>Is EOS</Label>
+                    </TableColumnHeader>
+                    <TableColumnHeader>
+                         <Label>EOS Date</Label>
+                    </TableColumnHeader>
+                </TableHeaders>
+                <TableRowEntries>
+                    <TableRowEntry>
+                        <TableColumnItems>
+                            <TableColumnItem>
+                                <ScriptBlock>"{0}.{1}" -f $_.Version.Major, $_.Version.Minor</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.IsEOS()</ScriptBlock>
+                            </TableColumnItem>
+                            <TableColumnItem>
+                                <ScriptBlock>$_.EOSDate.ToString("d")</ScriptBlock>
+                            </TableColumnItem>
+                        </TableColumnItems>
+                    </TableRowEntry>
+                 </TableRowEntries>
+            </TableControl>
+        </View>
+
         <!-- PowerShellCoreRelease table view -->
         <View>
             <Name>Default</Name>

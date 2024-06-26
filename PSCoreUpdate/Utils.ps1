@@ -19,6 +19,17 @@ enum ReleaseTypes {
     LTS = 2
 }
 
+class PowerShellSupportStatus {
+
+    [semver]$Version;
+
+    [datetime]$EOSDate;
+
+    [bool] IsEOS() {
+        return (([datetime]::Now.Date + 1) -ge $this.EOSDate.Date)
+    }
+}
+
 class PowerShellCoreRelease {
     
     [int]$ReleaseId;
