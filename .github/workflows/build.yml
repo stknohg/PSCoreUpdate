@@ -18,7 +18,7 @@ jobs:
     runs-on: windows-2022
     steps:
       # checkout
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       # Runs Pester all *.tests.ps1 scripts
       - name: Run Pester tests
         env:
