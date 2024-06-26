@@ -56,7 +56,8 @@ enum AssetArchtectures {
     PKG_OSXARM64
     PKG_OSX1011
     PKG_OSX1012
-    RPM_CM 
+    RPM_CM
+    RPM_CMARM64
     RPM_RH
     RPM_RHEL8
     RPM_RHEL7
@@ -141,6 +142,9 @@ class PowerShellCoreAsset {
             # CBL-Mariner rpm package
             { $_ -match "^.+cm.x86_64.rpm$" } {
                 return [AssetArchtectures]::RPM_CM
+            }
+            { $_ -match "^.+cm.aarch64.rpm$" } {
+                return [AssetArchtectures]::RPM_CMARM64
             }
             # Universal rpm packeage 
             { $_ -match "^.+rh.x86_64.rpm$" } {

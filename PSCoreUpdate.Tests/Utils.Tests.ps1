@@ -21,6 +21,7 @@ InModuleScope 'PSCoreUpdate' {
             @{Expected = [AssetArchtectures]::PKG_OSX1011; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0-alpha.17.pkg'},
             @{Expected = [AssetArchtectures]::PKG_OSX1012; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx.10.12-x64.pkg'},
             @{Expected = [AssetArchtectures]::RPM_CM; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.2.6/powershell-7.2.6-1.cm.x86_64.rpm'},
+            @{Expected = [AssetArchtectures]::RPM_CMARM64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.4.3/powershell-7.4.3-1.cm.aarch64.rpm'},
             @{Expected = [AssetArchtectures]::RPM_RH; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-preview.5/powershell-preview-7.2.0_preview.5-1.rh.x86_64.rpm'},
             @{Expected = [AssetArchtectures]::RPM_RHEL8; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.0.2/powershell-7.0.2-1.centos.8.x86_64.rpm'},
             @{Expected = [AssetArchtectures]::RPM_RHEL7; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-1.rhel.7.x86_64.rpm'},

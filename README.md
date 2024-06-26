@@ -186,6 +186,7 @@ The types of assets are as follows.
 |PKG_OSX|[PowerShell version]-osx-x64.pkg|
 |PKG_OSXARM64|[PowerShell version]-osx-arm64.pkg|
 |RPM_CM|[PowerShell version]-cm.x86_64.rpm|
+|RPM_CMARM64|[PowerShell version]-cm.aarch64.rpm|
 |RPM_RH|[PowerShell version]-rh.x86_64.rpm|
 |DEB_DEB64|[PowerShell version]-deb_amd64.deb|
 |TAR_LINUXARM32|[PowerShell version]-linux-arm32.tar.gz|
