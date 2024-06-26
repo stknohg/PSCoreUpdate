@@ -22,7 +22,7 @@ jobs:
       # Runs Pester all *.tests.ps1 scripts
       - name: Run Pester tests
         env:
-          GH_API_ACCESS_TOKEN: ${{ secrets.GH_API_ACCESS_TOKEN }}
+          GH_API_ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           # Install the latest Pester module
           Install-Module Pester -Force
