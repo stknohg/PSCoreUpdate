@@ -240,7 +240,6 @@ The types of assets are as follows.
 |TAR_LINUX64|[PowerShell version]-linux-x64.tar.gz|
 |TAR_OSX|[PowerShell version]-osx-x64.tar.gz|
 |TAR_OSXARM64|[PowerShell version]-osx-arm64.tar.gz|
-|ZIP_WINARM32|[PowerShell version]-win-arm32.zip|
 |ZIP_WINARM64|[PowerShell version]-win-arm64.zip|
 |ZIP_WIN32|[PowerShell version]-win-x86.zip|
 |ZIP_WIN64|[PowerShell version]-win-x64.zip|
@@ -273,3 +272,4 @@ The types of assets are as follows.
 |APPIMAGE|[PowerShell version]-x86_64.AppImage|
 |WIXPDB32|[PowerShell version]-win-x86.wixpdb|
 |WIXPDB64|[PowerShell version]-win-x64.wixpdb|
+|ZIP_WINARM32|[PowerShell version]-win-arm32.zip (Removed in PowerShell 7.4 Preview.5 [#20102](https://github.com/PowerShell/PowerShell/pull/20102))|
