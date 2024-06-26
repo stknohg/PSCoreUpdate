@@ -169,9 +169,9 @@ function GetVersionFromTag ([string]$VersionTag) {
 
 function SetHttpHeaders ([string]$Token) {
     if ([string]::IsNullOrEmpty($Token)) {
-        return @{ Accept = 'application/vnd.github.v3+json' }
+        return @{ Accept = 'application/vnd.github.v3+json'; 'X-GitHub-Api-Version' = '2022-11-28' }
     }
-    return @{ Accept = 'application/vnd.github.v3+json'; Authorization = "token $Token" }
+    return @{ Accept = 'application/vnd.github.v3+json'; 'X-GitHub-Api-Version' = '2022-11-28'; Authorization = "token $Token" }
 }
 
 function GetGitHubResponseByTag ([string]$VersionTagName, [string]$Token) {

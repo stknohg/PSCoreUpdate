@@ -107,7 +107,10 @@ PS C:\> Update-PowerShellRelease -Latest -Silent
 
 ### Find-PowerShellRelease
 
-Find PowerShell release information from GitHub.
+Find PowerShell release information from GitHub.  
+
+> [!NOTE]  
+> This function uses [GitHub REST API](https://docs.github.com/en/rest?apiVersion=2022-11-28) Version 2022-11-28.
 
 ```powershell
 PS C:\> Find-PowerShellRelease -MaxItems 10
