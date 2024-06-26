@@ -8,8 +8,10 @@ New cross-platform PowerShell update tool.
 
 PSCoreUpdate supports automation update of new cross-platform PowerShell (pwsh).  
 
-Currently, PowerShell Team is planning on supporting security updates of PowerShell through Microsoft Update on Windows ([#6118](https://github.com/PowerShell/PowerShell/issues/6118)), but it will take some time for realization.  
-[Homebrew Cask](https://caskroom.github.io/) is now available on macOS, but the installation of Homebrew is a bit heavy.  
+<del>Currently, PowerShell Team is planning on supporting security updates of PowerShell through Microsoft Update on Windows ([#6118](https://github.com/PowerShell/PowerShell/issues/6118)), but it will take some time for realization.  
+[Homebrew Cask](https://caskroom.github.io/) is now available on macOS, but the installation of Homebrew is a bit heavy.</del>
+
+PowerShell Team began supporting updates to PowerShell via Microsoft Update starting with PowerShell 7.2, but updates cannot be performed at any time, and there is no module that can manage release assets.
 
 This module is a little tool to solve such inconvenience.
 
@@ -18,7 +20,11 @@ This module is a little tool to solve such inconvenience.
 You can install it from [PowerShell gallery](https://www.powershellgallery.com/packages/PSCoreUpdate).
 
 ```powershell
+# Using PowerShellGet
 Install-Module PSCoreUpdate
+
+# Using Microsoft.PowerShell.PSResourceGet
+Install-PSResource -Name PSCoreUpdate
 ```
 
 ### Upgrade from version 2
