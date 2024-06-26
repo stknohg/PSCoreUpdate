@@ -79,6 +79,7 @@ enum AssetArchtectures {
     TAR_LINUXALPINE64
     TAR_LINUX64
     TAR_LINUX64FXDEPENDENT
+    TAR_LINUXALPINE64FXDEPENDENT
     TAR_OSX
     TAR_OSXARM64
     ZIP_WINARM32
@@ -173,6 +174,9 @@ class PowerShellCoreAsset {
             }
             { $_ -match "^.+linux-x64-fxdependent.tar.gz$" } {
                 return [AssetArchtectures]::TAR_LINUX64FXDEPENDENT
+            }
+            { $_ -match "^.+linux-x64-(musl-noopt|alpine)-fxdependent.tar.gz$" } {
+                return [AssetArchtectures]::TAR_LINUXALPINE64FXDEPENDENT
             }
             { $_ -match "^.+osx-x64.tar.gz$" } {
                 return [AssetArchtectures]::TAR_OSX

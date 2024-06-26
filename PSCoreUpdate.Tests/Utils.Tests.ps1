@@ -43,6 +43,8 @@ InModuleScope 'PSCoreUpdate' {
             @{Expected = [AssetArchtectures]::TAR_LINUXALPINE64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.2.2/powershell-6.2.2-linux-alpine-x64.tar.gz'},
             @{Expected = [AssetArchtectures]::TAR_LINUX64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-linux-x64.tar.gz'},
             @{Expected = [AssetArchtectures]::TAR_LINUX64FXDEPENDENT; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.2.2/powershell-6.2.2-linux-x64-fxdependent.tar.gz'},
+            @{Expected = [AssetArchtectures]::TAR_LINUXALPINE64FXDEPENDENT; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.4.0/powershell-7.4.0-linux-x64-musl-noopt-fxdependent.tar.gz'},
+            @{Expected = [AssetArchtectures]::TAR_LINUXALPINE64FXDEPENDENT; DownloadUrl = ' https://github.com/PowerShell/PowerShell/releases/download/v7.4.0-preview.5/powershell-7.4.0-preview.5-linux-x64-alpine-fxdependent.tar.gz'},
             @{Expected = [AssetArchtectures]::TAR_OSX; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/powershell-6.0.0-osx-x64.tar.gz'},
             @{Expected = [AssetArchtectures]::TAR_OSXARM64; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.2.0-rc.1/powershell-7.2.0-rc.1-osx-arm64.tar.gz'},
             @{Expected = [AssetArchtectures]::ZIP_WINARM32; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-arm32.zip'},
