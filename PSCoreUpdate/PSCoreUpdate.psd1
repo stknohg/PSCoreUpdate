@@ -10,7 +10,7 @@
     TypesToProcess       = @('PSCoreUpdate.types.ps1xml')
     FormatsToProcess     = @('PSCoreUpdate.format.ps1xml')
     RootModule           = 'PSCoreUpdate.psm1'
-    FunctionsToExport    = @('Find-PowerShellBuildStatus', 'Find-PowerShellRelease', 
+    FunctionsToExport    = @('Find-PowerShellBuildStatus', 'Find-PowerShellSupportStatus', 'Find-PowerShellRelease', 
                              'Test-LatestVersion', 'Update-PowerShellRelease', 'Save-PowerShellAsset', 
                              'Get-PowerShellGitHubApiToken', 'Remove-PowerShellGitHubApiToken', 'Set-PowerShellGitHubApiToken',
                              'Enable-PSCoreUpdateLegacyAlias')

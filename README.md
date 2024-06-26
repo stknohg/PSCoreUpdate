@@ -173,6 +173,39 @@ Version         Release ReleaseDate
 7.4.3           LTS     2024/06/18 23:26:06
 ```
 
+### Find-PowerShellSupportStatus
+
+Find PowerShell support status.  
+
+* Official information : [PowerShell end-of-support dates](https://learn.microsoft.com/en-us/powershell/scripting/install/powershell-support-lifecycle?view=powershell-7.4#powershell-end-of-support-dates)
+
+> [!NOTE]  
+> This function uses [endoflife.date raw data on GitHub](https://github.com/endoflife-date/release-data/blob/main/releases/powershell.json).
+
+```powershell
+# Find all versions
+PS C:\> Find-PowerShellSupportStatus
+
+Version Is EOS  EOS Date
+------- ------- --------
+7.4     False   2026/11/10
+7.3     True    2024/05/08
+7.2     False   2024/11/08
+7.1     True    2022/05/08
+7.0     True    2022/12/03
+6.2     True    2020/09/04
+6.1     True    2019/09/28
+6.0     True    2019/02/13
+
+# Find supported version only
+PS C:\> Find-PowerShellSupportStatus -ExcludeEOS
+
+Version Is EOS EOS Date
+------- ------ --------
+7.4     False  2026/11/10
+7.2     False  2024/11/08
+```
+
 ### Save-PowerShellAsset
 
 Download PowerShell release assets.

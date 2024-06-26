@@ -2,6 +2,7 @@ ConvertFrom-StringData @'
 Find_PowerShellRelease_001 = PowerShell releases was not found.
 Find_PowerShellRelease_002 = "{0}" is not correct version tag name.
 Find_PowerShellRelease_003 = "{0}" is not correct version range.\r\nVersion range must follow NuGet range syntax.\r\nSee : https://docs.microsoft.com/en-us/nuget/concepts/package-versioning#version-ranges
+Find_PowerShellSupportStatus_001 = Preview version of PowerShell is provided for testing and feedback only. (Version = {0})
 Get_PowerShellGitHubApiToken_001 = GitHub API token is not saved.
 Get_PowerShellGitHubApiToken_002 = Saved GitHub API token is {0} .
 Save_PowerShellAsset_001 = Invalid AssetType.

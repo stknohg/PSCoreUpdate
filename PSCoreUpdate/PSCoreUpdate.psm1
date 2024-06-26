@@ -5,6 +5,7 @@ Import-LocalizedData -BindingVariable "Messages" -FileName "Messages"
 . (Join-Path $PSScriptRoot 'Utils.ps1')
 . (Join-Path $PSScriptRoot 'PowerShellGitHubApiToken.ps1')
 . (Join-Path $PSScriptRoot 'Find-PowerShellBuildStatus.ps1')
+. (Join-Path $PSScriptRoot 'Find-PowerShellSupportStatus.ps1')
 . (Join-Path $PSScriptRoot 'Find-PowerShellRelease.ps1')
 . (Join-Path $PSScriptRoot 'Save-PowerShellAsset.ps1')
 . (Join-Path $PSScriptRoot 'Test-LatestVersion.ps1')
