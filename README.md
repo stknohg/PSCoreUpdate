@@ -182,6 +182,7 @@ The types of assets are as follows.
 |HASHES_SHA256|hashes.sha256|
 |MSI_WIN32|[PowerShell version]-win-x86.msi|
 |MSI_WIN64|[PowerShell version]-win-x64.msi|
+|MSI_ARM64|[PowerShell version]-win-arm64.msi|
 |MSIXBUNDLE|[PowerShell version]-win.msixbundle|
 |PKG_OSX|[PowerShell version]-osx-x64.pkg|
 |PKG_OSXARM64|[PowerShell version]-osx-arm64.pkg|

@@ -47,6 +47,7 @@ enum AssetArchtectures {
     HASHES_SHA256
     MSI_WIN32
     MSI_WIN64
+    MSI_ARM64
     MSIX_WIN32
     MSIX_WIN64
     MSIX_WINARM32
@@ -116,6 +117,10 @@ class PowerShellCoreAsset {
             }
             { $_ -match "^.+win.*-x64.msi$" } {
                 return [AssetArchtectures]::MSI_WIN64
+            }
+            # Note : ARM64 MSI installer was released since v7.4.3
+            { $_ -match "^.+win-arm64.msi$" } {
+                return [AssetArchtectures]::MSI_ARM64
             }
             { $_ -match "^.+win-x86.msix$" } {
                 return [AssetArchtectures]::MSIX_WIN32
