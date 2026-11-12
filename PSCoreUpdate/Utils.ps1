@@ -68,12 +68,15 @@ enum AssetArchtectures {
     PKG_OSXARM64
     PKG_OSX1011
     PKG_OSX1012
+    RPM_AZL4
+    RPM_AZL4ARM64
     RPM_CM
     RPM_CMARM64
     RPM_RH
     RPM_RHEL8
     RPM_RHEL7
     DEB_DEB64
+    DEB_DEBARM64
     DEB_DEBIAN8
     DEB_DEBIAN9
     DEB_DEBIAN10
@@ -146,7 +149,7 @@ class PowerShellCoreAsset {
             { $_ -match "^.+win-arm64.msix$" } {
                 return [AssetArchtectures]::MSIX_WINARM64
             }
-            { $_ -match "^.+win.msixbundle$" } {
+            { $_ -match "^.+.msixbundle$" } {
                 return [AssetArchtectures]::MSIXBUNDLE
             }
             # Note : PKG_OSX, PKG_OSXARM64 is for macOS 10.13 or later
@@ -155,6 +158,13 @@ class PowerShellCoreAsset {
             }
             { $_ -match "^.+osx.arm64.pkg$" } {
                 return [AssetArchtectures]::PKG_OSXARM64
+            }
+            # Azure Linux 4 rpm package
+            { $_ -match "^.+azl4.x86_64.rpm$" } {
+                return [AssetArchtectures]::RPM_AZL4
+            }
+            { $_ -match "^.+azl4.aarch64.rpm$" } {
+                return [AssetArchtectures]::RPM_AZL4ARM64
             }
             # CBL-Mariner rpm package
             { $_ -match "^.+cm.x86_64.rpm$" } {
@@ -170,6 +180,9 @@ class PowerShellCoreAsset {
             # Universal deb packeage 
             { $_ -match "^.+deb_amd64.deb$" } {
                 return [AssetArchtectures]::DEB_DEB64
+            }
+            { $_ -match "^.+deb_arm64.deb$" } {
+                return [AssetArchtectures]::DEB_DEBARM64
             }
             { $_ -match "^.+linux-arm32.tar.gz$" } {
                 return [AssetArchtectures]::TAR_LINUXARM32
