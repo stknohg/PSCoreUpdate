@@ -31,4 +31,5 @@ Update_PowerShellRelease_011 = 現在の PowerShell コンソールを終了し�
 Update_PowerShellRelease_012 = プレビューリリース
 Update_PowerShellRelease_013 = 長期サポート(LTS)リリース
 Update_PowerShellRelease_014 = リリース
+Update_PowerShellRelease_015 = PowerShell 7.7 からはMSIインストーラーに代わりMSIXパッケージ(.msxibundle)をインストールします...\r\n参考 : https://devblogs.microsoft.com/powershell/powershell-msi-deprecation/
 '@
