@@ -62,6 +62,11 @@ function Update-PowerShellRelease {
     }
     WriteInfo ($Messages.Update_PowerShellRelease_005 -f $psReleaseInfo.Version)
 
+    # Show PowerShell 7.7 warning
+    if ($PSVersionTable.PSVersion -lt '7.7.0-preview.1' -and $psReleaseInfo.Version -ge '7.7.0-preview.1') {
+        Write-Warning $Messages.Update_PowerShellRelease_015
+    }
+
     # Download installer asset
     $installerAssetUrls = GetInstallerAssetUrls -Release $psReleaseInfo
     if (@($installerAssetUrls).Count -eq 0) {
@@ -123,6 +128,10 @@ function GetInstallerAssetUrls ([PowerShellCoreRelease]$Release) {
 }
 
 function GetMSIAssetUrls ([PowerShellCoreRelease]$Release) {
+    # see: https://devblogs.microsoft.com/powershell/powershell-msi-deprecation/
+    if ($Release.version -ge '7.7.0-preview.1') {
+        return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSIXBUNDLE }).DownloadUrl.OriginalString
+    }
     if (IsCurrentProcess64bit) {
         return ($Release.Assets | Where-Object { $_.Architecture -eq [AssetArchtectures]::MSI_WIN64 }).DownloadUrl.OriginalString
     }
@@ -212,7 +221,13 @@ class InstallCommonParameters {
 
 function DoInstall ([hashtable]$CustomParameters, [InstallCommonParameters]$CommonParameters) {
     if ($IsWindows) {
-        InstallMSI -NewVersion $CustomParameters["Windows"]["NewVersion"] -CommonParameters $CommonParameters
+        # see: https://devblogs.microsoft.com/powershell/powershell-msi-deprecation/
+        $installVersion = $CustomParameters["Windows"]["NewVersion"]
+        if ($installVersion -ge '7.7.0-preview.1') {
+            InstallMSIXBundle -CommonParameters $CommonParameters
+            return
+        }
+        InstallMSI -NewVersion $installVersion -CommonParameters $CommonParameters
         return
     }
     if ($IsMacOS) {
@@ -220,6 +235,17 @@ function DoInstall ([hashtable]$CustomParameters, [InstallCommonParameters]$Comm
         return
     }
     return
+}
+
+function InstallMSIXBundle ([InstallCommonParameters]$CommonParameters) {
+    # invoke user install
+    if ($CommonParameters.ShouldProcess) {
+        WriteInfo ('Add-AppxPackage -Path {0}' -f ($CommonParameters.InstallerPath))
+        Add-AppxPackage -Path $CommonParameters.InstallerPath
+    } else {
+        Write-Warning $Messages.Update_PowerShellRelease_010
+        WriteInfo ('(skip) Add-AppxPackage -Path {0}' -f ($CommonParameters.InstallerPath))
+    }
 }
 
 function InstallMSI ([SemVer]$NewVersion, [InstallCommonParameters]$CommonParameters) { 

@@ -222,9 +222,6 @@ The types of assets are as follows.
 |Value|Asset|
 |----|----|
 |HASHES_SHA256|hashes.sha256|
-|MSI_WIN32|[PowerShell version]-win-x86.msi|
-|MSI_WIN64|[PowerShell version]-win-x64.msi|
-|MSI_ARM64|[PowerShell version]-win-arm64.msi|
 |MSIXBUNDLE|[PowerShell version]-(win|).msixbundle|
 |PKG_OSX|[PowerShell version]-osx-x64.pkg|
 |PKG_OSXARM64|[PowerShell version]-osx-arm64.pkg|
@@ -255,6 +252,9 @@ The types of assets are as follows.
 
 |Value|Asset|
 |----|----|
+|MSI_WIN32|[PowerShell version]-win-x86.msi (MSI installer has been removed since PowerShell 7.7.)|
+|MSI_WIN64|[PowerShell version]-win-x64.msi (MSI installer has been removed since PowerShell 7.7.)|
+|MSI_ARM64|[PowerShell version]-win-arm64.msi (MSI installer has been removed since PowerShell 7.7.)|
 |MSIX_WIN32|[PowerShell version]-win-x86.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
 |MSIX_WIN64|[PowerShell version]-win-x64.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|
 |MSIX_WINARM32|[PowerShell version]-win-arm32.msix (Currently unreleased [#13284](https://github.com/PowerShell/PowerShell/issues/13284))|

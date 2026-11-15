@@ -13,8 +13,9 @@ InModuleScope 'PSCoreUpdate' {
         }
     
         $testCases = @(
-            @{Pattern = '64bit'; Is64bit = $true; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x64.msi'},
-            @{Pattern = '32bit'; Is64bit = $false; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x86.msi'}
+            @{Pattern = '64bit'; Is64bit = $true; ReleaseVer = '6.0.0'; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x64.msi'},
+            @{Pattern = '32bit'; Is64bit = $false; ReleaseVer = '6.0.0'; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v6.0.0/PowerShell-6.0.0-win-x86.msi'}
+            @{Pattern = '64bit'; Is64bit = $false; ReleaseVer = '7.7.0'; DownloadUrl = 'https://github.com/PowerShell/PowerShell/releases/download/v7.7.0/PowerShell-7.7.0.msixbundle'}
         )
         It "GetMSIAssetUrls should get proper url (<Pattern>)" -TestCases $testCases {
             param($Pattern, $Is64bit, $DownloadUrl)
@@ -22,6 +23,7 @@ InModuleScope 'PSCoreUpdate' {
             Mock -CommandName IsCurrentProcess64bit -MockWith { return $Is64bit }
             
             $release = [PowerShellCoreRelease]::new()
+            $release.version = $ReleaseVer
             $release.Assets = [System.Collections.Generic.List[PowerShellCoreAsset]]::new()
             $asset = [PowerShellCoreAsset]::new()
             $asset.DownloadUrl = $DownloadUrl
@@ -79,6 +81,21 @@ InModuleScope 'PSCoreUpdate' {
             $asset2.Name = $DownloadUrls[1].split("/")[-1]
             $release.Assets.Add($asset2)
             GetPKGAssetUrls -Release $release | Should -Be $DownloadUrls[0]
+        }
+
+        It "InstallMSIXBundle should set proper parameters" {
+            $params = @{
+                NewVersion = '7.7.0'
+                CommonParameters = [InstallCommonParameters]@{
+                    InstallerPath  = "C:\Temp\PowerShell-7.7.0.msixbundle"
+                    InstallOptions = $null
+                    Silent         = $false
+                    ShouldProcess  = $false # this parameter must be false for testing
+                }
+            }
+            $actual = (InstallMSIXBundle @params *>&1)[-1]
+            # MSI default optional parameter is not orderd...
+            $actual | Should -Be '(skip) Add-AppxPackage -Path C:\Temp\PowerShell-7.7.0.msixbundle'
         }
 
         It "InstallMSI should set proper parameters (interactive)" {

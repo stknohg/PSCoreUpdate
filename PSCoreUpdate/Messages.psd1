@@ -31,4 +31,5 @@ Update_PowerShellRelease_011 = Exit current PowerShell Console...
 Update_PowerShellRelease_012 = preview release
 Update_PowerShellRelease_013 = LTS release
 Update_PowerShellRelease_014 = release
+Update_PowerShellRelease_015 = Starting with PowerShell 7.7, an MSIX package (.msixbundle) is used for installation instead of an MSI installer... \r\nSee: https://devblogs.microsoft.com/powershell/powershell-msi-deprecation/
 '@
